@@ -441,6 +441,12 @@ Referenced SOP Instance UID
 Uniquely identifies the referenced SOP Instance.'
 ]
 
+{ #category : #'as yet unclassified' }
+DcTable class >> tagAt: aTag [
+
+	 TagTable tagAt: aTag
+]
+
 { #category : #accessing }
 DcTable >> atBin: aBinTag [
 
@@ -700,6 +706,12 @@ DcTable >> table_E_1_1: anXmlRoot [
 		line with: hdrs do: [ :val :h | d at: h put: val ].
 		self removeUnprintablesInKey: 'Keyword' from: d.
 		self saveRow: d ]
+]
+
+{ #category : #accessing }
+DcTable >> tagAt: aTag [
+
+	TagTable tagAt: aTag
 ]
 
 { #category : #'as yet unclassified' }

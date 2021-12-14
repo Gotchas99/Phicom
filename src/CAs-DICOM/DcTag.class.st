@@ -2,7 +2,8 @@ Class {
 	#name : #DcTag,
 	#superclass : #Object,
 	#instVars : [
-		'bin'
+		'bin',
+		'hex'
 	],
 	#category : #'CAs-DICOM-Core'
 }
@@ -43,6 +44,15 @@ DcTag >> fromString: s [
 ]
 
 { #category : #printing }
+DcTag >> hex [
+
+	| bytes |
+	hex ifNil:[
+	bytes := (bin asByteArrayOfSize: 4) hex.
+	hex := $( , (bytes first: 4) , $, , (bytes last: 4) , $)]
+]
+
+{ #category : #printing }
 DcTag >> keyword [
 
 	^ [(DcTable in: #table_6_1 atBin: bin)
@@ -62,18 +72,19 @@ DcTag >> parseHex: aHexString [
 DcTag >> parseHexTag: tag [
 
 	| tmp1 |
+	hex := tag.
 	tmp1 := tag copyWithoutAll: ',()'.
-	 bin := [self parseHex: tmp1 ]
-		onErrorDo: [ 0 ].
+	bin := [ self parseHex: tmp1 ] onErrorDo: [ 0 ].
 	^ bin
 ]
 
 { #category : #printing }
 DcTag >> printOn: aStream [
 
-	| bytes |
-	"	super printOn: aStream."
-	bytes := (bin asByteArrayOfSize: 4) hex.
-	aStream << $( << (bytes first: 4) << $, << (bytes last: 4) << $)
-	<< $  << self keyword
+	aStream << 'Tag'.
+	aStream << self hex
+	"bin ifNotNil: [ 
+		bytes := (bin asByteArrayOfSize: 4) hex.
+		aStream << $( << (bytes first: 4) << $, << (bytes last: 4) << $) ]"
+	"aStream << $  << self keyword"
 ]
