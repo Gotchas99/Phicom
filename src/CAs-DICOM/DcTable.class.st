@@ -1,0 +1,728 @@
+Class {
+	#name : #DcTable,
+	#superclass : #Object,
+	#instVars : [
+		'tblHex',
+		'tblBin'
+	],
+	#classVars : [
+		'TableCache',
+		'TableIndex',
+		'TagTable'
+	],
+	#category : #'CAs-DICOM-Util'
+}
+
+{ #category : #'as yet unclassified' }
+DcTable class >> TagTable [
+
+^TagTable 
+]
+
+{ #category : #'as yet unclassified' }
+DcTable class >> baseDir [
+
+	^'c:\misc\dicomref'asFileReference 
+]
+
+{ #category : #'as yet unclassified' }
+DcTable class >> commandDictionaryText [
+
+	^'Tag
+
+Message Field
+
+Keyword
+
+VR
+
+VM
+
+Description of Field
+
+(0000,0000)
+
+Command Group Length
+
+CommandGroupLength
+
+UL
+
+1
+
+The even number of bytes from the end of the value field to the beginning of the next group.
+
+(0000,0002)
+
+Affected SOP Class UID
+
+AffectedSOPClassUID
+
+UI
+
+1
+
+The affected SOP Class UID associated with the operation.
+
+(0000,0003)
+
+Requested SOP Class UID
+
+RequestedSOPClassUID
+
+UI
+
+1
+
+The requested SOP Class UID associated with the operation.
+
+(0000,0100)
+
+Command Field
+
+CommandField
+
+US
+
+1
+
+This field distinguishes the DIMSE operation conveyed by this Message. This field shall be set to one of the following values:
+
+0001H C-STORE-RQ
+
+8001H C-STORE-RSP
+
+0010H C-GET-RQ
+
+8010H C-GET-RSP
+
+0020H C-FIND-RQ
+
+8020H C-FIND-RSP
+
+0021HC-MOVE-RQ
+
+8021H C-MOVE-RSP
+
+0030H C-ECHO-RQ
+
+8030H C-ECHO-RSP
+
+0100H N-EVENT-REPORT-RQ
+
+8100H N-EVENT-REPORT-RSP
+
+0110H N-GET-RQ
+
+8110H N-GET-RSP
+
+0120H N-SET-RQ
+
+8120H N-SET-RSP
+
+0130H N-ACTION-RQ
+
+8130H N-ACTION-RSP
+
+0140H N-CREATE-RQ
+
+8140H N-CREATE-RSP
+
+0150H N-DELETE-RQ
+
+8150H N-DELETE-RSP
+
+0FFFH C-CANCEL-RQ
+
+(0000,0110)
+
+Message ID
+
+MessageID
+
+US
+
+1
+
+Implementation-specific value that distinguishes this Message from other Messages.
+
+(0000,0120)
+
+Message ID Being Responded To
+
+MessageIDBeingRespondedTo
+
+US
+
+1
+
+Shall be set to the value of the Message ID (0000,0110) field used in associated request Message.
+
+(0000,0600)
+
+Move Destination
+
+MoveDestination
+
+AE
+
+1
+
+Shall be set to the DICOM AE Title of the destination DICOM AE to which the C-STORE sub-operations are being performed.
+
+(0000,0700)
+
+Priority
+
+Priority
+
+US
+
+1
+
+The priority shall be set to one of the following values:
+
+LOW = 0002H
+
+MEDIUM = 0000H
+
+HIGH = 0001H
+
+(0000,0800)
+
+Command Data Set Type
+
+CommandDataSetType
+
+US
+
+1
+
+This field indicates if a Data Set is present in the Message. This field shall be set to the value of 0101H if no Data Set is present; any other value indicates a Data Set is included in the Message.
+
+(0000,0900)
+
+Status
+
+Status
+
+US
+
+1
+
+Confirmation status of the operation. See Annex C.
+
+(0000,0901)
+
+Offending Element
+
+OffendingElement
+
+AT
+
+1-n
+
+If status is Cxxx, then this field contains a list of the elements in which the error was detected.
+
+(0000,0902)
+
+Error Comment
+
+ErrorComment
+
+LO
+
+1
+
+This field contains an application-specific text description of the error detected.
+
+(0000,0903)
+
+Error ID
+
+ErrorID
+
+US
+
+1
+
+This field shall optionally contain an application-specific error code.
+
+(0000,1000)
+
+Affected SOP Instance UID
+
+AffectedSOPInstanceUID
+
+UI
+
+1
+
+Contains the UID of the SOP Instance for which this operation occurred.
+
+(0000,1001)
+
+Requested SOP Instance UID
+
+RequestedSOPInstanceUID
+
+UI
+
+1
+
+Contains the UID of the SOP Instance for which this operation occurred.
+
+(0000,1002)
+
+Event Type ID
+
+EventTypeID
+
+US
+
+1
+
+Values for this field are application-specific.
+
+(0000,1005)
+
+Attribute Identifier List
+
+AttributeIdentifierList
+
+AT
+
+1-n
+
+This field contains an Attribute Tag for each of the n Attributes applicable.
+
+(0000,1008)
+
+Action Type ID
+
+ActionTypeID
+
+US
+
+1
+
+Values for this field are application-specific.
+
+(0000,1020)
+
+Number of Remaining Sub-operations
+
+NumberOfRemainingSuboperations
+
+US
+
+1
+
+The number of remaining C-STORE sub-operations to be invoked for the operation.
+
+(0000,1021)
+
+Number of Completed Sub-operations
+
+NumberOfCompletedSuboperations
+
+US
+
+1
+
+The number of C-STORE sub-operations associated with this operation that have completed successfully.
+
+(0000,1022)
+
+Number of Failed Sub-operations
+
+NumberOfFailedSuboperations
+
+US
+
+1
+
+The number of C-STORE sub-operations associated with this operation that have failed.
+
+(0000,1023)
+
+Number of Warning Sub-operations
+
+NumberOfWarningSuboperations
+
+US
+
+1
+
+The number of C-STORE sub-operations associated with this operation that generated warning responses.
+
+(0000,1030)
+
+Move Originator Application Entity Title
+
+MoveOriginatorApplicationEntityTitle
+
+AE
+
+1
+
+Contains the DICOM AE Title of the DICOM AE that invoked the C-MOVE operation from which this C-STORE sub-operation is being performed.
+
+(0000,1031)
+
+Move Originator Message ID
+
+MoveOriginatorMessageID
+
+US
+
+1
+
+Contains the Message ID (0000,0110) of the C-MOVE-RQ Message from which this C-STORE sub-operation is being performed.'
+]
+
+{ #category : #'as yet unclassified' }
+DcTable class >> in: tblId atBin: bin [
+
+	| tbl |
+	tbl := TableIndex at: tblId ifAbsentPut: [ self new table_6_1 ].
+	^tbl atBin: bin
+]
+
+{ #category : #'as yet unclassified' }
+DcTable class >> initialize [
+
+	TagTable := self new.
+	self initializeTableIndex.
+	self initializeCache
+]
+
+{ #category : #'as yet unclassified' }
+DcTable class >> initializeCache [
+
+	TableCache:=Dictionary new.
+]
+
+{ #category : #'as yet unclassified' }
+DcTable class >> initializeTableIndex [
+
+	TableIndex := Dictionary new
+]
+
+{ #category : #initialization }
+DcTable class >> resetAll [
+self allInstancesDo: [ :tbl|tbl initialize ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable class >> sample_10_11 [
+^'Attribute Name
+
+Tag
+
+Type
+
+Attribute Description
+
+Referenced SOP Class UID
+
+(0008,1150)
+
+1
+
+Uniquely identifies the referenced SOP Class.
+
+Referenced SOP Instance UID
+
+(0008,1155)
+
+1
+
+Uniquely identifies the referenced SOP Instance.'
+]
+
+{ #category : #accessing }
+DcTable >> atBin: aBinTag [
+
+	^ tblBin at: aBinTag
+]
+
+{ #category : #accessing }
+DcTable >> atHex: aHexTag [
+
+	^tblHex at:aHexTag
+]
+
+{ #category : #accessing }
+DcTable >> atHex: aHexTag fld: aFieldName [
+
+	^( tblHex at: aHexTag)at:aFieldName
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> file: aFilename cols: numCols headers: headers [
+
+	| fs |
+	fs := (self class baseDir / aFilename) readStream.
+	self stream: fs cols: numCols headers: headers
+	
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> initialize [
+
+	tblHex
+:=Dictionary new.	 tblBin:= Dictionary new.
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> oldReader [
+"lines := aStream lines reject: [ :l | l isEmpty ].
+	hdr := lines first: numCols.
+	tblHex := Dictionary new.
+	tblBin := Dictionary new.
+	(lines allButFirst: numCols) readStreamDo: [ :s | 
+		[ s atEnd ] whileFalse: [ 
+			d := Dictionary new.
+			(s next: numCols) with: hdr do: [ :val :h | d at: h put: val ].
+			d at: 'Tag' ifPresent: [ :t | 
+				tag := DcTag fromString: t.
+				d at: #TagHex put: tag bin.
+				tblHex at: (d at: 'Tag') put: d.
+				tblBin at: tag bin put: d ] ] ]"
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> part6 [
+
+	| fname root chapters chapter table thead hdrs tbody items d hdr61 url |
+	fname := 'C:\Misc\dicomref\part06.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
+
+	root := (XMLDOMParser parseURL: url) root.
+	"	root := (XMLDOMParser parse: fname asFileReference) root."
+	chapters := root nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_6'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (chapter elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_6-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdr61 do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> part7 [
+
+	| fname root url |
+	fname := 'C:\Misc\dicomref\part06.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part07/part07.xml'.
+
+	root := (XMLDOMParser parseURL: url) root.
+	self table_E_1_1: root
+]
+
+{ #category : #helper }
+DcTable >> readLine: aStream cols: numCols [
+
+	| fld flds dummy |
+	flds := OrderedCollection new.
+	1 to: numCols do: [ :i | 
+		fld := aStream nextLine.
+		flds add: fld.
+		fld isEmpty ifFalse: [ dummy:=  aStream nextLine ] ].
+	^ flds
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> removeUnprintablesInKey: aKey from: aDict [
+
+	| tmp |
+	aDict at: aKey ifPresent: [ :val | 
+		tmp := val select: [ :c | c shouldBePrintedAsLiteral ].
+		aDict at: aKey put: tmp ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> saveRow: aDict [
+
+	| tag |
+	aDict at: 'Tag' ifPresent: [ :t | 
+		tag := DcTag fromString: t.
+		aDict at: #TagHex put: tag bin.
+		tblHex at: (aDict at: 'Tag') put: aDict.
+		tblBin at: tag bin put: aDict ] 
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> stream: aStream cols: numCols headers: headers [
+
+	| line hdr d |
+	[ tblHex := Dictionary new.
+	tblBin := Dictionary new.
+	hdr := self readLine: aStream cols: numCols.
+	headers ifNotNil: [ hdr := headers ].
+	[ aStream atEnd ] whileFalse: [ 
+		d := Dictionary new.
+		line := self readLine: aStream cols: numCols.
+		line with: hdr do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ] ] ensure: [ aStream close ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> table_6_1 [
+
+	| fname root chapters chapter table thead hdrs tbody items d hdr61 url |
+	fname := 'C:\Misc\dicomref\part06.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
+
+	root := (XMLDOMParser parseURL: url) root.
+	"	root := (XMLDOMParser parse: fname asFileReference) root."
+	chapters := root nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_6'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (chapter elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_6-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdr61 do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> table_6_1: anXmlRoot [
+
+	| fname root chapters chapter table thead hdrs tbody items d hdr61 url |
+	fname := 'C:\Misc\dicomref\part06.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
+
+	root := (XMLDOMParser parseURL: url) root.
+	"	root := (XMLDOMParser parse: fname asFileReference) root."
+	chapters := anXmlRoot nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_6'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (chapter elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_6-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdr61 do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> table_E_1_1 [
+
+	| fname root chapters chapter table thead hdrs tbody items d hdre11 url section |
+	fname := 'C:\Misc\dicomref\part07.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part07/part07.xml'.
+
+	root := (XMLDOMParser parseURL: url) root.
+	"	root := (XMLDOMParser parse: fname asFileReference) root."
+	chapters := root nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_E'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	section := (chapter elementsAt: 'section') elementsDetect: [ :se | 
+		           'sect_E.1'
+		           = (se attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (section elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_E.1-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdre11 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdrs do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> table_E_1_1: anXmlRoot [
+
+	|   chapters chapter table thead hdrs tbody items d hdre11  section |
+	chapters := anXmlRoot nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_E'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	section := (chapter elementsAt: 'section') elementsDetect: [ :se | 
+		           'sect_E.1'
+		           = (se attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (section elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_E.1-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdre11 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdrs do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> text: aString cols: numCols [
+self text: aString cols: numCols headers: nil
+]
+
+{ #category : #'as yet unclassified' }
+DcTable >> text: aString cols: numCols headers: headers [
+
+	"| lines hdr d tag |"
+	self stream: aString readStream cols: numCols headers: headers
+	"lines := aString lines reject: [ :l | l isEmpty ].
+	hdr := lines first: numCols.
+	tblHex := Dictionary new.
+	tblBin := Dictionary new.
+	(lines allButFirst: numCols) readStreamDo: [ :s | 
+		[ s atEnd ] whileFalse: [ 
+			d := Dictionary new.
+			(s next: numCols) with: hdr do: [ :val :h | d at: h put: val ].
+			d at: 'Tag' ifPresent: [ :t | 
+				tag := DcTag fromString: t.
+				d at: #TagHex put: tag bin.
+				tblHex at: (d at: 'Tag') put: d.
+				tblBin at: tag bin put: d ] ] ]"
+]
