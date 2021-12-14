@@ -5,7 +5,7 @@ Class {
 		'ctxID',
 		'resultReason'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #accessing }

@@ -1,7 +1,7 @@
 Class {
 	#name : #DcItemUserInformation,
 	#superclass : #DcItemComplex,
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #accessing }

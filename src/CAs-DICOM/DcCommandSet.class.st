@@ -1,5 +1,5 @@
 Class {
 	#name : #DcCommandSet,
 	#superclass : #Object,
-	#category : #'CAs-DICOM-Message'
+	#category : #'CAs-DICOM-Core'
 }

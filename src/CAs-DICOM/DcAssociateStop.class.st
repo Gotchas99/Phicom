@@ -6,7 +6,7 @@ Class {
 		'source',
 		'reasonDiag'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #initialization }

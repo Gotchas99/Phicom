@@ -8,9 +8,10 @@ Class {
 		'port',
 		'sck',
 		'rq',
-		'dimse'
+		'dimse',
+		'currentMsg'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-AE'
 }
 
 { #category : #accessing }
@@ -37,18 +38,9 @@ aet:=anAET
 ]
 
 { #category : #ssl }
-DcAssociation >> connect [
-
-	| buffstream tmp |
-	sck := SocketStream openConnectionToHost: ip port: port timeout: 10.
-	sck binary.
-	buffstream := ZnBufferedWriteStream on: sck.
-	rq writeOn: buffstream.
-	buffstream flush.
-	buffstream := ZnBufferedReadStream on: sck.
-	tmp:= buffstream upToEnd.
-	buffstream close.
-self halt.
+DcAssociation >> currentMsg [
+^currentMsg ifNil:[currentMsg:= DcMessage new.]
+	
 ]
 
 { #category : #accessing }

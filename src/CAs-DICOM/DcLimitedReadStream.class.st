@@ -1,30 +1,42 @@
 Class {
-	#name : #DcPduReadStream,
+	#name : #DcLimitedReadStream,
 	#superclass : #DecoratorStream,
 	#instVars : [
-		'pduLength',
-		'limit'
+		'limit',
+		'length'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-Util'
 }
 
 { #category : #'as yet unclassified' }
-DcPduReadStream class >> on: aStream pduLength: anInt [
+DcLimitedReadStream class >> on: aStream length: anInt [
 
 	^ self basicNew
 		  on: aStream;
-		pduLength:anInt;
+		length:anInt;
 		  yourself
 ]
 
 { #category : #accessing }
-DcPduReadStream >> atEnd [
+DcLimitedReadStream >> atEnd [
 
 	^ decoratedStream atEnd or: [ self position >= limit ]
 ]
 
 { #category : #accessing }
-DcPduReadStream >> next: anInteger [
+DcLimitedReadStream >> length [
+^
+	length 
+]
+
+{ #category : #accessing }
+DcLimitedReadStream >> length: anInt [
+
+	length := anInt. limit:= self position+length 
+]
+
+{ #category : #accessing }
+DcLimitedReadStream >> next: anInteger [
 
 	"Answer the next anInteger elements of my stream. 
 	Must override because default uses OrderedCollection."
@@ -36,26 +48,14 @@ DcPduReadStream >> next: anInteger [
 ]
 
 { #category : #accessing }
-DcPduReadStream >> on: aStream [
+DcLimitedReadStream >> on: aStream [
 
 	super on: aStream.
 
 ]
 
 { #category : #accessing }
-DcPduReadStream >> pduLength [
-^
-	pduLength 
-]
-
-{ #category : #accessing }
-DcPduReadStream >> pduLength: anInt [
-
-	pduLength := anInt. limit:= self position+pduLength 
-]
-
-{ #category : #accessing }
-DcPduReadStream >> skip: anInteger [
+DcLimitedReadStream >> skip: anInteger [
 
 	"Set the receiver's position to be the current position+anInteger. A 
 	subclass might choose to be more helpful and select the minimum of the 
@@ -66,7 +66,7 @@ DcPduReadStream >> skip: anInteger [
 ]
 
 { #category : #accessing }
-DcPduReadStream >> upToEnd [
+DcLimitedReadStream >> upToEnd [
 
 	"Answer a subcollection from the current access position through the last element of the receiver."
 

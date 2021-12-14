@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'dimses'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-UpperLayer'
 }
 
 { #category : #converting }
@@ -22,11 +22,14 @@ DcUpperLayerServer >> dimseAt: aeTitle [
 { #category : #'as yet unclassified' }
 DcUpperLayerServer >> indication: request forAssoc: anAssoc [
 
-	| dimse response |
+	| dimse response  elements |
 	response := request isAssociation
 		            ifTrue: [ 
 		            DcAcse default indication: request forAssoc: anAssoc ]
 		            ifFalse: [ 
+			            self halt.
+			            elements := OrderedCollection new.
+			            request items do: [ :it | elements := it elements ].
 			            dimse := anAssoc dimse.
 			            dimse indication: request forAssoc: anAssoc ].
 	^ response

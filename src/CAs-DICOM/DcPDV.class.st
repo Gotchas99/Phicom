@@ -16,6 +16,22 @@ DcPDV class >> readFrom: stream [
 	^ self  new readFrom: stream
 ]
 
+{ #category : #accessing }
+DcPDV >> elements [
+
+	| tmp elements explicitVR |
+	elements := OrderedCollection new.
+	ReadStream with: payload do: [ :s | 
+		tmp := self isCommand
+			       ifTrue: [ DcElement from: s explicitVR: false ]
+			       ifFalse: [ 
+				       self halt. "explicitVR from PresCtx"
+				       explicitVR := true.
+				       DcElement from: s explicitVR: explicitVR ].
+		elements add: tmp ].
+	^ elements
+]
+
 { #category : #writing }
 DcPDV >> extLength [
 
@@ -60,7 +76,7 @@ DcPDV >> lengthField [
 	self halt.
 ]
 
-{ #category : #'instance creation' }
+{ #category : #accessing }
 DcPDV >> payload [
 ^payload
 ]
@@ -70,7 +86,7 @@ DcPDV >> readFrom: stream [
 
 	| length pduStream |
 	length := (stream next: 4) unsignedLongAt: 1 bigEndian: true.
-	pduStream := DcPduReadStream on: stream pduLength: length.
+	pduStream := DcLimitedReadStream on: stream length: length.
 	presCtx := pduStream next.
 	self readPduFrom: pduStream
 ]
@@ -78,8 +94,6 @@ DcPDV >> readFrom: stream [
 { #category : #'instance creation' }
 DcPDV >> readPduFrom: pduStream [
 
-	
 	header := pduStream next.
 	payload := pduStream upToEnd.
-	self halt
 ]

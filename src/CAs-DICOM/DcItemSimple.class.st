@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'value'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #comparing }

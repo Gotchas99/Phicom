@@ -6,7 +6,7 @@ Class {
 		'calledAET',
 		'callingAET'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #writing }

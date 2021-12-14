@@ -1,7 +1,7 @@
 Class {
 	#name : #DcItemSimpleString,
 	#superclass : #DcItemSimple,
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #'instance creation' }

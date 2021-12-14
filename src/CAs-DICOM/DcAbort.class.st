@@ -1,7 +1,7 @@
 Class {
 	#name : #DcAbort,
 	#superclass : #DcAssociateStop,
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #accessing }

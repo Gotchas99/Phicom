@@ -13,19 +13,13 @@ Class {
 	#category : #'CAs-DICOM-Util'
 }
 
-{ #category : #'as yet unclassified' }
-DcTable class >> TagTable [
-
-^TagTable 
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcTable class >> baseDir [
 
 	^'c:\misc\dicomref'asFileReference 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #samples }
 DcTable class >> commandDictionaryText [
 
 	^'Tag
@@ -381,7 +375,7 @@ US
 Contains the Message ID (0000,0110) of the C-MOVE-RQ Message from which this C-STORE sub-operation is being performed.'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcTable class >> in: tblId atBin: bin [
 
 	| tbl |
@@ -389,32 +383,39 @@ DcTable class >> in: tblId atBin: bin [
 	^tbl atBin: bin
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'class initialization' }
 DcTable class >> initialize [
 
-	TagTable := self new.
+	TagTable := nil.
 	self initializeTableIndex.
 	self initializeCache
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'class initialization' }
 DcTable class >> initializeCache [
 
 	TableCache:=Dictionary new.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'class initialization' }
 DcTable class >> initializeTableIndex [
 
 	TableIndex := Dictionary new
 ]
 
-{ #category : #initialization }
+{ #category : #'class initialization' }
+DcTable class >> initializeTagTable [
+
+	^ TagTable := self new		              part6;
+		              part7
+]
+
+{ #category : #'class initialization' }
 DcTable class >> resetAll [
 self allInstancesDo: [ :tbl|tbl initialize ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #samples }
 DcTable class >> sample_10_11 [
 ^'Attribute Name
 
@@ -441,10 +442,17 @@ Referenced SOP Instance UID
 Uniquely identifies the referenced SOP Instance.'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcTable class >> tagAt: aTag [
 
-	 TagTable tagAt: aTag
+	^ self tagTable tagAt: aTag
+]
+
+{ #category : #accessing }
+DcTable class >> tagTable [
+
+	^ TagTable ifNil: [ 
+		  self initializeTagTable]
 ]
 
 { #category : #accessing }
@@ -501,38 +509,20 @@ DcTable >> oldReader [
 { #category : #'as yet unclassified' }
 DcTable >> part6 [
 
-	| fname root chapters chapter table thead hdrs tbody items d hdr61 url |
+	| fname root url |
 	fname := 'C:\Misc\dicomref\part06.xml'.
 	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
 
 	root := (XMLDOMParser parseURL: url) root.
 	"	root := (XMLDOMParser parse: fname asFileReference) root."
-	chapters := root nodes elementsAt: 'chapter'.
-	chapter := chapters elementsDetect: [ :ch | 
-		           'chapter_6'
-		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
-	table := (chapter elementsAt: 'table') elementsDetect: [ :tab | 
-		         'table_6-1'
-		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
-	thead := (table elementsAt: 'thead') first elements first.
-	hdrs := thead elements collect: [ :th | th contentString trim ].
-	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
-	tbody := (table elementsAt: 'tbody') first elements.
-	items := tbody collect: [ :tr | 
-		         tr elements collect: [ :td | 
-			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
-	items do: [ :line | 
-		d := Dictionary new.
-		line with: hdr61 do: [ :val :h | d at: h put: val ].
-		self removeUnprintablesInKey: 'Keyword' from: d.
-		self saveRow: d ]
+	self table_6_1: root
 ]
 
 { #category : #'as yet unclassified' }
 DcTable >> part7 [
 
 	| fname root url |
-	fname := 'C:\Misc\dicomref\part06.xml'.
+	fname := 'C:\Misc\dicomref\part07.xml'.
 	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part07/part07.xml'.
 
 	root := (XMLDOMParser parseURL: url) root.
@@ -591,6 +581,7 @@ DcTable >> stream: aStream cols: numCols headers: headers [
 DcTable >> table_6_1 [
 
 	| fname root chapters chapter table thead hdrs tbody items d hdr61 url |
+	self deprecated:'use the one with xml root param'.
 	fname := 'C:\Misc\dicomref\part06.xml'.
 	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
 
@@ -620,12 +611,7 @@ DcTable >> table_6_1 [
 { #category : #'as yet unclassified' }
 DcTable >> table_6_1: anXmlRoot [
 
-	| fname root chapters chapter table thead hdrs tbody items d hdr61 url |
-	fname := 'C:\Misc\dicomref\part06.xml'.
-	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
-
-	root := (XMLDOMParser parseURL: url) root.
-	"	root := (XMLDOMParser parse: fname asFileReference) root."
+	| chapters chapter table thead hdrs tbody items d hdr61  |
 	chapters := anXmlRoot nodes elementsAt: 'chapter'.
 	chapter := chapters elementsDetect: [ :ch | 
 		           'chapter_6'
@@ -650,7 +636,7 @@ DcTable >> table_6_1: anXmlRoot [
 { #category : #'as yet unclassified' }
 DcTable >> table_E_1_1 [
 
-	| fname root chapters chapter table thead hdrs tbody items d hdre11 url section |
+	| fname root chapters chapter table thead hdrs tbody items d hdre11 url section |	self deprecated:'use the one with xml root param'.
 	fname := 'C:\Misc\dicomref\part07.xml'.
 	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part07/part07.xml'.
 
@@ -711,7 +697,12 @@ DcTable >> table_E_1_1: anXmlRoot [
 { #category : #accessing }
 DcTable >> tagAt: aTag [
 
-	TagTable tagAt: aTag
+	| tmp |
+	aTag isNumber ifTrue: [ tmp := tblBin at: aTag ].
+	aTag isString ifTrue: [ tmp := tblHex at: aTag ].
+	aTag class = DcTag ifTrue: [ tmp := tblBin at: aTag bin].
+	tmp ifNil: [ Error signal: 'unknown tag' ].
+	^ tmp
 ]
 
 { #category : #'as yet unclassified' }

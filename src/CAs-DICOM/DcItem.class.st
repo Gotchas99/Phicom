@@ -9,7 +9,7 @@ Class {
 	#classVars : [
 		'TypeMap'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #initialization }
@@ -120,7 +120,7 @@ DcItem >> readFrom: stream [
 	| length pduStream |
 	itemType := stream next.
 	stream skip: 1.
-	length := (stream next: 2) unsignedShortAt: 1 bigEndian: true.pduStream := DcPduReadStream on: stream pduLength: length.
+	length := (stream next: 2) unsignedShortAt: 1 bigEndian: true.pduStream := DcLimitedReadStream on: stream length: length.
 	self readItemFrom: pduStream
 ]
 

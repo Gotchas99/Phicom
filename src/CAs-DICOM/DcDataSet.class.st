@@ -3,9 +3,9 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'elements',
-		'explicit'
+		'explicitVR'
 	],
-	#category : #'CAs-DICOM-Message'
+	#category : #'CAs-DICOM-Core'
 }
 
 { #category : #'as yet unclassified' }
@@ -19,14 +19,14 @@ DcDataSet class >> docsTransferSyntax [
 ]
 
 { #category : #'as yet unclassified' }
-DcDataSet class >> readFrom: aStream explicit: aBoolean [
+DcDataSet class >> readFrom: aStream explicitVR: aBoolean [
 
-^	(self new) explicit:aBoolean;readFrom:aStream
+^	(self new) explicitVR:aBoolean;readFrom:aStream
 ]
 
 { #category : #accessing }
-DcDataSet >> explicit:aBoolean [
-explicit:=aBoolean 
+DcDataSet >> explicitVR:aBoolean [
+explicitVR:=aBoolean 
 ]
 
 { #category : #accessing }
@@ -35,6 +35,6 @@ DcDataSet >> readFrom: s [
 	| e |
 	elements := OrderedCollection new.
 	[ s atEnd ] whileFalse: [ 
-		e := DcElement from: s explicitVR: explicit.
+		e := DcElement from: s explicitVR: explicitVR.
 		elements add: e ]
 ]

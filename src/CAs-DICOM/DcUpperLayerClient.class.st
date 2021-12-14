@@ -1,5 +1,5 @@
 Class {
 	#name : #DcUpperLayerClient,
 	#superclass : #DcUpperLayer,
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-UpperLayer'
 }

@@ -23,7 +23,7 @@ DcDimse >> cEcho:param [
 { #category : #'as yet unclassified' }
 DcDimse >> indication: aRequest forAssoc: anAssoc [
 
-	self halt.
-	self traceCr: 'PDV recieved'
-	.^nil
+	
+	self traceCr: 'PDV recieved'.self halt.
+	^ nil
 ]

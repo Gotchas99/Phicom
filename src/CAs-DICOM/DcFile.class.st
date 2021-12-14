@@ -46,7 +46,7 @@ DcFile >> read [
 	filename asFileReference binaryReadStreamDo: [ :s | 
 		meta := DcFileMeta readMetaFrom: s.
 
-		dataset := DcDataSet readFrom: s explicit: self isExplicit ]
+		dataset := DcDataSet readFrom: s explicitVR: self isExplicit ]
 ]
 
 { #category : #accessing }

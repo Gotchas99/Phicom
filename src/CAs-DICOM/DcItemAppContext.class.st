@@ -1,7 +1,7 @@
 Class {
 	#name : #DcItemAppContext,
 	#superclass : #DcItemSimpleString,
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #accessing }

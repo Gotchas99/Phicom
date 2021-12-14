@@ -138,7 +138,7 @@ DcPDU >> readFrom: stream [
 	type := stream next.
 	stream skip: 1.
 	length := (stream next: 4) unsignedLongAt: 1 bigEndian: true.
-	pduStream := DcPduReadStream on: stream pduLength: length.
+	pduStream := DcLimitedReadStream on: stream length: length.
 	self readPduFrom: pduStream
 ]
 

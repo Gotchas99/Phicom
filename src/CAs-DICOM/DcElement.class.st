@@ -1,3 +1,6 @@
+"
+The encoding of the Command Set shall be Little Endian Byte Ordering as defined in PS3.5.
+"
 Class {
 	#name : #DcElement,
 	#superclass : #Object,
@@ -19,7 +22,7 @@ DcElement class >> VRcodes [
 ^VRvalueCode 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #documentation }
 DcElement class >> docs_VR [
 
 	"https://dicom.nema.org/medical/dicom/current/output/chtml/part05/sect_6.2.html"
@@ -104,17 +107,24 @@ DcElement >> <= otherElement [
 	^ tag <= otherElement tag
 ]
 
-{ #category : #'instance creation' }
+{ #category : #accessing }
 DcElement >> asLong [
 
 	^ value longAt: 1 bigEndian: false
 ]
 
-{ #category : #'instance creation' }
+{ #category : #accessing }
 DcElement >> asShort [
 
 	^ value  shortAt: 1
 		                   bigEndian: false.
+]
+
+{ #category : #accessing }
+DcElement >> assoc [
+^tag keyword -> self value.
+
+	
 ]
 
 { #category : #'instance creation' }
@@ -128,9 +138,9 @@ DcElement >> from: s explicitVR: aBoolean [
 
 	explicitVR := aBoolean.
 	tag := DcTag from: s.
-	explicitVR ifTrue: [ self getVR: s ].
+	explicitVR ifTrue: [ self getVR: s ]ifFalse:[vr:=tag vr.].
 	self getLength: s.
-	self getValue:s
+	self getValue: s
 ]
 
 { #category : #'instance creation' }
@@ -138,9 +148,12 @@ DcElement >> getLength: s [
 
 	"Undefined Length = FFFFFFFFH"
 
-	length := self isShortVR
-		          ifTrue: [ s nextLittleEndianNumber: 2 ]
-		          ifFalse: [ s nextLittleEndianNumber: 4 ]
+	length := tag isCommand
+		          ifTrue: [ s nextLittleEndianNumber: 4 ]
+		          ifFalse: [ 
+			          self isShortVR
+				          ifTrue: [ s nextLittleEndianNumber: 2 ]
+				          ifFalse: [ s nextLittleEndianNumber: 4 ] ]
 ]
 
 { #category : #'instance creation' }
@@ -164,19 +177,29 @@ DcElement >> initialize [
 explicitVR :=false
 ]
 
-{ #category : #'instance creation' }
+{ #category : #testing }
+DcElement >> isCommandElement [
+
+	^ tag isCommand
+]
+
+{ #category : #testing }
 DcElement >> isShortVR [
 
 	^self shortVRs includes:vr
 
 ]
 
-{ #category : #'instance creation' }
+{ #category : #testing }
 DcElement >> isUndefined [
 
 	"Undefined Length = FFFFFFFFH"
 
 	^ length = 4294967295.
+]
+
+{ #category : #accessing }
+DcElement >> keyword [ ^tag keyword 
 ]
 
 { #category : #printing }
@@ -190,13 +213,13 @@ DcElement >> printOn: aStream [
 	 length printOn:aStream.aStream  << $)
 ]
 
-{ #category : #'instance creation' }
+{ #category : #accessing }
 DcElement >> rawValue [
 
 	^ value
 ]
 
-{ #category : #'instance creation' }
+{ #category : #accessing }
 DcElement >> shortVRs [
 
 	
@@ -210,7 +233,7 @@ DcElement >> tag [
  ^tag
 ]
 
-{ #category : #'instance creation' }
+{ #category : #accessing }
 DcElement >> value [
 
 	^ (self class VRcodes at: vr)value:value

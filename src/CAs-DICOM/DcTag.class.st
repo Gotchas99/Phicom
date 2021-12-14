@@ -47,20 +47,27 @@ DcTag >> fromString: s [
 DcTag >> hex [
 
 	| bytes |
-	hex ifNil:[
-	bytes := (bin asByteArrayOfSize: 4) hex.
-	hex := $( , (bytes first: 4) , $, , (bytes last: 4) , $)]
+	^hex ifNil: [ 
+		bytes := (bin asByteArrayOfSize: 4) hex.
+		hex := '(' , (bytes first: 4) , ',' , (bytes last: 4) , ')' ]
+]
+
+{ #category : #testing }
+DcTag >> isCommand [
+^bin <= (self parseHex:'FFFF')
+	
 ]
 
 { #category : #printing }
 DcTag >> keyword [
 
-	^ [(DcTable in: #table_6_1 atBin: bin)
+	^ [ 
+	  (DcTable tagAt: bin)
 		  at: #Keyword
-		  ifAbsent: [ '???' ]]onErrorDo:['***']
+		  ifAbsent: [ '???' ] ] onErrorDo: [ '***' ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 DcTag >> parseHex: aHexString [
 ^ 
 	aHexString
@@ -68,7 +75,7 @@ DcTag >> parseHex: aHexString [
 		into: [ :sum :each | sum * 16 + each hexDigitValue ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 DcTag >> parseHexTag: tag [
 
 	| tmp1 |
@@ -87,4 +94,11 @@ DcTag >> printOn: aStream [
 		bytes := (bin asByteArrayOfSize: 4) hex.
 		aStream << $( << (bytes first: 4) << $, << (bytes last: 4) << $) ]"
 	"aStream << $  << self keyword"
+]
+
+{ #category : #printing }
+DcTag >> vr [
+
+	^ [ (DcTable tagAt: bin) at: #VR ifAbsent: [ '???' ] ] 
+		  onErrorDo: [ '***' ]
 ]

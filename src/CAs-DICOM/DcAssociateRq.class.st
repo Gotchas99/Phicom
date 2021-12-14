@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'ctxID'
 	],
-	#category : #'CAs-DICOM-Net'
+	#category : #'CAs-DICOM-ACSE'
 }
 
 { #category : #accessing }
