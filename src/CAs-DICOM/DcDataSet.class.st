@@ -25,6 +25,11 @@ DcDataSet class >> readFrom: aStream explicitVR: aBoolean [
 ]
 
 { #category : #accessing }
+DcDataSet >> elements [
+^elements
+]
+
+{ #category : #accessing }
 DcDataSet >> explicitVR:aBoolean [
 explicitVR:=aBoolean 
 ]
@@ -33,7 +38,7 @@ explicitVR:=aBoolean
 DcDataSet >> readFrom: s [
 
 	| e |
-	elements := OrderedCollection new.
+	elements := SortedCollection new.
 	[ s atEnd ] whileFalse: [ 
 		e := DcElement from: s explicitVR: explicitVR.
 		elements add: e ]

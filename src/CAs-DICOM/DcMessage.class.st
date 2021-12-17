@@ -7,6 +7,7 @@ Class {
 	#name : #DcMessage,
 	#superclass : #Object,
 	#instVars : [
+		'presCtxId',
 		'commandSet',
 		'dataSet'
 	],
@@ -16,7 +17,7 @@ Class {
 { #category : #adding }
 DcMessage >> addElement: anElement [
 
-	anElement isCommand
+	anElement isCommandElement
 		ifTrue: [ commandSet add: anElement ]
 		ifFalse: [ dataSet add: anElement ]
 ]

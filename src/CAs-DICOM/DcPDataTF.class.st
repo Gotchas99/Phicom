@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #accessing }
+DcPDataTF class >> serviceName [
+
+	^ #pData
+]
+
+{ #category : #accessing }
 DcPDataTF class >> type [
 
 	^ 4
@@ -26,8 +32,8 @@ DcPDataTF >> isAssociation [
 { #category : #'instance creation' }
 DcPDataTF >> readPduFrom: stream [
 
-	| it |
+	| pdv |
 	[ stream atEnd ] whileFalse: [ 
-		it := DcPDV readFrom: stream.
-		items add: it ]
+		pdv := DcPDV readFrom: stream.
+		items add: pdv ]
 ]

@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #accessing }
+DcAbort class >> serviceName [
+
+	^ #aAbort
+]
+
+{ #category : #accessing }
 DcAbort class >> type [
 
 	^ 7

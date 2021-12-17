@@ -59,7 +59,8 @@ DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 	respPresCtx := aRequest getPresentationContexts collect: [ :px | 
 		               self selectTransferSyntax: px ].
 	respPresCtx do: [ :pctx | resp addItem: pctx ].
-		ui := DcItemUserInformation new standard.
+	anAssoc presCtx: respPresCtx .
+	ui := DcItemUserInformation new standard.
 	resp addItem: ui.
 	resp checkLength.
 	^ resp

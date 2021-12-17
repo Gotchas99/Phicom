@@ -148,12 +148,12 @@ DcElement >> getLength: s [
 
 	"Undefined Length = FFFFFFFFH"
 
-	length := tag isCommand
-		          ifTrue: [ s nextLittleEndianNumber: 4 ]
-		          ifFalse: [ 
+	length := explicitVR
+		          ifTrue: [ 
 			          self isShortVR
 				          ifTrue: [ s nextLittleEndianNumber: 2 ]
 				          ifFalse: [ s nextLittleEndianNumber: 4 ] ]
+		          ifFalse: [ s nextLittleEndianNumber: 4 ]
 ]
 
 { #category : #'instance creation' }
@@ -181,6 +181,12 @@ explicitVR :=false
 DcElement >> isCommandElement [
 
 	^ tag isCommand
+]
+
+{ #category : #testing }
+DcElement >> isExplicitVR [
+
+	^ explicitVR
 ]
 
 { #category : #testing }

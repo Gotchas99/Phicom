@@ -41,7 +41,8 @@ DcNet class >> defaultOn: portNumber [
 
 { #category : #initialization }
 DcNet class >> defaultPortnumber [
-^11104
+
+	^ 11104
 ]
 
 { #category : #initialization }

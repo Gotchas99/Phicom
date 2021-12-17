@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #accessing }
+DcReleaseRp class >> serviceName [
+
+	^ #aRelease
+]
+
+{ #category : #accessing }
 DcReleaseRp class >> type [
 
 	^ 6

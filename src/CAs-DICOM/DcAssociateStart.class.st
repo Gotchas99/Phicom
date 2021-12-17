@@ -9,6 +9,12 @@ Class {
 	#category : #'CAs-DICOM-ACSE'
 }
 
+{ #category : #accessing }
+DcAssociateStart class >> serviceName [
+
+	^ #aAssociate
+]
+
 { #category : #writing }
 DcAssociateStart >> calledAET [
 

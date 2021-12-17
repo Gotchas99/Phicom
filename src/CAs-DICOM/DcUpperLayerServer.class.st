@@ -7,12 +7,6 @@ Class {
 	#category : #'CAs-DICOM-UpperLayer'
 }
 
-{ #category : #converting }
-DcUpperLayerServer >> associate: anAssoc [
-
-	self halt.
-]
-
 { #category : #'as yet unclassified' }
 DcUpperLayerServer >> dimseAt: aeTitle [
 
@@ -20,18 +14,19 @@ DcUpperLayerServer >> dimseAt: aeTitle [
 ]
 
 { #category : #'as yet unclassified' }
-DcUpperLayerServer >> indication: request forAssoc: anAssoc [
+DcUpperLayerServer >> indication: pdu forAssoc: anAssoc [
 
-	| dimse response  elements |
-	response := request isAssociation
+	| dimse response  service |
+	service := self serviceForType: pdu type.
+	response := pdu isAssociation
 		            ifTrue: [ 
-		            DcAcse default indication: request forAssoc: anAssoc ]
+		            DcAcse default indication: pdu forAssoc: anAssoc ]
 		            ifFalse: [ 
-			            self halt.
-			            elements := OrderedCollection new.
-			            request items do: [ :it | elements := it elements ].
 			            dimse := anAssoc dimse.
-			            dimse indication: request forAssoc: anAssoc ].
+			            dimse
+				            indicationService: service
+				            param: pdu items
+				            forAssoc: anAssoc ].
 	^ response
 ]
 

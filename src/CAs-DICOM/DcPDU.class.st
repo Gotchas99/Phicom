@@ -1,3 +1,6 @@
+"
+The Big Endian byte ordering has been chosen for consistency with the OSI and TCP/IP environment. This pertains to the DICOM UL PDU headers only. The encoding of the PDV message fragments is defined by the Transfer Syntax negotiated at association establishment.
+"
 Class {
 	#name : #DcPDU,
 	#superclass : #Object,
@@ -41,7 +44,10 @@ DcPDU class >> initializeTypeMap [
 
 { #category : #testing }
 DcPDU class >> isKnownType: typeCode [
-"Not used?"
+
+	"Not used?"
+
+	self deprecated: 'not used'.
 	^ TypeMap includesKey: typeCode
 ]
 
@@ -52,6 +58,12 @@ DcPDU class >> readFrom: stream [
 	type := stream peek.
 	pduClass := TypeMap at: type.
 	^ pduClass new readFrom: stream
+]
+
+{ #category : #accessing }
+DcPDU class >> serviceName [
+
+	^ #NotUsed
 ]
 
 { #category : #accessing }
@@ -134,7 +146,7 @@ DcPDU >> myLength [
 DcPDU >> readFrom: stream [
 
 	| length pduStream |
-	self traceCr: self className ,' message recieved'.
+	self traceCr: (self className allButFirst:2) , ' PDU recieved'.
 	type := stream next.
 	stream skip: 1.
 	length := (stream next: 4) unsignedLongAt: 1 bigEndian: true.
