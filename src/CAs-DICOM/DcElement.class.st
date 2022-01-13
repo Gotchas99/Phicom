@@ -86,7 +86,9 @@ DcElement class >> initializeVRvalues [
 	OW=Other Word
 	PN=Person Name
 	SH=Short String
-	UI=UID"
+	UI=UID
+	UL=Unsigned Long
+	US=Unsigned Short"
 
 	VRvalueCode := Dictionary new.
 	VRvalueCode
@@ -94,11 +96,13 @@ DcElement class >> initializeVRvalues [
 		at: 'DS' put: [ :raw | raw asString trimmed asNumber ];
 		at: 'LO' put: [ :raw | raw asString trimmed ];
 		at: 'OB' put: [ :raw | raw ];
-		at: 'OW' put: [ :raw | raw ];at: 'PN' put: [ :raw | raw asString trimmed ];
+		at: 'OW' put: [ :raw | raw ];
+		at: 'PN' put: [ :raw | raw asString trimmed ];
 		at: 'SH' put: [ :raw | raw asString trimmed ];
 		at: 'UI'
 		put: [ :raw | (raw reject: [ :b | b = 0 ]) asString trimmed ];
-		at: 'UL' put: [ :raw | raw unsignedLongAt: 1 bigEndian: false ]
+		at: 'UL' put: [ :raw | raw unsignedLongAt: 1 bigEndian: false];
+			at: 'US' put: [ :raw | raw unsignedShortAt: 1 bigEndian: false ]
 ]
 
 { #category : #comparing }

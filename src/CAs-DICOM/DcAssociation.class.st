@@ -20,7 +20,9 @@ Class {
 { #category : #initialization }
 DcAssociation >> addFragment: aFrag isCmd: isCmd [
 
-	isCmd ifTrue:[cmdFragments add: aFrag] ifFalse:[dataFragments add: aFrag]
+self deprecated: 'use messages'.	isCmd
+		ifTrue: [ cmdFragments add: aFrag ]
+		ifFalse: [ dataFragments add: aFrag ]
 ]
 
 { #category : #accessing }
@@ -64,7 +66,7 @@ DcAssociation >> dimse: anObject [
 	dimse := anObject
 ]
 
-{ #category : #ssl }
+{ #category : #accessing }
 DcAssociation >> incomingMsg [
 ^incomingMsg ifNil:[incomingMsg:= DcMessage new.]
 	
@@ -88,15 +90,22 @@ DcAssociation >> ip: anIP [
 { #category : #initialization }
 DcAssociation >> lastElement [
 
+	| req |
+	incomingMsg requiresDataset ifTrue: [ 
+		incomingMsg hasDataset ifFalse: [ ^ nil ] ].
+	req := incomingMsg asDictionary.
 	self halt.
-	self resetIncoming
+	"process req..."
+	self resetIncoming.
+	^req
 ]
 
 { #category : #initialization }
 DcAssociation >> lastFragment [
+	self deprecated: 'use messages'.
 
 	self halt.
-self 	resetIncoming
+	self resetIncoming
 ]
 
 { #category : #accessing }
@@ -125,13 +134,6 @@ DcAssociation >> release [
 
 { #category : #initialization }
 DcAssociation >> resetIncoming [
-
-
-	cmdFragments := OrderedCollection new.
-	dataFragments := OrderedCollection new
-]
-
-{ #category : #ssl }
-DcAssociation >> rq:anAssociateRq [
-rq:=anAssociateRq
+incomingMsg := DcMessage new.
+	"cmdFragments := OrderedCollection new.	dataFragments := OrderedCollection new."
 ]

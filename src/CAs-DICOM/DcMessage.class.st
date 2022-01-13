@@ -22,8 +22,35 @@ DcMessage >> addElement: anElement [
 		ifFalse: [ dataSet add: anElement ]
 ]
 
+{ #category : #adding }
+DcMessage >> asDictionary [
+
+	| d |
+	d := Dictionary new.
+	commandSet do: [ :c | d add: c assoc ].^d
+]
+
+{ #category : #accessing }
+DcMessage >> cmd [
+
+	self halt.
+]
+
+{ #category : #adding }
+DcMessage >> hasDataset [
+
+	^dataSet isNotEmpty 
+]
+
 { #category : #initialization }
 DcMessage >> initialize [
 
 	commandSet:=SortedCollection new.dataSet:=OrderedCollection new.
+]
+
+{ #category : #adding }
+DcMessage >> requiresDataset [
+	self flag:'analyze command'
+	.^false.
+
 ]

@@ -60,6 +60,12 @@ DcAe >> dimse: anObject [
 	dimse := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+DcAe >> indication: cmd with: req for: anAssoc [
+
+	self halt.
+]
+
 { #category : #initialization }
 DcAe >> initialize [ 
 self initializeNetwork
