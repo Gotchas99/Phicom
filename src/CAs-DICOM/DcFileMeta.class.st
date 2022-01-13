@@ -328,7 +328,7 @@ DcFileMeta >> readMetaFrom: s [
 	group readStreamDo: [ :gs | 
 		[ gs atEnd ] whileFalse: [ 
 			attr := DcElement from: gs explicitVR: true.
-			reg := self class registry atBin: attr tag bin.
+			reg := DcTable tagAt: attr tag.
 			key := (reg at: 'Keyword') onlyLetters.
 			meta at: key put: attr ] ]
 ]

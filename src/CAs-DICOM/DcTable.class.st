@@ -388,7 +388,8 @@ DcTable class >> initialize [
 
 	TagTable := nil.
 	self initializeTableIndex.
-	self initializeCache
+	self initializeCache. 
+	self initializeTagTable
 ]
 
 { #category : #'class initialization' }
@@ -406,8 +407,11 @@ DcTable class >> initializeTableIndex [
 { #category : #'class initialization' }
 DcTable class >> initializeTagTable [
 
-	^ TagTable := self new		              part6;
+	^ TagTable := self new
+	part10;
+		              part6;
 		              part7
+		              
 ]
 
 { #category : #'class initialization' }
@@ -482,7 +486,7 @@ DcTable >> file: aFilename cols: numCols headers: headers [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 DcTable >> initialize [
 
 	tblHex
@@ -506,26 +510,45 @@ DcTable >> oldReader [
 				tblBin at: tag bin put: d ] ] ]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
+DcTable >> part10 [
+
+	| fname root url doc |
+	fname := 'C:\Misc\dicomref\part10.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part10/part10.xml'.
+
+	doc := fname asFileReference exists
+		       ifTrue: [ XMLDOMParser parse: fname asFileReference ]
+		       ifFalse: [ XMLDOMParser parseURL: url ].
+	root := doc root.
+	self table_7_1_1: root
+]
+
+{ #category : #initialization }
 DcTable >> part6 [
 
-	| fname root url |
+	| fname root url doc |
 	fname := 'C:\Misc\dicomref\part06.xml'.
 	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
-
-	root := (XMLDOMParser parseURL: url) root.
-	"	root := (XMLDOMParser parse: fname asFileReference) root."
+	
+	doc := fname asFileReference exists
+		       ifTrue: [ XMLDOMParser parse: fname asFileReference ]
+		       ifFalse: [ XMLDOMParser parseURL: url ].
+	root := doc root.
 	self table_6_1: root
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 DcTable >> part7 [
 
-	| fname root url |
+	| fname root url doc |
 	fname := 'C:\Misc\dicomref\part07.xml'.
 	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part07/part07.xml'.
 
-	root := (XMLDOMParser parseURL: url) root.
+	doc := fname asFileReference exists
+		       ifTrue: [ XMLDOMParser parse: fname asFileReference ]
+		       ifFalse: [ XMLDOMParser parseURL: url ].
+	root := doc root.
 	self table_E_1_1: root
 ]
 
@@ -541,7 +564,7 @@ DcTable >> readLine: aStream cols: numCols [
 	^ flds
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #helper }
 DcTable >> removeUnprintablesInKey: aKey from: aDict [
 
 	| tmp |
@@ -550,7 +573,7 @@ DcTable >> removeUnprintablesInKey: aKey from: aDict [
 		aDict at: aKey put: tmp ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #helper }
 DcTable >> saveRow: aDict [
 
 	| tag |
@@ -608,7 +631,7 @@ DcTable >> table_6_1 [
 		self saveRow: d ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 DcTable >> table_6_1: anXmlRoot [
 
 	| chapters chapter table thead hdrs tbody items d hdr61  |
@@ -629,6 +652,37 @@ DcTable >> table_6_1: anXmlRoot [
 	items do: [ :line | 
 		d := Dictionary new.
 		line with: hdr61 do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #initialization }
+DcTable >> table_7_1_1: anXmlRoot [
+
+	"In part 10 file info"
+
+	| chapters chapter table thead hdrs tbody items d hdrFixed section |
+	chapters := anXmlRoot nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_7'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	section := (chapter elementsAt: 'section') elementsDetect: [ :se | 
+		           'sect_7.1'
+		           = (se attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (section elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_7.1-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdrFixed := #( #Name #Tag #Type #Description ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdrFixed do: [ :val :h | d at: h put: val ].
+		d at: 'Keyword' put: ((d at: 'Name') copyReplaceAll: ' ' with: '').
 		self removeUnprintablesInKey: 'Keyword' from: d.
 		self saveRow: d ]
 ]
@@ -666,7 +720,7 @@ DcTable >> table_E_1_1 [
 		self saveRow: d ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 DcTable >> table_E_1_1: anXmlRoot [
 
 	|   chapters chapter table thead hdrs tbody items d hdre11  section |

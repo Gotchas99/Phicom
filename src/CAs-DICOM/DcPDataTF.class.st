@@ -19,8 +19,8 @@ DcPDataTF class >> type [
 { #category : #initialization }
 DcPDataTF >> initialize [
 
-	super initialize
-.	items := OrderedCollection new
+	super initialize.
+	
 ]
 
 { #category : #testing }

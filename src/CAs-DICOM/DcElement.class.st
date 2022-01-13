@@ -79,30 +79,43 @@ self 	initializeVRvalues
 { #category : #initialization }
 DcElement class >> initializeVRvalues [
 
-	"CS=Code String
+	"As=Age (string ending with e.g. 'Y')
+	CS=Code String
+	DA=Date
 	DS=Decimal String
+	IS=not sure. dimensions for image?
 	LO=Long string
 	OB=Other byte
 	OW=Other Word
 	PN=Person Name
 	SH=Short String
+	TM=Time
 	UI=UID
 	UL=Unsigned Long
 	US=Unsigned Short"
 
 	VRvalueCode := Dictionary new.
 	VRvalueCode
+		at: 'AS' put: [ :raw | raw asString trimmed ];
 		at: 'CS' put: [ :raw | raw asString trimmed ];
+		"needs to be converted to real date
+		"at: 'DA'
+		put: [ :raw | raw asString trimmed ];
 		at: 'DS' put: [ :raw | raw asString trimmed asNumber ];
-		at: 'LO' put: [ :raw | raw asString trimmed ];
+		at: 'IS'
+		put: [ :raw | raw asString trimmed ];
+	at: 'LO' put: [ :raw | raw asString trimmed ];
 		at: 'OB' put: [ :raw | raw ];
 		at: 'OW' put: [ :raw | raw ];
 		at: 'PN' put: [ :raw | raw asString trimmed ];
 		at: 'SH' put: [ :raw | raw asString trimmed ];
+		"needs to be converted to real time
+		"at: 'TM'
+		put: [ :raw | raw asString trimmed ];
 		at: 'UI'
 		put: [ :raw | (raw reject: [ :b | b = 0 ]) asString trimmed ];
-		at: 'UL' put: [ :raw | raw unsignedLongAt: 1 bigEndian: false];
-			at: 'US' put: [ :raw | raw unsignedShortAt: 1 bigEndian: false ]
+		at: 'UL' put: [ :raw | raw unsignedLongAt: 1 bigEndian: false ];
+		at: 'US' put: [ :raw | raw unsignedShortAt: 1 bigEndian: false ]
 ]
 
 { #category : #comparing }
@@ -218,9 +231,10 @@ DcElement >> printOn: aStream [
 	super printOn: aStream.
 
 	aStream << $(.
-	tag printOn: aStream.
-	aStream << $, << vr << $,.
-	 length printOn:aStream.aStream  << $)
+	tag keyword  printOn: aStream.
+	aStream << ': '.
+	self value printOn: aStream.
+	aStream << $)
 ]
 
 { #category : #accessing }
