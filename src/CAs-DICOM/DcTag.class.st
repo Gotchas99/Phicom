@@ -1,3 +1,6 @@
+"
+Part of an element in the tag-(VR)-length-value structure
+"
 Class {
 	#name : #DcTag,
 	#superclass : #Object,

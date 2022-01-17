@@ -550,6 +550,7 @@ DcTable >> part7 [
 		       ifFalse: [ XMLDOMParser parseURL: url ].
 	root := doc root.
 	self table_E_1_1: root
+.		self table_E_2_1: root
 ]
 
 { #category : #helper }
@@ -744,6 +745,35 @@ DcTable >> table_E_1_1: anXmlRoot [
 	items do: [ :line | 
 		d := Dictionary new.
 		line with: hdrs do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #initialization }
+DcTable >> table_E_2_1: anXmlRoot [
+"Retired commands"
+	| chapters chapter table thead hdrs tbody items d hdre11 section |
+	chapters := anXmlRoot nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_E'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	section := (chapter elementsAt: 'section') elementsDetect: [ :se | 
+		           'sect_E.2'
+		           = (se attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (section elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_E.2-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdre11 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdrs do: [ :val :h | d at: h put: val ].
+		d at:#Comment put:'Retired command'.
 		self removeUnprintablesInKey: 'Keyword' from: d.
 		self saveRow: d ]
 ]

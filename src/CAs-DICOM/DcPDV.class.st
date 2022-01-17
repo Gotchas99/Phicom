@@ -9,7 +9,6 @@ Class {
 	#name : #DcPDV,
 	#superclass : #Object,
 	#instVars : [
-		'header',
 		'userdata',
 		'presCtxId'
 	],

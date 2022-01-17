@@ -3,29 +3,23 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'ae',
-		'aet',
-		'ip',
-		'port',
-		'sck',
-		'rq',
 		'presCtxs',
 		'dimse',
-		'cmdFragments',
-		'dataFragments',
 		'incomingMsg'
 	],
 	#category : #'CAs-DICOM-AE'
 }
 
-{ #category : #initialization }
+{ #category : #message }
 DcAssociation >> addFragment: aFrag isCmd: isCmd [
 
-self deprecated: 'use messages'.	isCmd
+	self deprecated: 'use messages'.
+	"isCmd
 		ifTrue: [ cmdFragments add: aFrag ]
-		ifFalse: [ dataFragments add: aFrag ]
+		ifFalse: [ dataFragments add: aFrag ]"
 ]
 
-{ #category : #accessing }
+{ #category : #message }
 DcAssociation >> addIncomingElement: element [
 
 	incomingMsg addElement: element
@@ -43,15 +37,16 @@ DcAssociation >> ae: anObject [
 	ae := anObject
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - deprecated' }
 DcAssociation >> aet [
-
-^	aet
+self deprecated:'not needed here'.
+	"^ aet"
 ]
 
-{ #category : #accessing }
-DcAssociation >> aet:anAET [
-aet:=anAET
+{ #category : #'accessing - deprecated' }
+DcAssociation >> aet: anAET [
+self deprecated:'not needed here'.
+	"aet := anAET"
 ]
 
 { #category : #accessing }
@@ -66,41 +61,31 @@ DcAssociation >> dimse: anObject [
 	dimse := anObject
 ]
 
-{ #category : #accessing }
-DcAssociation >> incomingMsg [
-^incomingMsg ifNil:[incomingMsg:= DcMessage new.]
-	
-]
-
 { #category : #initialization }
 DcAssociation >> initialize [
-incomingMsg := DcMessage new.
-	cmdFragments := OrderedCollection new.
-	dataFragments := OrderedCollection new
+
+	self resetIncoming
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - deprecated' }
 DcAssociation >> ip: anIP [
 
-	ip :=NetNameResolver
-		           addressForName:  anIP
-		           timeout: 10.
+	self deprecated: 'not needed here'.
+	"ip := NetNameResolver addressForName: anIP timeout: 10"
 ]
 
-{ #category : #initialization }
+{ #category : #message }
 DcAssociation >> lastElement [
 
-	| req |
+	| tmp |
 	incomingMsg requiresDataset ifTrue: [ 
 		incomingMsg hasDataset ifFalse: [ ^ nil ] ].
-	req := incomingMsg asDictionary.
-	self halt.
-	"process req..."
-	self resetIncoming.
-	^req
+	tmp := incomingMsg .
+		self resetIncoming.
+	^ tmp
 ]
 
-{ #category : #initialization }
+{ #category : #message }
 DcAssociation >> lastFragment [
 	self deprecated: 'use messages'.
 
@@ -108,32 +93,31 @@ DcAssociation >> lastFragment [
 	self resetIncoming
 ]
 
-{ #category : #accessing }
-DcAssociation >> port:aPort [
-port:=aPort
-]
+{ #category : #'accessing - deprecated' }
+DcAssociation >> port: aPort [
 
-{ #category : #accessing }
-DcAssociation >> presCtx: respPresCtx [
-
-	presCtxs := Dictionary new.respPresCtx do:[:px|presCtxs  at: px ctxID  put: px items].
+	self deprecated: 'not needed here'.
+	"port := aPort"
 ]
 
 { #category : #accessing }
 DcAssociation >> presCtxAt: aPresCtxID [
 
 
-	^presCtxs at: aPresCtxID 
+	| tsn |
+	tsn:=(presCtxs at: aPresCtxID) second.
+	^DcSyntax atUid: tsn value.
+	
 ]
 
-{ #category : #ssl }
-DcAssociation >> release [
-
-	sck ifNotNil: [ sck close .sck:=nil]
-]
-
-{ #category : #initialization }
+{ #category : #message }
 DcAssociation >> resetIncoming [
 incomingMsg := DcMessage new.
 	"cmdFragments := OrderedCollection new.	dataFragments := OrderedCollection new."
+]
+
+{ #category : #accessing }
+DcAssociation >> selectedPresCtxs: selectedPresCtx [
+
+	presCtxs := Dictionary new.selectedPresCtx do:[:px|presCtxs  at: px ctxID  put: px items].
 ]

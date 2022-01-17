@@ -1,5 +1,5 @@
 Class {
-	#name : #DcTransferSyntax,
+	#name : #DcSyntax,
 	#superclass : #Object,
 	#instVars : [
 		'uid',
@@ -8,14 +8,14 @@ Class {
 		'littleEndian'
 	],
 	#classVars : [
-		'TsnName',
-		'TsnUid'
+		'SyntaxName',
+		'SyntaxUid'
 	],
 	#category : #'CAs-DICOM-Dimse'
 }
 
 { #category : #'class initialization' }
-DcTransferSyntax class >> add: paramArray [
+DcSyntax class >> add: paramArray [
 
 	"uid, name, explicit_VR(optional, default explicit), endianness(optional, default little endian)"
 
@@ -23,43 +23,57 @@ DcTransferSyntax class >> add: paramArray [
 	tsn := self new.
 	tsn uid: paramArray first.
 	tsn name: paramArray second.
-	tsn explictVR: (paramArray length >= 3
+	tsn explictVR: (paramArray size >= 3
 			 ifTrue: [ paramArray third ]
 			 ifFalse: [ true ]).
-	tsn littleEndian: (paramArray length >= 4
+	tsn littleEndian: (paramArray size >= 4
 			 ifTrue: [ paramArray fourth ]
 			 ifFalse: [ true ]).
-	TsnUid at: tsn uid put: tsn.
-	TsnName at:
+	SyntaxUid at: tsn uid put: tsn.
+	SyntaxName at:
 	tsn name put: tsn
 ]
 
 { #category : #'class initialization' }
-DcTransferSyntax class >> initialize [
+DcSyntax class >> atUid: aUid [
 
-	self initializeDict
+	^SyntaxUid at:aUid
 ]
 
 { #category : #'class initialization' }
-DcTransferSyntax class >> initializeDict [
+DcSyntax class >> initialize [
+SyntaxUid := Dictionary new.
+	SyntaxName := Dictionary new.
+	self initializeTransferSyntaxes
+]
 
-	TsnUid := Dictionary new.
-	TsnName := Dictionary new.
+{ #category : #'class initialization' }
+DcSyntax class >> initializeAbstractSyntaxes [
+
+	"uid, name, explicit_VR(optional, default explicit)"
+
+	self add: #( '1.2.840.10008.1.1' 'abst syntax ???' ).
+
+]
+
+{ #category : #'class initialization' }
+DcSyntax class >> initializeTransferSyntaxes [
+
+	
 	"uid, name, explicit_VR(optional, default explicit), endianness(optional, default little endian)"
-	self
-		add: #( '1.2.840.10008.1.2' , 'Implicit VR Little Endian'
-			   , false ) .self
-		add: #( '1.2.840.10008.1.2.1' , 'Explicit VR Little Endian' )
+	self add: #( '1.2.840.10008.1.2' 'Implicit VR Little Endian'
+		   false ).
+	self add: #( '1.2.840.10008.1.2.1' 'Explicit VR Little Endian' )
 ]
 
 { #category : #accessing }
-DcTransferSyntax >> explictVR [
+DcSyntax >> explictVR [
 
 	^ explictVR
 ]
 
 { #category : #accessing }
-DcTransferSyntax >> explictVR: aBoolean [
+DcSyntax >> explictVR: aBoolean [
 
 	explictVR := aBoolean
 
@@ -67,14 +81,20 @@ DcTransferSyntax >> explictVR: aBoolean [
 
 ]
 
+{ #category : #testing }
+DcSyntax >> isExplictVR [
+
+	^ explictVR
+]
+
 { #category : #accessing }
-DcTransferSyntax >> littleEndian [
+DcSyntax >> littleEndian [
 
 	^ littleEndian
 ]
 
 { #category : #accessing }
-DcTransferSyntax >> littleEndian: aBoolean [
+DcSyntax >> littleEndian: aBoolean [
 
 	littleEndian := aBoolean
 
@@ -82,25 +102,25 @@ DcTransferSyntax >> littleEndian: aBoolean [
 ]
 
 { #category : #accessing }
-DcTransferSyntax >> name [
+DcSyntax >> name [
 
 	^ name
 ]
 
 { #category : #accessing }
-DcTransferSyntax >> name: anObject [
+DcSyntax >> name: anObject [
 
 	name := anObject
 ]
 
 { #category : #accessing }
-DcTransferSyntax >> uid [
+DcSyntax >> uid [
 
 	^ uid
 ]
 
 { #category : #accessing }
-DcTransferSyntax >> uid: anObject [
+DcSyntax >> uid: anObject [
 
 	uid := anObject
 ]

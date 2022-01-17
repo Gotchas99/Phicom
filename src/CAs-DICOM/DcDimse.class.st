@@ -11,6 +11,14 @@ Class {
 }
 
 { #category : #'class initialization' }
+DcDimse class >> cmdAt: aCode [
+
+	
+
+	^ CmdCode at:aCode
+]
+
+{ #category : #'class initialization' }
 DcDimse class >> cmdCodeText [
 
 	^ '0001H C-STORE-RQ
@@ -114,16 +122,18 @@ DcDimse >> indicationService: service param: param forAssoc: anAssoc [
 { #category : #'as yet unclassified' }
 DcDimse >> pData: pdvList forAssoc: anAssoc [
 
-	| element fs ctx req |
-	self flag: 'hur hittar man exp/imp VR'.
+	| element fs ctx msg cmd param |
 	pdvList do: [ :pdv | 
 		ctx := anAssoc presCtxAt: pdv presCtxId.
 		fs := pdv fragment readStream.
 		[ fs atEnd ] whileFalse: [ 
-			element := DcElement from: fs explicitVR: false.
+			element := DcElement from: fs explicitVR: ctx isExplictVR.
 			anAssoc addIncomingElement: element ].
-		"anAssoc addFragment: pdv fragment isCmd: pdv isCommand."
 		pdv isLast ifTrue: [ 
-			req := anAssoc lastElement. "lastFragment"
-			req ifNotNil: [ anAssoc ae indication:req cmd with: req for: anAssoc  ] ] ]
+			msg := anAssoc lastElement.
+			msg ifNotNil: [ 
+				cmd := self class cmdAt: msg cmd.
+				 "convert message to req"
+				param := DcSrvParam fromMessage: msg.self halt.
+				anAssoc ae indication: cmd with: param for: anAssoc ] ] ]
 ]
