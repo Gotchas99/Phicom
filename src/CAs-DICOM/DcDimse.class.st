@@ -133,7 +133,7 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 			msg := anAssoc lastElement.
 			msg ifNotNil: [ 
 				cmd := self class cmdAt: msg cmd.
-				 "convert message to req"
-				param := DcSrvParam fromMessage: msg.self halt.
+				"convert message to req"
+				param := DcSrvParam fromMessage: msg.
 				anAssoc ae indication: cmd with: param for: anAssoc ] ] ]
 ]

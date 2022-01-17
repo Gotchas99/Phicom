@@ -35,7 +35,7 @@ DcMessage >> cmdDict [
 
 	^ cmdDict ifNil: [ 
 		  cmdDict := Dictionary new.
-		  commandSet do: [ :c | cmdDict add: c assoc ] ]
+		  commandSet do: [ :c | cmdDict add: c assoc ] .cmdDict]
 ]
 
 { #category : #adding }

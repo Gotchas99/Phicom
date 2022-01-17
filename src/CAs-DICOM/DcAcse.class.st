@@ -48,18 +48,19 @@ DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 		on: KeyNotFound
 		do: [ 
 			resp := DcAssociateRj new.
-			resp
+			resp 
 				result: 1;
 				source: 1;
 				reasonDiag: 7.
 			^ resp ].
+	anAssoc ae: ae default.
 	anAssoc dimse: ae default dimse.
 	resp := DcAssociateAc new.
 	resp rq: aRequest.
 	respPresCtx := aRequest getPresentationContexts collect: [ :px | 
 		               self selectTransferSyntax: px ].
 	respPresCtx do: [ :pctx | resp addItem: pctx ].
-	anAssoc selectedPresCtxs: respPresCtx .
+	anAssoc selectedPresCtxs: respPresCtx.
 	ui := DcItemUserInformation new standard.
 	resp addItem: ui.
 	resp checkLength.

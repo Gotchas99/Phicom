@@ -246,9 +246,9 @@ DcNet >> listenLoop [
 		^ self listenLoop ].
 	"self traceCr:
 		'before serveConnectionsOn ----------------------------'."
-	self serveConnectionsOn: serverSocket ] repeat ] ifCurtailed: [ 
-		self traceCr: 'listenloop curtailed. releaseServerSocket'.
-				self releaseServerSocket ].
+	self serveConnectionsOn: serverSocket ] repeat ] ensure: [ "ensure var tidigare ifCurtailed"
+		self traceCr: 'listenloop ended (ensure:). releaseServerSocket'.
+		self releaseServerSocket ].
 	self traceCr: 'After serveConnectionsOn ----------------------------'
 ]
 
@@ -307,9 +307,8 @@ DcNet >> releaseServerSocket [
 { #category : #'request handling' }
 DcNet >> serveConnectionOn: socket [
 
-	| stream assoc |
-	assoc := DcAssociation new.
-	stream := self socketStreamOn: socket.
+	| stream  |
+		stream := self socketStreamOn: socket.
 	[ 
 	[ self executeRequestResponseLoopOn: stream ]
 		on: ConnectionClosed , ConnectionTimedOut

@@ -5,15 +5,22 @@ Class {
 		'dimse'
 	],
 	#classInstVars : [
-		'default'
+		'default',
+		'CmdTable'
 	],
 	#category : #'CAs-DICOM-AE'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcAe class >> AETitle [
 
 	self subclassResponsibility 
+]
+
+{ #category : #initialization }
+DcAe class >> CmdTable [
+
+^	CmdTable 
 ]
 
 { #category : #accessing }
@@ -26,7 +33,20 @@ DcAe class >> default [
 DcAe class >> initialize [
 
 	SessionManager default registerUserClassNamed: self name.
-self reset
+	self reset.
+	self initializeCmdTable.
+	self allSubclassesDo: [ :c | c initialize ]
+]
+
+{ #category : #initialization }
+DcAe class >> initializeCmdTable [
+
+	CmdTable := Dictionary new.
+	CmdTable
+		at: 'C-ECHO-RQ'
+		put:#cEchoRq:assoc: .
+		"put: [ :param :anAssoc | self cEchoRq: param assoc: anAssoc ]."
+	^ CmdTable
 ]
 
 { #category : #accessing }
@@ -48,6 +68,11 @@ DcAe >> aeTitle [
 ^self class AETitle 
 ]
 
+{ #category : #'as yet unclassified' }
+DcAe >> cEchoRq:param assoc:anAssoc [
+self halt.
+]
+
 { #category : #accessing }
 DcAe >> dimse [
 
@@ -61,9 +86,12 @@ DcAe >> dimse: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-DcAe >> indication: cmd with: req for: anAssoc [
+DcAe >> indication: cmd with: param for: anAssoc [
 
+	| method |
 	self halt.
+	method:= self class CmdTable at: cmd.
+	^ (self perform: method with: param with: anAssoc)
 ]
 
 { #category : #initialization }
