@@ -10,9 +10,16 @@ DcSrvParamCEcho class >> messageTypes [
 	^ #( 'C-ECHO-RQ' 'C-ECHO-RSP' )
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #creating }
 DcSrvParamCEcho >> createFromMessage: aMsg [
 
 	super createFromMessage: aMsg.
 	
+]
+
+{ #category : #creating }
+DcSrvParamCEcho >> createFromRequest: aParam [
+
+	super createFromRequest: aParam.
+	messageType:='C-ECHO-RSP'
 ]

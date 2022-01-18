@@ -37,22 +37,10 @@ DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 
 	| ae resp respPresCtx ui |
 	self traceCr: 'A-ASSOCIATE-RQ message recieved'.
-	aRequest validateAppContext ifFalse: [ 
-		resp := DcAssociateRj new.
-		resp
-			result: 1;
-			source: 2;
-			reasonDiag: 3.
-		^ resp ].
+	aRequest validateAppContext ifFalse: [ 		^ DcAssociateRj invalidAppContext ].
 	[ ae := DcAeDirectory ourAET: aRequest calledAET ]
 		on: KeyNotFound
-		do: [ 
-			resp := DcAssociateRj new.
-			resp 
-				result: 1;
-				source: 1;
-				reasonDiag: 7.
-			^ resp ].
+		do: [ ^ DcAssociateRj aeNotrecognized ].
 	anAssoc ae: ae default.
 	anAssoc dimse: ae default dimse.
 	resp := DcAssociateAc new.

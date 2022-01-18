@@ -2,6 +2,7 @@ Class {
 	#name : #DcSrvParam,
 	#superclass : #Object,
 	#instVars : [
+		'messageType',
 		'messageId',
 		'messageIdResp',
 		'sopClassUid',
@@ -13,7 +14,7 @@ Class {
 { #category : #'instance creation' }
 DcSrvParam class >> classForCmd: aCmd [
 
-^	self allSubclasses detect:[:sub|sub handles:aCmd].
+	^ self allSubclasses detect: [ :sub | sub handlesCmd: aCmd ]
 ]
 
 { #category : #'instance creation' }
@@ -26,9 +27,9 @@ DcSrvParam class >> fromMessage: aMsg [
 ]
 
 { #category : #'instance creation' }
-DcSrvParam class >> handles: aCmd [
+DcSrvParam class >> handlesCmd: aCmd [
 
-^	self messageTypes includes: aCmd
+	^ self messageTypes includes: aCmd
 ]
 
 { #category : #initialization }
@@ -41,7 +42,7 @@ DcSrvParam class >> messageTypes [
 	self subclassResponsibility 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #creating }
 DcSrvParam >> createFromMessage: aMsg [
 
 	| cmds |
@@ -52,4 +53,62 @@ DcSrvParam >> createFromMessage: aMsg [
 		                 ifAbsent: [ nil ].
 	sopClassUid := cmds at: #AffectedSOPClassUID.
 	status := cmds at: #Status ifAbsent: [ nil ]
+]
+
+{ #category : #creating }
+DcSrvParam >> createFromRequest: aParam [
+
+	messageIdResp:= aParam messageId
+]
+
+{ #category : #accessing }
+DcSrvParam >> messageId [
+
+	^ messageId
+]
+
+{ #category : #accessing }
+DcSrvParam >> messageId: anObject [
+
+	messageId := anObject
+]
+
+{ #category : #accessing }
+DcSrvParam >> messageIdResp [
+
+	^ messageIdResp
+]
+
+{ #category : #accessing }
+DcSrvParam >> messageIdResp: anObject [
+
+	messageIdResp := anObject
+]
+
+{ #category : #accessing }
+DcSrvParam >> messageType [ ^messageType
+]
+
+{ #category : #accessing }
+DcSrvParam >> sopClassUid [
+
+	^ sopClassUid
+]
+
+{ #category : #accessing }
+DcSrvParam >> sopClassUid: anObject [
+
+	sopClassUid := anObject
+]
+
+{ #category : #accessing }
+DcSrvParam >> status [
+
+	^ status
+]
+
+{ #category : #accessing }
+DcSrvParam >> status: anObject [
+
+	status := anObject
 ]

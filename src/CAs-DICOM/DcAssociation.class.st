@@ -5,7 +5,8 @@ Class {
 		'ae',
 		'presCtxs',
 		'dimse',
-		'incomingMsg'
+		'incomingMsg',
+		'nextMsgId'
 	],
 	#category : #'CAs-DICOM-AE'
 }
@@ -64,7 +65,8 @@ DcAssociation >> dimse: anObject [
 { #category : #initialization }
 DcAssociation >> initialize [
 
-	self resetIncoming
+	self resetIncoming.
+	nextMsgId := 0
 ]
 
 { #category : #'accessing - deprecated' }
@@ -91,6 +93,12 @@ DcAssociation >> lastFragment [
 
 	self halt.
 	self resetIncoming
+]
+
+{ #category : #accessing }
+DcAssociation >> nextMsgId [
+nextMsgId:=nextMsgId+1.
+^nextMsgId
 ]
 
 { #category : #'accessing - deprecated' }

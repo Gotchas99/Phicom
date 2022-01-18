@@ -63,14 +63,27 @@ DcAe class >> startUp: resuming [
 		self allSubclassesDo: [:c|c reset]]
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 DcAe >> aeTitle [
 ^self class AETitle 
 ]
 
-{ #category : #'as yet unclassified' }
-DcAe >> cEchoRq:param assoc:anAssoc [
-self halt.
+{ #category : #services }
+DcAe >> cEchoRq: param assoc: anAssoc [
+
+	| rsp |
+	self halt.
+	rsp := DcSrvParamCEcho new createFromRequest: param.rsp status:0.
+	dimse requestService: rsp messageType param: rsp forAssoc: anAssoc
+]
+
+{ #category : #dispatch }
+DcAe >> confirmation: cmd with: param for: anAssoc [
+
+	| method |
+	"method := self class CmdTable at: cmd."
+	method := self methodFromCmd: cmd.
+	^ self perform: method with: param with: anAssoc
 ]
 
 { #category : #accessing }
@@ -85,13 +98,13 @@ DcAe >> dimse: anObject [
 	dimse := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #dispatch }
 DcAe >> indication: cmd with: param for: anAssoc [
 
 	| method |
-	self halt.
-	method:= self class CmdTable at: cmd.
-	^ (self perform: method with: param with: anAssoc)
+	"method := self class CmdTable at: cmd."
+	method := self methodFromCmd: cmd.
+	^ self perform: method with: param with: anAssoc
 ]
 
 { #category : #initialization }
@@ -104,4 +117,18 @@ DcAe >> initializeNetwork [
 
 	dimse := DcDimse new.
 	dimse ae: self.
+]
+
+{ #category : #helper }
+DcAe >> methodFromCmd: cmd [
+
+	"cmd := 'C-ECHO-RQ'."
+
+	| rq3 rq4 rq5 rq6 rq7 |
+	rq3 := $- split: cmd asLowercase.
+	rq4 := rq3 allButFirst collect: [ :each | each capitalized ].
+	rq5 := rq3 first asArray , rq4.
+	rq6 := '' join: rq5.
+	rq7 := (rq6 , ':assoc:') asSymbol.
+	^ rq7
 ]
