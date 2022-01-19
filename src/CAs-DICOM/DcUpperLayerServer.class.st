@@ -39,3 +39,19 @@ DcUpperLayerServer >> registerDimse: aDimse for: aeTitle [
 
 	dimses at: aeTitle put: aDimse
 ]
+
+{ #category : #'as yet unclassified' }
+DcUpperLayerServer >> request: pdu forAssoc: anAssoc [
+
+	| response service |
+self flag:'not done'.	response := pdu isAssociation
+		            ifTrue: [ 
+		            DcAcse default indication: pdu forAssoc: anAssoc ]
+		            ifFalse: [ 
+			            service := self serviceForType: pdu type.
+			            anAssoc dimse
+				            indicationService: service
+				            param: pdu items
+				            forAssoc: anAssoc ].
+	^ response
+]

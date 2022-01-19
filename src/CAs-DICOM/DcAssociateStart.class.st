@@ -62,18 +62,16 @@ DcAssociateStart >> myLength [
 { #category : #'as yet unclassified' }
 DcAssociateStart >> readPduFrom: stream [
 
-	| it  |
+	| it |
 	version := (stream next: 2) unsignedShortAt: 1 bigEndian: true.
 	stream skip: 2.
 	self calledAET: (stream next: 16) asString trim.
 	self callingAET: (stream next: 16) asString trim.
 	stream skip: 32.
-	"bytesLeft := lengthField - self myLength.
-	[ bytesLeft > 0 ] whileTrue: [ "
 	[ stream atEnd ] whileFalse: [ 
 		it := DcItem readFrom: stream.
 		items add: it
-		"bytesLeft := bytesLeft - it extLength" ]
+	 ]
 ]
 
 { #category : #'as yet unclassified' }
