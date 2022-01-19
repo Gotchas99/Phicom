@@ -146,7 +146,7 @@ DcPDU >> myLength [
 DcPDU >> readFrom: stream [
 
 	| length pduStream |
-	self traceCr: (self className allButFirst:2) , ' PDU recieved'.
+	self traceCr: 'PDU recieved: ',(self className allButFirst: 2)  .
 	type := stream next.
 	stream skip: 1.
 	length := (stream next: 4) unsignedLongAt: 1 bigEndian: true.

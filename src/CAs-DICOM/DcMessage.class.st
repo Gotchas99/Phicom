@@ -9,19 +9,25 @@ Class {
 	#name : #DcMessage,
 	#superclass : #Object,
 	#instVars : [
-		'commandSet',
-		'dataSet',
-		'cmdDict'
+		'cmdDict',
+		'commandElements',
+		'dataElements'
 	],
 	#category : #'CAs-DICOM-Core'
 }
+
+{ #category : #'instance creation' }
+DcMessage class >> fromParam: param [
+
+	^self new param: param
+]
 
 { #category : #adding }
 DcMessage >> addElement: anElement [
 
 	anElement isCommandElement
-		ifTrue: [ commandSet add: anElement.cmdDict:=nil. ]
-		ifFalse: [ dataSet add: anElement ]
+		ifTrue: [ commandElements add: anElement.cmdDict:=nil. ]
+		ifFalse: [ dataElements add: anElement ]
 ]
 
 { #category : #accessing }
@@ -35,19 +41,25 @@ DcMessage >> cmdDict [
 
 	^ cmdDict ifNil: [ 
 		  cmdDict := Dictionary new.
-		  commandSet do: [ :c | cmdDict add: c assoc ] .cmdDict]
+		  commandElements do: [ :c | cmdDict add: c assoc ] .cmdDict]
 ]
 
 { #category : #adding }
 DcMessage >> hasDataset [
 
-	^dataSet isNotEmpty 
+	^dataElements isNotEmpty 
 ]
 
 { #category : #initialization }
 DcMessage >> initialize [
 
-	commandSet:=SortedCollection new.dataSet:=OrderedCollection new.
+	commandElements:=SortedCollection new.dataElements:=OrderedCollection new.
+]
+
+{ #category : #'as yet unclassified' }
+DcMessage >> param: param [
+
+	self halt.
 ]
 
 { #category : #adding }

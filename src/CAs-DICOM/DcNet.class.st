@@ -199,15 +199,9 @@ DcNet >> executeRequestResponseLoopOn: stream [
 	| assoc |
 	self traceCr: 'executeRequestResponseLoopOn:'.
 	assoc := DcAssociation new.
-	[ 
 	[ stream isConnected ] whileTrue: [ 
+		self executeOneRequestResponseOn: stream forAssoc: assoc ] 
 		
-		self executeOneRequestResponseOn: stream forAssoc: assoc ] ]
-		on: ConnectionClosed , ConnectionTimedOut
-		do: [ :ex | 
-			Transcript
-				show: 'Connection error';
-				cr ]
 ]
 
 { #category : #private }
@@ -243,7 +237,8 @@ DcNet >> listenLoop [
 	[ 
 	[ 
 	serverSocket isValid ifFalse: [ "will trigger #ifCurtailed: block and destroy socket" 
-		^ self listenLoop ].
+		self traceCr: 'serverSocket invalid ----------------------------'
+		.^ self listenLoop ].
 	"self traceCr:
 		'before serveConnectionsOn ----------------------------'."
 	self serveConnectionsOn: serverSocket ] repeat ] ensure: [ "ensure var tidigare ifCurtailed"
@@ -335,8 +330,8 @@ DcNet >> serveConnectionsOn: listeningSocket [
 	socket ifNil: [ "self traceCr: 'no accepted connection'." ^ self ].
 	self traceCr: 'accepted connection'.
 
-	[ self serveConnectionOn: socket ] ifCurtailed: [ 
-		self traceCr: 'curtailed. destroy accepted socket'.
+	[ self serveConnectionOn: socket ] ensure: [ "was ifCurtailed:"
+		self traceCr: 'ensure:. destroy accepted socket'.
 		socket destroy ].
 	^ self
 ]

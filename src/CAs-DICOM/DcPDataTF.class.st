@@ -18,9 +18,7 @@ DcPDataTF class >> type [
 
 { #category : #initialization }
 DcPDataTF >> initialize [
-
-	super initialize.
-	
+	super initialize
 ]
 
 { #category : #testing }

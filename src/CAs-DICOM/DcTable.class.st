@@ -8,7 +8,8 @@ Class {
 	#classVars : [
 		'TableCache',
 		'TableIndex',
-		'TagTable'
+		'TagTable',
+		'UidTable'
 	],
 	#category : #'CAs-DICOM-Util'
 }
@@ -415,6 +416,14 @@ DcTable class >> initializeTagTable [
 ]
 
 { #category : #'class initialization' }
+DcTable class >> initializeUidTable [
+
+	^ UidTable := self new
+		             
+		              part6_UID
+]
+
+{ #category : #'class initialization' }
 DcTable class >> resetAll [
 self allInstancesDo: [ :tbl|tbl initialize ]
 ]
@@ -536,6 +545,20 @@ DcTable >> part6 [
 		       ifFalse: [ XMLDOMParser parseURL: url ].
 	root := doc root.
 	self table_6_1: root
+]
+
+{ #category : #initialization }
+DcTable >> part6_UID [
+
+	| fname root url doc |
+	fname := 'C:\Misc\dicomref\part06.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
+
+	doc := fname asFileReference exists
+		       ifTrue: [ XMLDOMParser parse: fname asFileReference ]
+		       ifFalse: [ XMLDOMParser parseURL: url ].
+	root := doc root.
+	self table_A_1: root
 ]
 
 { #category : #initialization }
@@ -684,6 +707,31 @@ DcTable >> table_7_1_1: anXmlRoot [
 		d := Dictionary new.
 		line with: hdrFixed do: [ :val :h | d at: h put: val ].
 		d at: 'Keyword' put: ((d at: 'Name') copyReplaceAll: ' ' with: '').
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
+]
+
+{ #category : #initialization }
+DcTable >> table_A_1: anXmlRoot [
+
+	| chapters chapter table thead hdrs tbody items d hdr61 |
+	chapters := anXmlRoot nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_A'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := (chapter elementsAt: 'table') elementsDetect: [ :tab | 
+		         'table_A-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdr61 do: [ :val :h | d at: h put: val ].
 		self removeUnprintablesInKey: 'Keyword' from: d.
 		self saveRow: d ]
 ]

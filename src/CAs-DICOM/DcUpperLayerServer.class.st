@@ -16,14 +16,12 @@ DcUpperLayerServer >> dimseAt: aeTitle [
 { #category : #'as yet unclassified' }
 DcUpperLayerServer >> indication: pdu forAssoc: anAssoc [
 
-	| dimse response service |
-	service := self serviceForType: pdu type.
+	| response service |
 	response := pdu isAssociation
 		            ifTrue: [ 
-		         						   DcAcse default indication: pdu forAssoc: anAssoc ]
-		            ifFalse: [ 
-			            dimse := anAssoc dimse.
-			            dimse
+		            DcAcse default indication: pdu forAssoc: anAssoc ]
+		            ifFalse: [ service := self serviceForType: pdu type.
+				            anAssoc dimse
 				            indicationService: service
 				            param: pdu items
 				            forAssoc: anAssoc ].

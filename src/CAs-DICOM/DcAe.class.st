@@ -58,9 +58,9 @@ DcAe class >> reset [
 { #category : #initialization }
 DcAe class >> startUp: resuming [
 
-	self traceCr: 'DcAe startUp. resuming: ' , resuming printString.
+	self traceCr: self name, ' startUp. resuming: ' , resuming printString.
 	SessionManager default currentSession addDeferredStartupAction: [ 
-		self allSubclassesDo: [:c|c reset]]
+		self allSubclassesDo: [ :c | c reset ] ]
 ]
 
 { #category : #accessing }
@@ -72,8 +72,8 @@ DcAe >> aeTitle [
 DcAe >> cEchoRq: param assoc: anAssoc [
 
 	| rsp |
-	self halt.
-	rsp := DcSrvParamCEcho new createFromRequest: param.rsp status:0.
+	rsp := DcSrvParamCEcho new createFromRequest: param.
+	rsp status: 0.
 	dimse requestService: rsp messageType param: rsp forAssoc: anAssoc
 ]
 
@@ -102,7 +102,6 @@ DcAe >> dimse: anObject [
 DcAe >> indication: cmd with: param for: anAssoc [
 
 	| method |
-	"method := self class CmdTable at: cmd."
 	method := self methodFromCmd: cmd.
 	^ self perform: method with: param with: anAssoc
 ]

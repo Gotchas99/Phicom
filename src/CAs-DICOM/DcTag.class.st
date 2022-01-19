@@ -37,8 +37,6 @@ DcTag >> bin [
 DcTag >> from: s [
 
 	| g e |
-	"g := s nextLittleEndianNumber: 2.
-	e := s nextLittleEndianNumber: 2."
 	g := (s next: 2) unsignedShortAt: 1 bigEndian: false.
 	e := (s next: 2) unsignedShortAt: 1 bigEndian: false.
 	bin := g << 16 + e

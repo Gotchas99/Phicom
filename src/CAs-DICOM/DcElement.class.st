@@ -17,9 +17,11 @@ Class {
 	#category : #'CAs-DICOM-Core'
 }
 
-{ #category : #initialization }
+{ #category : #accessing }
 DcElement class >> VRcodes [
-^VRvalueCode 
+
+	^ VRvalueCode
+	
 ]
 
 { #category : #documentation }

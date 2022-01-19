@@ -26,15 +26,17 @@ DcPDV class >> readFrom: stream [
 DcPDV >> elements [
 
 	| tmp elements explicitVR |
+	self halt.
 	elements := OrderedCollection new.
 	ReadStream with: userdata do: [ :s | 
-[ s atEnd ]whileFalse:		[tmp := self isCommand
-			       ifTrue: [ DcElement from: s explicitVR: false ]
-			       ifFalse: [ 
-				       self halt. "explicitVR from PresCtx"
-				       explicitVR := true.
-				       DcElement from: s explicitVR: explicitVR ].
-		elements add: tmp] ].
+		[ s atEnd ] whileFalse: [ 
+			tmp := self isCommand
+				       ifTrue: [ DcElement from: s explicitVR: false ]
+				       ifFalse: [ 
+					       self halt. "explicitVR from PresCtx"
+					       explicitVR := true.
+					       DcElement from: s explicitVR: explicitVR ].
+			elements add: tmp ] ].
 	^ elements
 ]
 
@@ -115,7 +117,6 @@ DcPDV >> readFrom: stream [
 { #category : #'instance creation' }
 DcPDV >> readPduFrom: pduStream [
 
-	"header := pduStream next."
 	userdata := pduStream upToEnd
 ]
 
