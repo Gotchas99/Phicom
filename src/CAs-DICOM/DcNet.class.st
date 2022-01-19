@@ -302,16 +302,16 @@ DcNet >> releaseServerSocket [
 { #category : #'request handling' }
 DcNet >> serveConnectionOn: socket [
 
-	| stream  |
-		stream := self socketStreamOn: socket.
+	| stream |
+	stream := self socketStreamOn: socket.
 	[ 
 	[ self executeRequestResponseLoopOn: stream ]
 		on: ConnectionClosed , ConnectionTimedOut
 		do: [ :ex | 
 			Transcript
-				show: 'Connection error. Closing stream';
+				show: 'serveConnectionOn: Connection error. Closing stream';
 				cr ] ] ensure: [ 
-		self traceCr: 'closing stream'.
+		self traceCr: 'serveConnectionOn: closing stream'.
 		stream close ]
 ]
 
@@ -324,15 +324,22 @@ DcNet >> serveConnectionsOn: listeningSocket [
 	request/response cycle."
 
 	| socket |
-	self traceCr:
-		'waiting for connection ' , DateAndTime current printString.
+	self traceCr: 'serveConnectionsOn: waiting for connection '
+		, DateAndTime current printString.
 	socket := listeningSocket waitForAcceptFor: self acceptWaitTimeout.
 	socket ifNil: [ "self traceCr: 'no accepted connection'." ^ self ].
-	self traceCr: 'accepted connection'.
+	self traceCr: 'serveConnectionsOn: accepted connection'.
 
-	[ self serveConnectionOn: socket ] ensure: [ "was ifCurtailed:"
-		self traceCr: 'ensure:. destroy accepted socket'.
-		socket destroy ].
+	"[" "self serveConnectionOn: socket"
+	[ 
+	self traceCr: 'serveConnectionsOn:process started **************'.
+	self serveConnectionOn: socket.
+	self traceCr: 'serveConnectionsOn:process stopped **************' ]
+		forkAt: 32
+		named: 'serveConnectionsOn' 
+		"] ensure: [ ""was ifCurtailed:""
+		self traceCr: 'serveConnectionsOn: ensure:. destroy accepted socket'.
+		socket destroy ]".
 	^ self
 ]
 
@@ -377,10 +384,10 @@ DcNet >> socketStreamOn: socket [
 { #category : #public }
 DcNet >> start [
 
-	process := [ [ self listenLoop ] repeat ]
+	process := [ self traceCr: 'serverprocess started **************'.[ self listenLoop ] repeat.self traceCr: 'serverprocess stopped **************' ]
 		           forkAt: 33
 		           named: self serverProcessName. "highIOPriority"
-	self traceCr: 'server started **************'
+	self traceCr: 'serverprocess forked **************'
 ]
 
 { #category : #public }
