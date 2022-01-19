@@ -23,9 +23,10 @@ DcItemSimple >> myLength [
 
 { #category : #printing }
 DcItemSimple >> printOn: stream [
-super printOn:stream.
+
+	super printOn: stream.
 	stream nextPut: $(.
-	value printOn: stream.
+	stream<<value  .
 	stream nextPut: $)
 ]
 

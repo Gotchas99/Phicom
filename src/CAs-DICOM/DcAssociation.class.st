@@ -118,6 +118,14 @@ DcAssociation >> presCtxAt: aPresCtxID [
 	
 ]
 
+{ #category : #accessing }
+DcAssociation >> presForAsn: anAbstractSyntax [
+
+	| tsn |
+	tsn := (presCtxs at: anAbstractSyntax) second.
+	^ DcSyntax atUid: tsn value
+]
+
 { #category : #message }
 DcAssociation >> resetIncoming [
 incomingMsg := DcMessage new.

@@ -1,6 +1,6 @@
 Class {
 	#name : #DcItemTransferSyntax,
-	#superclass : #DcItemSimpleString,
+	#superclass : #DcItemUid,
 	#category : #'CAs-DICOM-ACSE'
 }
 

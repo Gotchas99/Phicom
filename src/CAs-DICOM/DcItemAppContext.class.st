@@ -1,6 +1,6 @@
 Class {
 	#name : #DcItemAppContext,
-	#superclass : #DcItemSimpleString,
+	#superclass : #DcItemUid,
 	#category : #'CAs-DICOM-ACSE'
 }
 
