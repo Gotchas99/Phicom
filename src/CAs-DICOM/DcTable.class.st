@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'tblHex',
-		'tblBin'
+		'tblBin',
+		'tblUid'
 	],
 	#classVars : [
 		'TableCache',
@@ -389,8 +390,9 @@ DcTable class >> initialize [
 
 	TagTable := nil.
 	self initializeTableIndex.
-	self initializeCache. 
-	self initializeTagTable
+	self initializeCache.
+	self initializeTagTable.
+	self initializeUidTable
 ]
 
 { #category : #'class initialization' }
@@ -417,10 +419,8 @@ DcTable class >> initializeTagTable [
 
 { #category : #'class initialization' }
 DcTable class >> initializeUidTable [
-
-	^ UidTable := self new
-		             
-		              part6_UID
+<script>
+	^ UidTable := self new part6_UID
 ]
 
 { #category : #'class initialization' }
@@ -469,6 +469,18 @@ DcTable class >> tagTable [
 ]
 
 { #category : #accessing }
+DcTable class >> uidAtCode: aUidCode [
+
+	^ UidTable uidAtCode: aUidCode
+]
+
+{ #category : #accessing }
+DcTable class >> uidAtKeyword: aKeyword [
+
+	^ UidTable uidAtKeyword: aKeyword
+]
+
+{ #category : #accessing }
 DcTable >> atBin: aBinTag [
 
 	^ tblBin at: aBinTag
@@ -498,8 +510,9 @@ DcTable >> file: aFilename cols: numCols headers: headers [
 { #category : #initialization }
 DcTable >> initialize [
 
-	tblHex
-:=Dictionary new.	 tblBin:= Dictionary new.
+	tblHex := Dictionary new.
+	tblBin := Dictionary new
+.	tblUid :=Dictionary new.
 ]
 
 { #category : #'as yet unclassified' }
@@ -724,7 +737,7 @@ DcTable >> table_A_1: anXmlRoot [
 		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
 	thead := (table elementsAt: 'thead') first elements first.
 	hdrs := thead elements collect: [ :th | th contentString trim ].
-	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	hdr61 := #( #UID #Name #Keyword #Type #Part ).
 	tbody := (table elementsAt: 'tbody') first elements.
 	items := tbody collect: [ :tr | 
 		         tr elements collect: [ :td | 
@@ -733,7 +746,7 @@ DcTable >> table_A_1: anXmlRoot [
 		d := Dictionary new.
 		line with: hdr61 do: [ :val :h | d at: h put: val ].
 		self removeUnprintablesInKey: 'Keyword' from: d.
-		self saveRow: d ]
+		tblUid at: (d at:#UID) put:(d at:#Keyword) ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -860,4 +873,16 @@ DcTable >> text: aString cols: numCols headers: headers [
 				d at: #TagHex put: tag bin.
 				tblHex at: (d at: 'Tag') put: d.
 				tblBin at: tag bin put: d ] ] ]"
+]
+
+{ #category : #accessing }
+DcTable >> uidAtCode: aUidCode [
+
+	^ tblUid at: aUidCode
+]
+
+{ #category : #accessing }
+DcTable >> uidAtKeyword: aKeyword [
+
+	^ tblUid  keyAtValue:  aKeyword
 ]

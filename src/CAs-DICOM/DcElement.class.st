@@ -227,6 +227,10 @@ DcElement >> isUndefined [
 DcElement >> keyword [ ^tag keyword 
 ]
 
+{ #category : #'instance creation' }
+DcElement >> keyword: aKeyword value:aValue [
+]
+
 { #category : #printing }
 DcElement >> printOn: aStream [
 

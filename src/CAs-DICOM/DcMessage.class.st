@@ -10,6 +10,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'cmdDict',
+		'dataSet',
 		'commandElements',
 		'dataElements'
 	],
@@ -30,6 +31,10 @@ DcMessage >> addElement: anElement [
 		ifFalse: [ dataElements add: anElement ]
 ]
 
+{ #category : #converting }
+DcMessage >> asElements [
+]
+
 { #category : #accessing }
 DcMessage >> cmd [
 
@@ -41,7 +46,8 @@ DcMessage >> cmdDict [
 
 	^ cmdDict ifNil: [ 
 		  cmdDict := Dictionary new.
-		  commandElements do: [ :c | cmdDict add: c assoc ] .cmdDict]
+		  commandElements do: [ :el | cmdDict add: el assoc ].
+		  cmdDict ]
 ]
 
 { #category : #adding }
