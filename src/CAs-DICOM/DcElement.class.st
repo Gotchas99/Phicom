@@ -227,8 +227,10 @@ DcElement >> isUndefined [
 DcElement >> keyword [ ^tag keyword 
 ]
 
-{ #category : #'instance creation' }
-DcElement >> keyword: aKeyword value:aValue [
+{ #category : #accessing }
+DcElement >> keyword:aKeyword value:aValue [
+
+	tag:= DcTag fromKeyword: aKeyword
 ]
 
 { #category : #printing }

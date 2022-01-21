@@ -21,6 +21,6 @@ DcSrvParamCEcho >> createFromMessage: aMsg [
 DcSrvParamCEcho >> createFromRequest: aParam [
 
 	super createFromRequest: aParam.
-	messageType := 'C-ECHO-RSP'.
-	self sopClassUid:'1.2.840.10008.1.1'
+	self messageType: 'C-ECHO-RSP'.
+	self sopClassUid: '1.2.840.10008.1.1'
 ]

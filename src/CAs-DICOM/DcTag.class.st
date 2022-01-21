@@ -6,7 +6,9 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'bin',
-		'hex'
+		'hex',
+		'keyword',
+		'vr'
 	],
 	#category : #'CAs-DICOM-Core'
 }
@@ -14,6 +16,12 @@ Class {
 { #category : #'instance creation' }
 DcTag class >> from:s [
 ^self new from:s
+]
+
+{ #category : #'instance creation' }
+DcTag class >> fromKeyword: aKeyword [
+
+	^ self new fromKeyword: aKeyword 
 ]
 
 { #category : #'instance creation' }
@@ -34,12 +42,27 @@ DcTag >> bin [
 ]
 
 { #category : #'instance creation' }
+DcTag >> bin: aBinTagCode [
+
+	bin := aBinTagCode.
+	keyword := nil.
+	vr := nil.
+	hex := nil
+]
+
+{ #category : #'instance creation' }
 DcTag >> from: s [
 
 	| g e |
 	g := (s next: 2) unsignedShortAt: 1 bigEndian: false.
 	e := (s next: 2) unsignedShortAt: 1 bigEndian: false.
-	bin := g << 16 + e
+self 	bin: g << 16 + e
+]
+
+{ #category : #'instance creation' }
+DcTag >> fromKeyword: aKeyword [
+
+	self bin: ( (DcTable tagAt: aKeyword )at: 'TagHex')
 ]
 
 { #category : #'instance creation' }
@@ -66,10 +89,9 @@ DcTag >> isCommand [
 { #category : #printing }
 DcTag >> keyword [
 
-	^ [ 
-	  (DcTable tagAt: bin)
-		  at: #Keyword
-		  ifAbsent: [ '???' ] ] onErrorDo: [ '***' ]
+	^ keyword ifNil: [ 
+		  [ keyword:=(DcTable tagAt: bin) at: #Keyword ifAbsent: [ '???' ] ] 
+			  onErrorDo: [ '***' ] ]
 ]
 
 { #category : #'instance creation' }
@@ -83,10 +105,10 @@ DcTag >> parseHex: aHexString [
 { #category : #'instance creation' }
 DcTag >> parseHexTag: tag [
 
-	| tmp1 |
+	| digits |
 	hex := tag.
-	tmp1 := tag copyWithoutAll: ',()'.
-	bin := [ self parseHex: tmp1 ] onErrorDo: [ 0 ].
+	digits := hex copyWithoutAll: ',()'.
+	self bin: ([ self parseHex: digits ] onErrorDo: [ 0 ]).
 	^ bin
 ]
 
@@ -104,6 +126,6 @@ DcTag >> printOn: aStream [
 { #category : #printing }
 DcTag >> vr [
 
-	^ [ (DcTable tagAt: bin) at: #VR ifAbsent: [ '???' ] ] 
-		  onErrorDo: [ '***' ]
+	^ vr ifNil:[vr:=[ (DcTable tagAt: bin) at: #VR ifAbsent: [ '???' ] ] onErrorDo: [ 
+		  '***' ]]
 ]

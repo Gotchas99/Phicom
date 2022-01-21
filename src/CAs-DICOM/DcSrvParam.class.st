@@ -42,6 +42,24 @@ DcSrvParam class >> messageTypes [
 	self subclassResponsibility 
 ]
 
+{ #category : #converting }
+DcSrvParam >> asMessage [
+
+	"messageId messageIdResp sopClassUid status"
+
+	| msg |
+	msg := DcMessage new.
+	messageId ifNotNil: [ 
+		msg addElement:
+			(DcElement new keyword: 'MessageID' value: messageId) ].
+	messageIdResp ifNotNil: [ 
+		msg addElement: (DcElement new keyword: 'MessageIDBeingRespondedTo' value: messageIdResp) ].
+	msg addElement: (DcElement new keyword: 'AffectedSOPClassUID' value: sopClassUid).
+	status ifNotNil: [ 
+		msg addElement: (DcElement new keyword: 'status' value: status) ].
+	^ msg
+]
+
 { #category : #creating }
 DcSrvParam >> createFromMessage: aMsg [
 
@@ -87,6 +105,12 @@ DcSrvParam >> messageIdResp: anObject [
 
 { #category : #accessing }
 DcSrvParam >> messageType [ ^messageType
+]
+
+{ #category : #accessing }
+DcSrvParam >> messageType: aMessageType [
+
+ messageType:=aMessageType
 ]
 
 { #category : #accessing }

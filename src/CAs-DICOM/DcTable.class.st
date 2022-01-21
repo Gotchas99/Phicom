@@ -2,9 +2,10 @@ Class {
 	#name : #DcTable,
 	#superclass : #Object,
 	#instVars : [
-		'tblHex',
-		'tblBin',
-		'tblUid'
+		'tblUid',
+		'tagHex',
+		'tagBin',
+		'tagKeyword'
 	],
 	#classVars : [
 		'TableCache',
@@ -483,19 +484,19 @@ DcTable class >> uidAtKeyword: aKeyword [
 { #category : #accessing }
 DcTable >> atBin: aBinTag [
 
-	^ tblBin at: aBinTag
+	^ tagBin at: aBinTag
 ]
 
 { #category : #accessing }
 DcTable >> atHex: aHexTag [
 
-	^tblHex at:aHexTag
+	^tagHex at:aHexTag
 ]
 
 { #category : #accessing }
 DcTable >> atHex: aHexTag fld: aFieldName [
 
-	^( tblHex at: aHexTag)at:aFieldName
+	^( tagHex at: aHexTag)at:aFieldName
 ]
 
 { #category : #'as yet unclassified' }
@@ -510,9 +511,9 @@ DcTable >> file: aFilename cols: numCols headers: headers [
 { #category : #initialization }
 DcTable >> initialize [
 
-	tblHex := Dictionary new.
-	tblBin := Dictionary new
-.	tblUid :=Dictionary new.
+	tagHex := Dictionary new.
+	tagBin := Dictionary new.tagKeyword := Dictionary new.
+	tblUid := Dictionary new
 ]
 
 { #category : #'as yet unclassified' }
@@ -615,18 +616,20 @@ DcTable >> saveRow: aDict [
 
 	| tag |
 	aDict at: 'Tag' ifPresent: [ :t | 
+		(t beginsWith: '(') ifFalse: [ ^ self ].
 		tag := DcTag fromString: t.
 		aDict at: #TagHex put: tag bin.
-		tblHex at: (aDict at: 'Tag') put: aDict.
-		tblBin at: tag bin put: aDict ] 
+		tagHex at: (aDict at: 'Tag') put: aDict.
+		tagBin at: tag bin put: aDict.
+		tagKeyword at: (aDict at: 'Keyword') put: aDict ]
 ]
 
 { #category : #'as yet unclassified' }
 DcTable >> stream: aStream cols: numCols headers: headers [
 
 	| line hdr d |
-	[ tblHex := Dictionary new.
-	tblBin := Dictionary new.
+	[ tagHex := Dictionary new.
+	tagBin := Dictionary new.
 	hdr := self readLine: aStream cols: numCols.
 	headers ifNotNil: [ hdr := headers ].
 	[ aStream atEnd ] whileFalse: [ 
@@ -843,9 +846,12 @@ DcTable >> table_E_2_1: anXmlRoot [
 DcTable >> tagAt: aTag [
 
 	| tmp |
-	aTag isNumber ifTrue: [ tmp := tblBin at: aTag ].
-	aTag isString ifTrue: [ tmp := tblHex at: aTag ].
-	aTag class = DcTag ifTrue: [ tmp := tblBin at: aTag bin].
+	aTag isNumber ifTrue: [ tmp := tagBin at: aTag ].
+	aTag isString ifTrue: [ tmp :=
+		(aTag beginsWith: '(')
+			ifTrue: [  tagHex at: aTag ]
+			ifFalse: [  tagKeyword at: aTag ] ].
+	aTag class = DcTag ifTrue: [ tmp := tagBin at: aTag bin ].
 	tmp ifNil: [ Error signal: 'unknown tag' ].
 	^ tmp
 ]

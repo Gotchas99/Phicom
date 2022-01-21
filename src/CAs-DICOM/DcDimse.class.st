@@ -141,7 +141,9 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 { #category : #'as yet unclassified' }
 DcDimse >> requestService: service param: param forAssoc: anAssoc [
 
-	|  msg |
+	| msg |
 	self traceCr: 'DIMSE.request recieved.service: ' , service.
+	self halt.
+	msg := param asMessage .
 	msg := DcMessage fromParam: param
 ]
