@@ -10,9 +10,9 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'cmdDict',
-		'dataSet',
 		'commandElements',
-		'dataElements'
+		'dataElements',
+		'dataDict'
 	],
 	#category : #'CAs-DICOM-Core'
 }
@@ -21,6 +21,33 @@ Class {
 DcMessage class >> fromParam: param [
 
 	^self new param: param
+]
+
+{ #category : #adding }
+DcMessage >> addCommand: aCmd value: aVal [
+
+	
+	cmdDict at: aCmd put: aVal.commandElements := nil.
+]
+
+{ #category : #accessing }
+DcMessage >> addCommandField: serviceName [
+
+	| cmdCode |
+	cmdCode := DcDimse cmdAtName: serviceName.
+	self addCommand: #CommandField value: cmdCode 
+]
+
+{ #category : #accessing }
+DcMessage >> addCommandGroupLength [
+
+	
+]
+
+{ #category : #accessing }
+DcMessage >> addDataSetType [
+
+	cmdDict at: #CommandDataSetType ifAbsentPut: self noDataset
 ]
 
 { #category : #adding }
@@ -44,7 +71,7 @@ DcMessage >> cmd [
 { #category : #adding }
 DcMessage >> cmdDict [
 
-	^ cmdDict ifNil: [ 
+	^ cmdDict ifEmpty: [  
 		  cmdDict := Dictionary new.
 		  commandElements do: [ :el | cmdDict add: el assoc ].
 		  cmdDict ]
@@ -58,11 +85,18 @@ DcMessage >> hasDataset [
 
 { #category : #initialization }
 DcMessage >> initialize [
-
-	commandElements:=SortedCollection new.dataElements:=OrderedCollection new.
+cmdDict:=Dictionary new.
+	commandElements := SortedCollection new.
+	dataElements := OrderedCollection new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+DcMessage >> noDataset [
+
+	^ Integer readFrom: '0101H' base: 16 
+]
+
+{ #category : #accessing }
 DcMessage >> param: param [
 
 	self halt.
@@ -71,7 +105,5 @@ DcMessage >> param: param [
 { #category : #adding }
 DcMessage >> requiresDataset [
 
-	| noDataset |
-	noDataset := Integer readFrom: '0101H' base: 16.
-	^ (self cmdDict at: 'CommandDataSetType') ~= noDataset
+	^ (self cmdDict at: 'CommandDataSetType') ~= self noDataset
 ]

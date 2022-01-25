@@ -19,6 +19,12 @@ DcDimse class >> cmdAt: aCode [
 ]
 
 { #category : #'class initialization' }
+DcDimse class >> cmdAtName: aName [
+
+	^ CmdCode keyAtValue:  aName
+]
+
+{ #category : #'class initialization' }
 DcDimse class >> cmdCodeText [
 
 	^ '0001H C-STORE-RQ
@@ -144,6 +150,7 @@ DcDimse >> requestService: service param: param forAssoc: anAssoc [
 	| msg |
 	self traceCr: 'DIMSE.request recieved.service: ' , service.
 	self halt.
-	msg := param asMessage .
-	"msg := DcMessage fromParam: param"
+	param messageType:service.
+	msg := param asMessage.
+DcUpperLayerClient default request: msg forAssoc: anAssoc.
 ]

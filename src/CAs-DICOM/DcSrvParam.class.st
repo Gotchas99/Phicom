@@ -6,7 +6,8 @@ Class {
 		'messageId',
 		'messageIdResp',
 		'sopClassUid',
-		'status'
+		'status',
+		'dict'
 	],
 	#category : #'CAs-DICOM-Dimse'
 }
@@ -48,15 +49,17 @@ DcSrvParam >> asMessage [
 	"messageId messageIdResp sopClassUid status"
 
 	| msg |
-	msg := DcMessage new.
-	messageId ifNotNil: [ 
-		msg addElement:
-			(DcElement new keyword: 'MessageID' value: messageId) ].
-	messageIdResp ifNotNil: [ 
-		msg addElement: (DcElement new keyword: 'MessageIDBeingRespondedTo' value: messageIdResp) ].
-	msg addElement: (DcElement new keyword: 'AffectedSOPClassUID' value: sopClassUid).
-	status ifNotNil: [ 
-		msg addElement: (DcElement new keyword: 'Status' value: status) ].
+	msg := DcMessage new. 
+	self messageId ifNotNil: [ :val | 
+		msg addCommand: 'MessageID' value: val ].
+self 	messageIdResp ifNotNil: [  :val | 
+		msg addCommand: 'MessageIDBeingRespondedTo'
+				 value: val ].
+	msg addCommand:
+		 'AffectedSOPClassUID' value: self sopClassUid.
+self 	status ifNotNil: [  :val | 
+		msg addCommand:  'Status' value: val ].
+	msg addCommandField: messageType.
 	^ msg
 ]
 
@@ -77,6 +80,11 @@ DcSrvParam >> createFromMessage: aMsg [
 DcSrvParam >> createFromRequest: aParam [
 
 	messageIdResp:= aParam messageId
+]
+
+{ #category : #accessing }
+DcSrvParam >> initialize [ 
+dict:= Dictionary new
 ]
 
 { #category : #accessing }

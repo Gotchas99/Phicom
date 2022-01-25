@@ -10,6 +10,14 @@ DcSrvParamCEcho class >> messageTypes [
 	^ #( 'C-ECHO-RQ' 'C-ECHO-RSP' )
 ]
 
+{ #category : #converting }
+DcSrvParamCEcho >> asMessage [
+
+	| msg |
+	msg := super asMessage.
+msg addDataSetType .	^ msg
+]
+
 { #category : #creating }
 DcSrvParamCEcho >> createFromMessage: aMsg [
 
