@@ -56,7 +56,7 @@ DcSrvParam >> asMessage [
 		msg addElement: (DcElement new keyword: 'MessageIDBeingRespondedTo' value: messageIdResp) ].
 	msg addElement: (DcElement new keyword: 'AffectedSOPClassUID' value: sopClassUid).
 	status ifNotNil: [ 
-		msg addElement: (DcElement new keyword: 'status' value: status) ].
+		msg addElement: (DcElement new keyword: 'Status' value: status) ].
 	^ msg
 ]
 

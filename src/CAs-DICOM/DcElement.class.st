@@ -8,8 +8,9 @@ Class {
 		'tag',
 		'length',
 		'vr',
-		'value',
-		'explicitVR'
+		'explicitVR',
+		'rawValue',
+		'value'
 	],
 	#classVars : [
 		'VRvalueCode'
@@ -129,13 +130,13 @@ DcElement >> <= otherElement [
 { #category : #accessing }
 DcElement >> asLong [
 
-	^ value longAt: 1 bigEndian: false
+	^ rawValue longAt: 1 bigEndian: false
 ]
 
 { #category : #accessing }
 DcElement >> asShort [
 
-	^ value  shortAt: 1
+	^ rawValue  shortAt: 1
 		                   bigEndian: false.
 ]
 
@@ -188,7 +189,7 @@ DcElement >> getValue: s [
 
 	"Undefined Length = FFFFFFFFH"
 
-	value := s next:length
+	rawValue := s next: length.value:=nil.
 ]
 
 { #category : #initialization }
@@ -228,9 +229,10 @@ DcElement >> keyword [ ^tag keyword
 ]
 
 { #category : #accessing }
-DcElement >> keyword:aKeyword value:aValue [
+DcElement >> keyword: aKeyword value: aValue [
 
-	tag:= DcTag fromKeyword: aKeyword
+	tag := DcTag fromKeyword: aKeyword.
+	self value: aValue
 ]
 
 { #category : #printing }
@@ -238,9 +240,8 @@ DcElement >> printOn: aStream [
 
 	super printOn: aStream.
 
-	aStream << $(.
-	tag keyword  printOn: aStream.
-	aStream << ': '.
+	aStream << $(
+	<< tag keyword  << ': '.
 	self value printOn: aStream.
 	aStream << $)
 ]
@@ -248,7 +249,7 @@ DcElement >> printOn: aStream [
 { #category : #accessing }
 DcElement >> rawValue [
 
-	^ value
+	^ rawValue
 ]
 
 { #category : #accessing }
@@ -268,7 +269,13 @@ DcElement >> tag [
 { #category : #accessing }
 DcElement >> value [
 
-	^ (self class VRcodes at: vr)value:value
+	^value ifNil:[ value:=(self class VRcodes at: vr) value: rawValue]
+]
+
+{ #category : #accessing }
+DcElement >> value: aValue [
+
+	value:=aValue .rawValue :=nil
 ]
 
 { #category : #accessing }

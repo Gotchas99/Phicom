@@ -145,5 +145,5 @@ DcDimse >> requestService: service param: param forAssoc: anAssoc [
 	self traceCr: 'DIMSE.request recieved.service: ' , service.
 	self halt.
 	msg := param asMessage .
-	msg := DcMessage fromParam: param
+	"msg := DcMessage fromParam: param"
 ]
