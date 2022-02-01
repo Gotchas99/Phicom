@@ -1,5 +1,7 @@
 "
-The encoding of the Command Set shall be Little Endian Byte Ordering as defined in PS3.5.
+The encoding of the Command Set shall be Little Endian Byte Ordering as defined in PS3.5
+
+The encoding (of the command set) corresponds to the Implicit VR Data Element encoding defined in PS3.5
 "
 Class {
 	#name : #DcElement,
@@ -13,10 +15,17 @@ Class {
 		'value'
 	],
 	#classVars : [
+		'RawCodes',
 		'VRvalueCode'
 	],
 	#category : #'CAs-DICOM-Core'
 }
+
+{ #category : #accessing }
+DcElement class >> RawCodes [
+
+	^ RawCodes
+]
 
 { #category : #accessing }
 DcElement class >> VRcodes [
@@ -64,11 +73,6 @@ Unsigned binary integer 32 bits long. Represents an integer n in the range:
 ]
 
 { #category : #'instance creation' }
-DcElement class >> from:s [
-^self new from:s
-]
-
-{ #category : #'instance creation' }
 DcElement class >> from: s explicitVR: aBoolean [
 	^ self new from: s explicitVR: aBoolean
 ]
@@ -76,7 +80,43 @@ DcElement class >> from: s explicitVR: aBoolean [
 { #category : #initialization }
 DcElement class >> initialize [
 
-self 	initializeVRvalues
+	self initializeVRvalues.
+self 	initializeRawValues
+]
+
+{ #category : #initialization }
+DcElement class >> initializeRawValues [
+
+	"As=Age (string ending with e.g. 'Y')
+	CS=Code String
+	DA=Date
+	DS=Decimal String
+	IS=not sure. dimensions for image?
+	LO=Long string
+	OB=Other byte
+	OW=Other Word
+	PN=Person Name
+	SH=Short String
+	TM=Time
+	UI=UID
+	UL=Unsigned Long
+	US=Unsigned Short"
+
+	"DA and TM need to be converted from real date and time	"
+
+	RawCodes := Dictionary new.
+	RawCodes
+		at: 'DA' put: [ :val | val asString trimmed ];
+		at: 'DS' put: [ :val | val printString ];
+		at: 'TM' put: [ :val | val asString trimmed ];
+		at: 'UI'
+		put: [ :val | (val reject: [ :b | b = 0 ]) asString trimmed ];
+		at: 'UL' put: [ :val | val asByteArrayOfSize: 4 ];
+		at: 'US' put: [ :val | "at: 'UL' put: [ :val | 
+			(ByteArray new: 4) unsignedLongAt: 1 put: val bigEndian: false ];
+		at: 'US' put: [ :val | 
+			(ByteArray new: 2) unsignedShortAt: 1 put: val bigEndian: false ]" 
+			val asByteArrayOfSize: 2 ]
 ]
 
 { #category : #initialization }
@@ -147,10 +187,18 @@ DcElement >> assoc [
 	
 ]
 
-{ #category : #'instance creation' }
-DcElement >> from: s [
+{ #category : #accessing }
+DcElement >> explicitVR [
 
-self 	from: s explicitVR: false
+	^ self isCommandElement
+		  ifTrue: [ false ]
+		  ifFalse: [ explicitVR := true ]
+]
+
+{ #category : #accessing }
+DcElement >> explicitVR: aBoolean [
+explicitVR :=aBoolean 
+	
 ]
 
 { #category : #'instance creation' }
@@ -192,6 +240,18 @@ DcElement >> getValue: s [
 	rawValue := s next: length.value:=nil.
 ]
 
+{ #category : #accessing }
+DcElement >> groupLength [
+
+	^ self rawValue size
+]
+
+{ #category : #accessing }
+DcElement >> implicitVR [
+
+	explicitVR := false
+]
+
 { #category : #initialization }
 DcElement >> initialize [ 
 explicitVR :=false
@@ -228,7 +288,7 @@ DcElement >> isUndefined [
 DcElement >> keyword [ ^tag keyword 
 ]
 
-{ #category : #accessing }
+{ #category : #'instance creation' }
 DcElement >> keyword: aKeyword value: aValue [
 
 	tag := DcTag fromKeyword: aKeyword.
@@ -249,7 +309,9 @@ DcElement >> printOn: aStream [
 { #category : #accessing }
 DcElement >> rawValue [
 
-	^ rawValue
+	^ rawValue ifNil: [ 
+		  rawValue := (self class RawCodes at: self vr ifAbsent: [ ([:v | v] )]) 
+			              value: value ]
 ]
 
 { #category : #accessing }
@@ -280,5 +342,6 @@ DcElement >> value: aValue [
 
 { #category : #accessing }
 DcElement >> vr [
-^vr
+
+	^ vr ifNil:[tag vr]
 ]

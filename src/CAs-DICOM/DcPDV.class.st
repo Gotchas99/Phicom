@@ -9,8 +9,9 @@ Class {
 	#name : #DcPDV,
 	#superclass : #Object,
 	#instVars : [
-		'userdata',
-		'presCtxId'
+		'header',
+		'presCtxId',
+		'fragment'
 	],
 	#category : #'CAs-DICOM-UpperLayer'
 }
@@ -22,24 +23,6 @@ DcPDV class >> readFrom: stream [
 	^ self  new readFrom: stream
 ]
 
-{ #category : #accessing }
-DcPDV >> elements [
-
-	| tmp elements explicitVR |
-	self halt.
-	elements := OrderedCollection new.
-	ReadStream with: userdata do: [ :s | 
-		[ s atEnd ] whileFalse: [ 
-			tmp := self isCommand
-				       ifTrue: [ DcElement from: s explicitVR: false ]
-				       ifFalse: [ 
-					       self halt. "explicitVR from PresCtx"
-					       explicitVR := true.
-					       DcElement from: s explicitVR: explicitVR ].
-			elements add: tmp ] ].
-	^ elements
-]
-
 { #category : #writing }
 DcPDV >> extLength [
 
@@ -49,19 +32,29 @@ DcPDV >> extLength [
 { #category : #accessing }
 DcPDV >> fragment [
 
-	^ userdata allButFirst
+	^ fragment 
+]
+
+{ #category : #accessing }
+DcPDV >> fragment: aByteArray [
+
+ fragment:=aByteArray
 ]
 
 { #category : #accessing }
 DcPDV >> header [
 
-	^ userdata first
+	^ header
 ]
 
 { #category : #writing }
 DcPDV >> headerLength [
 
 	^ 4+1
+]
+
+{ #category : #initialization }
+DcPDV >> initialize [ header:=0
 ]
 
 { #category : #testing }
@@ -95,13 +88,14 @@ DcPDV >> lengthField [
 ]
 
 { #category : #accessing }
-DcPDV >> payload [
-^userdata
+DcPDV >> presCtxId [
+^presCtxId
 ]
 
 { #category : #accessing }
-DcPDV >> presCtxId [
-^presCtxId
+DcPDV >> presCtxId:anInt [
+
+	presCtxId:=anInt
 ]
 
 { #category : #'instance creation' }
@@ -116,12 +110,25 @@ DcPDV >> readFrom: stream [
 
 { #category : #'instance creation' }
 DcPDV >> readPduFrom: pduStream [
-
-	userdata := pduStream upToEnd
+header := pduStream next.
+	fragment := pduStream upToEnd
 ]
 
 { #category : #accessing }
-DcPDV >> userdata [
+DcPDV >> setCommand: aBoolean [
 
-	^ userdata
+	| commandMask |
+	commandMask := 14. "1110 as decimal"
+	header := (header bitAnd: commandMask )bitOr: aBoolean asBit
+]
+
+{ #category : #accessing }
+DcPDV >> setLast: aBoolean [
+
+	| lastMask |
+	lastMask := 13. "1101 as decimal"
+	header := (header bitAnd: lastMask) bitOr:
+		          (aBoolean asBit bitShift: 1)
+		
+	
 ]

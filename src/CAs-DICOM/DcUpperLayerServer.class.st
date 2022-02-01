@@ -8,6 +8,22 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+DcUpperLayerServer >> confirmation: pdu forAssoc: anAssoc [
+
+	| response service |
+	response := pdu isAssociation
+		            ifTrue: [ 
+		            DcAcse default indication: pdu forAssoc: anAssoc ]
+		            ifFalse: [ 
+			            service := self serviceForType: pdu type.
+			            anAssoc dimse
+				            indicationService: service
+				            param: pdu items
+				            forAssoc: anAssoc ].
+	^ response
+]
+
+{ #category : #'as yet unclassified' }
 DcUpperLayerServer >> dimseAt: aeTitle [
 
 ^	dimses at: aeTitle 

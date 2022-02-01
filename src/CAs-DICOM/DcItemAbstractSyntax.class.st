@@ -15,3 +15,9 @@ DcItemAbstractSyntax class >> verification [
 
 	^ self new value: '1.2.840.10008.1.1'
 ]
+
+{ #category : #converting }
+DcItemAbstractSyntax >> asSyntax [
+
+	^DcSyntax atUid: value
+]

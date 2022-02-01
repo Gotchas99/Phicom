@@ -15,3 +15,9 @@ DcItemTransferSyntax class >> itemType [
 
 	^ Integer readFrom: '40H' base: 16
 ]
+
+{ #category : #converting }
+DcItemTransferSyntax >> asSyntax [
+
+	^ DcSyntax atUid: value
+]

@@ -66,6 +66,12 @@ DcSyntax class >> initializeTransferSyntaxes [
 	self add: #( '1.2.840.10008.1.2.1' 'Explicit VR Little Endian' )
 ]
 
+{ #category : #converting }
+DcSyntax >> asSyntax [
+
+	^ self
+]
+
 { #category : #accessing }
 DcSyntax >> explictVR [
 

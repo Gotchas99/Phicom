@@ -10,9 +10,9 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'cmdDict',
+		'dataDict',
 		'commandElements',
-		'dataElements',
-		'dataDict'
+		'dataElements'
 	],
 	#category : #'CAs-DICOM-Core'
 }
@@ -26,8 +26,9 @@ DcMessage class >> fromParam: param [
 { #category : #adding }
 DcMessage >> addCommand: aCmd value: aVal [
 
+	cmdDict at: aCmd put: aVal.
+	commandElements := SortedCollection new.
 	
-	cmdDict at: aCmd put: aVal.commandElements := nil.
 ]
 
 { #category : #accessing }
@@ -41,7 +42,19 @@ DcMessage >> addCommandField: serviceName [
 { #category : #accessing }
 DcMessage >> addCommandGroupLength [
 
-	
+	"CommandGroupLength"
+
+	| els len |
+	els := self cmdElements.
+	len := els inject: 0 into: [ :sum :each | sum + each groupLength ].
+	self addCommand: 'CommandGroupLength' value: len
+]
+
+{ #category : #adding }
+DcMessage >> addData: aKey value: aVal [
+
+	dataDict at: aKey put: aVal.
+	dataElements := SortedCollection new
 ]
 
 { #category : #accessing }
@@ -54,12 +67,10 @@ DcMessage >> addDataSetType [
 DcMessage >> addElement: anElement [
 
 	anElement isCommandElement
-		ifTrue: [ commandElements add: anElement.cmdDict:=nil. ]
+		ifTrue: [ 
+			commandElements add: anElement.
+			cmdDict := Dictionary new. ]
 		ifFalse: [ dataElements add: anElement ]
-]
-
-{ #category : #converting }
-DcMessage >> asElements [
 ]
 
 { #category : #accessing }
@@ -77,6 +88,25 @@ DcMessage >> cmdDict [
 		  cmdDict ]
 ]
 
+{ #category : #converting }
+DcMessage >> cmdElements [
+
+| els el |
+els:=SortedCollection new.
+ cmdDict keysAndValuesDo:  [ :key :val|el:= DcElement new keyword: key value: val.els add:el].^els
+]
+
+{ #category : #converting }
+DcMessage >> dataElements [
+
+	| els el |
+	els := SortedCollection new.
+	dataDict keysAndValuesDo: [ :key :val | 
+		el := DcElement new keyword: key value: val.
+		els add: el ].
+	^ els
+]
+
 { #category : #adding }
 DcMessage >> hasDataset [
 
@@ -85,7 +115,8 @@ DcMessage >> hasDataset [
 
 { #category : #initialization }
 DcMessage >> initialize [
-cmdDict:=Dictionary new.
+
+	cmdDict := Dictionary new.dataDict := Dictionary new.
 	commandElements := SortedCollection new.
 	dataElements := OrderedCollection new
 ]
@@ -106,4 +137,10 @@ DcMessage >> param: param [
 DcMessage >> requiresDataset [
 
 	^ (self cmdDict at: 'CommandDataSetType') ~= self noDataset
+]
+
+{ #category : #accessing }
+DcMessage >> sopClassUid [
+
+	^ self cmdDict at: 'AffectedSOPClassUID'
 ]

@@ -32,3 +32,11 @@ DcSrvParamCEcho >> createFromRequest: aParam [
 	self messageType: 'C-ECHO-RSP'.
 	self sopClassUid: '1.2.840.10008.1.1'
 ]
+
+{ #category : #creating }
+DcSrvParamCEcho >> createFromResponse: aParam [
+
+	super createFromResponse: aParam.
+	self messageType: 'C-ECHO-RSP'.
+	self sopClassUid: '1.2.840.10008.1.1'
+]

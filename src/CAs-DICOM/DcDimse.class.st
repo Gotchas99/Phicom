@@ -109,11 +109,20 @@ DcDimse >> ae: anAE [
 	dul registerDimse: self for: ae aeTitle
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #commands }
 DcDimse >> cEcho:param [
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #helper }
+DcDimse >> fragsFromElements: els [
+
+	"| bytes |
+	bytes := ByteArray streamContents: [ :s | els do: [ :el |  ] ].
+	^ bytes"
+	^OrderedCollection with:els
+]
+
+{ #category : #services }
 DcDimse >> indicationService: service param: param forAssoc: anAssoc [
 
 	| resp |
@@ -125,7 +134,7 @@ DcDimse >> indicationService: service param: param forAssoc: anAssoc [
 	^ resp
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #services }
 DcDimse >> pData: pdvList forAssoc: anAssoc [
 
 	| element fs ctx msg cmd param |
@@ -144,13 +153,43 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 				anAssoc ae indication: cmd with: param for: anAssoc ] ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #helper }
+DcDimse >> pdvFromFrags: frags [
+]
+
+{ #category : #services }
 DcDimse >> requestService: service param: param forAssoc: anAssoc [
 
-	| msg |
+	| msg ctxid els |
 	self traceCr: 'DIMSE.request recieved.service: ' , service.
 	self halt.
-	param messageType:service.
+	param messageType: service.
+	msg := param asMessage. 
+	els:= msg cmdElements .
+	ctxid := anAssoc ctxidForSopUid: service.
+	DcUpperLayerClient default request: msg forAssoc: anAssoc
+]
+
+{ #category : #services }
+DcDimse >> responseService: service param: param forAssoc: anAssoc [
+
+	| msg ctxid els sop frags pdv1 pdvlist pdv2 |
+	self traceCr: 'DIMSE.response recieved.service: ' , service.
+	param messageType: service.
 	msg := param asMessage.
-DcUpperLayerClient default request: msg forAssoc: anAssoc.
+	sop := msg sopClassUid.
+	"	ctxid := anAssoc ctxidForSopUid: sop."
+	ctxid := 1.
+	msg addCommandGroupLength.
+	els := msg cmdElements.self halt.
+	frags := self fragsFromElements: els.
+	pdv1 := self pdvFromFrags: frags.
+	pdvlist := OrderedCollection with: pdv1.
+	msg hasDataset ifTrue: [ 
+		els := msg dataElements.
+		frags := self fragsFromElements: els.
+		pdv2 := self pdvFromFrags: frags.
+		pdvlist add: pdv2 ].
+	"response is sent as pData request to DUL"
+	DcUpperLayerClient default request: pdvlist forAssoc: anAssoc
 ]

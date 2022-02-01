@@ -51,6 +51,17 @@ self deprecated:'not needed here'.
 ]
 
 { #category : #accessing }
+DcAssociation >> asnForService: aService [
+]
+
+{ #category : #accessing }
+DcAssociation >> ctxidForSopUid: anAbstractSyntax [
+
+	| asn |
+	asn := self presForAsn: anAbstractSyntax .^asn
+]
+
+{ #category : #accessing }
 DcAssociation >> dimse [
 
 	^ dimse

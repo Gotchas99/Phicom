@@ -11,6 +11,13 @@ DcUpperLayerClient >> associate: anAssoc [
 ]
 
 { #category : #'as yet unclassified' }
+DcUpperLayerClient >> associateAET: anAET [ 
+
+	^ DcAssociation new
+		  aet: anAET
+]
+
+{ #category : #'as yet unclassified' }
 DcUpperLayerClient >> request: pdu forAssoc: anAssoc [
 "expect: a list of PDV"
 	| response service |

@@ -72,9 +72,9 @@ DcAe >> aeTitle [
 DcAe >> cEchoRq: param assoc: anAssoc [
 
 	| rsp |
-	rsp := DcSrvParamCEcho new createFromRequest: param.
+	rsp := DcSrvParamCEcho new createFromResponse: param.
 	rsp status: 0.
-	dimse requestService: rsp messageType param: rsp forAssoc: anAssoc
+	dimse responseService: rsp messageType param: rsp forAssoc: anAssoc
 ]
 
 { #category : #dispatch }
