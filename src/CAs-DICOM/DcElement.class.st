@@ -216,12 +216,7 @@ DcElement >> getLength: s [
 
 	"Undefined Length = FFFFFFFFH"
 
-	length := explicitVR
-		          ifTrue: [ 
-			          self isShortVR
-				          ifTrue: [ s nextLittleEndianNumber: 2 ]
-				          ifFalse: [ s nextLittleEndianNumber: 4 ] ]
-		          ifFalse: [ s nextLittleEndianNumber: 4 ]
+	length := s nextLittleEndianNumber: self lengthLength .
 ]
 
 { #category : #'instance creation' }
@@ -243,7 +238,12 @@ DcElement >> getValue: s [
 { #category : #accessing }
 DcElement >> groupLength [
 
-	^ self rawValue size
+	| len |
+	len := 4. "tag"
+	len := len + self lengthLength.
+	self isExplicitVR ifTrue: [ len := len + self lengthLength ].
+	len := len + self rawValue size.
+	^ len
 ]
 
 { #category : #accessing }
@@ -293,6 +293,21 @@ DcElement >> keyword: aKeyword value: aValue [
 
 	tag := DcTag fromKeyword: aKeyword.
 	self value: aValue
+]
+
+{ #category : #helper }
+DcElement >> lengthLength [
+
+	"different size of length field"
+
+	| size |
+	size := explicitVR
+		        ifTrue: [ 
+			        self isShortVR
+				        ifTrue: [ 2 ]
+				        ifFalse: [ 4 ] ]
+		        ifFalse: [ 4 ].
+	^ size
 ]
 
 { #category : #printing }

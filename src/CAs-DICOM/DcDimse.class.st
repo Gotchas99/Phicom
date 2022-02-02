@@ -137,6 +137,19 @@ DcDimse >> indicationService: service param: param forAssoc: anAssoc [
 	^ resp
 ]
 
+{ #category : #helper }
+DcDimse >> messageForService: service param: param forAssoc: anAssoc [
+
+	| msg sop ctxid |
+	param messageType: service.
+	msg := param asMessage.
+	sop := msg sopClassUid.
+	ctxid := anAssoc ctxidForSopUid: sop.
+"	ctxid := 1."
+	msg addCommandGroupLength.
+	^ msg
+]
+
 { #category : #services }
 DcDimse >> pData: pdvList forAssoc: anAssoc [
 
@@ -178,16 +191,11 @@ DcDimse >> requestService: service param: param forAssoc: anAssoc [
 { #category : #services }
 DcDimse >> responseService: service param: param forAssoc: anAssoc [
 
-	| msg ctxid els sop frags pdv1 pdvlist pdv2 |
+	| msg  els  frags pdv1 pdvlist pdv2 |
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, 'response recieved.service: ' , service.
-	param messageType: service.
-	msg := param asMessage.
-	sop := msg sopClassUid.
-	"	ctxid := anAssoc ctxidForSopUid: sop."
-	ctxid := 1.
-	msg addCommandGroupLength.
+	msg := self messageForService: service param: param forAssoc: anAssoc.
 	els := msg cmdElements.
 	self halt.
 	frags := self fragsFromElements: els.

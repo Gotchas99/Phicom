@@ -146,8 +146,9 @@ DcPDU >> myLength [
 DcPDU >> readFrom: stream [
 
 	| length pduStream |
-	self traceCr: DateAndTime current asStringYMDHMS , ' ' 
-		, 'PDU recieved: ' , (self className allButFirst: 2).
+"	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , 'PDU recieved: '
+		, (self className allButFirst: 2)."
 	type := stream next.
 	stream skip: 1.
 	length := (stream next: 4) unsignedLongAt: 1 bigEndian: true.
