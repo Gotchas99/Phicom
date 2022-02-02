@@ -57,11 +57,10 @@ DcAssociation >> asnForService: aService [
 { #category : #accessing }
 DcAssociation >> ctxidForSopUid: anAbstractSyntax [
 
-	| asn |
-	presCtxs keysAndValuesDo:[:key :value|
-	(	value first value = anAbstractSyntax)ifTrue:[^key]]. 
-	Error signal:'ctxId notefound'.
-"	asn := self presForAsn: anAbstractSyntax .^asn"
+	presCtxs keysAndValuesDo: [ :key :value | 
+		value first value = anAbstractSyntax ifTrue: [ ^ key ] ].
+	Error signal: 'ctxId notefound'
+
 ]
 
 { #category : #accessing }

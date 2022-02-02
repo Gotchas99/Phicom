@@ -12,7 +12,8 @@ Class {
 		'cmdDict',
 		'dataDict',
 		'commandElements',
-		'dataElements'
+		'dataElements',
+		'ctxid'
 	],
 	#category : #'CAs-DICOM-Core'
 }
@@ -94,6 +95,17 @@ DcMessage >> cmdElements [
 | els el |
 els:=SortedCollection new.
  cmdDict keysAndValuesDo:  [ :key :val|el:= DcElement new keyword: key value: val.els add:el].^els
+]
+
+{ #category : #accessing }
+DcMessage >> ctxid [
+^
+	ctxid
+]
+
+{ #category : #accessing }
+DcMessage >> ctxid: aCtxid [
+ctxid:= aCtxid
 ]
 
 { #category : #converting }

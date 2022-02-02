@@ -107,16 +107,11 @@ DcElement class >> initializeRawValues [
 	RawCodes := Dictionary new.
 	RawCodes
 		at: 'DA' put: [ :val | val asString trimmed ];
-		at: 'DS' put: [ :val | val printString ];
+		at: 'DS' put: [ :val | val printString asByteArray];
 		at: 'TM' put: [ :val | val asString trimmed ];
-		at: 'UI'
-		put: [ :val | (val reject: [ :b | b = 0 ]) asString trimmed ];
+		at: 'UI' put: [ :val | val padToEvenNull asByteArray];
 		at: 'UL' put: [ :val | val asByteArrayOfSize: 4 ];
-		at: 'US' put: [ :val | "at: 'UL' put: [ :val | 
-			(ByteArray new: 4) unsignedLongAt: 1 put: val bigEndian: false ];
-		at: 'US' put: [ :val | 
-			(ByteArray new: 2) unsignedShortAt: 1 put: val bigEndian: false ]" 
-			val asByteArrayOfSize: 2 ]
+		at: 'US' put: [ :val | val asByteArrayOfSize: 2 ]
 ]
 
 { #category : #initialization }
@@ -325,8 +320,9 @@ DcElement >> printOn: aStream [
 DcElement >> rawValue [
 
 	^ rawValue ifNil: [ 
-		  rawValue := (self class RawCodes at: self vr ifAbsent: [ ([:v | v] )]) 
-			              value: value ]
+		  rawValue := (self class RawCodes
+			               at: self vr
+			               ifAbsent: [ [ :v | v padToEven asByteArray ] ]) value: value ]
 ]
 
 { #category : #accessing }
@@ -359,4 +355,36 @@ DcElement >> value: aValue [
 DcElement >> vr [
 
 	^ vr ifNil:[tag vr]
+]
+
+{ #category : #writing }
+DcElement >> writeLength: s [
+
+	"Undefined Length = FFFFFFFFH"
+ s
+		          nextLittleEndianNumber: self lengthLength
+		          put: self rawValue size
+]
+
+{ #category : #writing }
+DcElement >> writeOn: s [
+
+	tag writeOn: s.
+	explicitVR ifTrue: [ self writeVR: s ].
+	self writeLength: s.
+	self writeValue: s
+]
+
+{ #category : #writing }
+DcElement >> writeVR: s [
+
+	vr putOn:s.
+	self isShortVR ifTrue: [ s nextPutAll: #( 0 0 ) ].
+	
+]
+
+{ #category : #writing }
+DcElement >> writeValue: s [
+
+	self rawValue putOn:s.
 ]

@@ -129,3 +129,9 @@ DcTag >> vr [
 	^ vr ifNil:[vr:=[ (DcTable tagAt: bin) at: #VR ifAbsent: [ '???' ] ] onErrorDo: [ 
 		  '***' ]]
 ]
+
+{ #category : #writing }
+DcTag >> writeOn: s [
+
+	s nextLittleEndianNumber: 4 put:  bin
+]

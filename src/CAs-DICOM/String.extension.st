@@ -1,23 +1,23 @@
 Extension { #name : #String }
 
 { #category : #'*CAs-DICOM' }
-String >> isEven [
+String >> even [
 
-	^self size isEven 
+	^ self size even
 ]
 
 { #category : #'*CAs-DICOM' }
 String >> padToEven [
 
-	^ self size isEven
+	^ self size even
 		  ifTrue: [ self ]
-		  ifFalse: [ self,' ' ]
+		  ifFalse: [ self copyWith:Character space ]
 ]
 
 { #category : #'*CAs-DICOM' }
 String >> padToEvenNull [
 
-	^ self size isEven
+	^ self size even
 		  ifTrue: [ self ]
-		  ifFalse: [ self , Character null ]
+		  ifFalse: [ self copyWith: Character null ]
 ]

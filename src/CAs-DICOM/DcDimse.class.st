@@ -119,7 +119,17 @@ DcDimse >> fragsFromElements: els [
 	"| bytes |
 	bytes := ByteArray streamContents: [ :s | els do: [ :el |  ] ].
 	^ bytes"
-	^OrderedCollection with:els
+	| frags len frag maxLen |
+	maxLen:= 16000."Find this somewhere"
+	frags:= OrderedCollection with:OrderedCollection new..
+	len:=0.
+	els do:[:el|frag:=frags last.
+		len:=len +el groupLength ..
+		len>maxLen ifTrue:[
+			"adding returns the added object"
+			frag:=	frags add: OrderedCollection new.len:=el groupLength].frag add:el
+		.].
+	^frags
 ]
 
 { #category : #services }
@@ -145,7 +155,7 @@ DcDimse >> messageForService: service param: param forAssoc: anAssoc [
 	msg := param asMessage.
 	sop := msg sopClassUid.
 	ctxid := anAssoc ctxidForSopUid: sop.
-"	ctxid := 1."
+	msg ctxid:ctxid.
 	msg addCommandGroupLength.
 	^ msg
 ]
@@ -170,7 +180,16 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 ]
 
 { #category : #helper }
-DcDimse >> pdvFromFrags: frags [
+DcDimse >> pdvsFromFrags: frags [
+ 
+	| pdvs pdv bytes |
+	pdvs := frags collect: [ :frag | 
+		        bytes := ByteArray streamContents: [ :s | 
+			                 frag do: [ :el | el writeOn: s ] ].
+		        pdv := DcPDV new fragment: bytes.
+		        pdv setCommand: frag first isCommandElement ].
+	pdvs last setLast: true.
+	^ pdvs
 ]
 
 { #category : #services }
@@ -199,13 +218,14 @@ DcDimse >> responseService: service param: param forAssoc: anAssoc [
 	els := msg cmdElements.
 	self halt.
 	frags := self fragsFromElements: els.
-	pdv1 := self pdvFromFrags: frags.
+	pdv1 := self pdvsFromFrags: frags.
 	pdvlist := OrderedCollection with: pdv1.
 	msg hasDataset ifTrue: [ 
 		els := msg dataElements.
 		frags := self fragsFromElements: els.
-		pdv2 := self pdvFromFrags: frags.
+		pdv2 := self pdvsFromFrags: frags.
 		pdvlist add: pdv2 ].
-	"response is sent as pData request to DUL"
+	pdvlist flattened do:[:pdv|pdv presCtxId: msg ctxid.].
+	"response is sent as pData _request_ to DUL"
 	DcUpperLayerClient default request: pdvlist forAssoc: anAssoc
 ]
