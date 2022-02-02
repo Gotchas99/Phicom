@@ -126,10 +126,13 @@ DcDimse >> fragsFromElements: els [
 DcDimse >> indicationService: service param: param forAssoc: anAssoc [
 
 	| resp |
-	self traceCr: 'DIMSE.indication recieved.service: ' , service.
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'indication recieved.service: ' , service.
 
 	#pData = service ifTrue: [ 
-				self pData: param forAssoc: anAssoc .resp := nil.].
+		self pData: param forAssoc: anAssoc.
+		resp := nil ].
 
 	^ resp
 ]
@@ -161,11 +164,13 @@ DcDimse >> pdvFromFrags: frags [
 DcDimse >> requestService: service param: param forAssoc: anAssoc [
 
 	| msg ctxid els |
-	self traceCr: 'DIMSE.request recieved.service: ' , service.
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'request recieved.service: ' , service.
 	self halt.
 	param messageType: service.
-	msg := param asMessage. 
-	els:= msg cmdElements .
+	msg := param asMessage.
+	els := msg cmdElements.
 	ctxid := anAssoc ctxidForSopUid: service.
 	DcUpperLayerClient default request: msg forAssoc: anAssoc
 ]
@@ -174,14 +179,17 @@ DcDimse >> requestService: service param: param forAssoc: anAssoc [
 DcDimse >> responseService: service param: param forAssoc: anAssoc [
 
 	| msg ctxid els sop frags pdv1 pdvlist pdv2 |
-	self traceCr: 'DIMSE.response recieved.service: ' , service.
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'response recieved.service: ' , service.
 	param messageType: service.
 	msg := param asMessage.
 	sop := msg sopClassUid.
 	"	ctxid := anAssoc ctxidForSopUid: sop."
 	ctxid := 1.
 	msg addCommandGroupLength.
-	els := msg cmdElements.self halt.
+	els := msg cmdElements.
+	self halt.
 	frags := self fragsFromElements: els.
 	pdv1 := self pdvFromFrags: frags.
 	pdvlist := OrderedCollection with: pdv1.

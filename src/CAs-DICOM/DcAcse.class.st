@@ -27,7 +27,8 @@ DcAcse class >> reset [
 { #category : #'as yet unclassified' }
 DcAcse >> abort: aRequest forAssoc: anAssoc [
 
-	self traceCr: 'A-ABORT message recieved'.
+	self traceCr:DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+				, 'A-ABORT message recieved'.
 	ConnectionClosed signal.
 	^ nil
 ]
@@ -36,8 +37,10 @@ DcAcse >> abort: aRequest forAssoc: anAssoc [
 DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 
 	| ae resp respPresCtx ui |
-	self traceCr: 'A-ASSOCIATE-RQ message recieved'.
-	aRequest validateAppContext ifFalse: [ 		^ DcAssociateRj invalidAppContext ].
+	self traceCr: DateAndTime current asStringYMDHMS ,  ' ' , self class name ,  ' '
+				,'A-ASSOCIATE-RQ message recieved'.
+	aRequest validateAppContext ifFalse: [ 
+		^ DcAssociateRj invalidAppContext ].
 	[ ae := DcAeDirectory ourAET: aRequest calledAET ]
 		on: KeyNotFound
 		do: [ ^ DcAssociateRj aeNotrecognized ].

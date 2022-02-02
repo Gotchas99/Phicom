@@ -183,7 +183,8 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 	Indicate that we intend to close the connection afterwards"
 
 	| request response |
-	self traceCr: 'executeOneRequestResponseOn:'.
+	self traceCr:
+		DateAndTime current asStringYMDHMS ,' ', self class name,' executeOneRequestResponseOn:'.
 	request := DcPDU readFrom: stream.
 	response := DcUpperLayerServer default
 		            indication: request
@@ -197,11 +198,12 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 DcNet >> executeRequestResponseLoopOn: stream [
 
 	| assoc |
-	self traceCr: 'executeRequestResponseLoopOn:'.
+	self traceCr:
+		DateAndTime current asStringYMDHMS,' ',self class name,' '
+		, ' executeRequestResponseLoopOn:'.
 	assoc := DcAssociation new.
 	[ stream isConnected ] whileTrue: [ 
-		self executeOneRequestResponseOn: stream forAssoc: assoc ] 
-		
+		self executeOneRequestResponseOn: stream forAssoc: assoc ]
 ]
 
 { #category : #private }
@@ -232,13 +234,13 @@ DcNet >> listenLoop [
 	After each connection we also check that the listening Socket is still valid 
 	- if not we just make a recursive call to this method to start over."
 
-	self traceCr: 'listenLoop ======================='.
+	self traceCr: DateAndTime current asStringYMDHMS,' listenLoop ======================='.
 	self initializeServerSocket.
 	[ 
 	[ 
-	serverSocket isValid ifFalse: [ "will trigger #ifCurtailed: block and destroy socket" 
-		self traceCr: 'serverSocket invalid ----------------------------'
-		.^ self listenLoop ].
+	serverSocket isValid ifFalse: [ "will trigger #ifCurtailed: block and destroy socket"
+		self traceCr: 'serverSocket invalid ----------------------------'.
+		^ self listenLoop ].
 	"self traceCr:
 		'before serveConnectionsOn ----------------------------'."
 	self serveConnectionsOn: serverSocket ] repeat ] ensure: [ "ensure var tidigare ifCurtailed"
@@ -309,9 +311,13 @@ DcNet >> serveConnectionOn: socket [
 		on: ConnectionClosed , ConnectionTimedOut
 		do: [ :ex | 
 			Transcript
-				show: 'serveConnectionOn: Connection error. Closing stream';
+				show:
+					DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+					, 'serveConnectionOn: Connection error. Closing stream';
 				cr ] ] ensure: [ 
-		self traceCr: 'serveConnectionOn: closing stream'.
+		self traceCr:
+			DateAndTime current asStringYMDHMS , ' ' , self class name , $ 
+					, 'serveConnectionOn: closing stream'.
 		stream close ]
 ]
 
@@ -324,22 +330,19 @@ DcNet >> serveConnectionsOn: listeningSocket [
 	request/response cycle."
 
 	| socket |
-	self traceCr: 'serveConnectionsOn: waiting for connection '
-		, DateAndTime current printString.
+	"self traceCr: 'serveConnectionsOn: waiting for connection '
+		, DateAndTime current printString."
 	socket := listeningSocket waitForAcceptFor: self acceptWaitTimeout.
-	socket ifNil: [ "self traceCr: 'no accepted connection'." ^ self ].
+	socket ifNil: [ 
+		"self traceCr: 'no accepted connection'."
+		^ self ].
 	self traceCr: 'serveConnectionsOn: accepted connection'.
-
-	"[" "self serveConnectionOn: socket"
 	[ 
 	self traceCr: 'serveConnectionsOn:process started **************'.
 	self serveConnectionOn: socket.
 	self traceCr: 'serveConnectionsOn:process stopped **************' ]
 		forkAt: 32
-		named: 'serveConnectionsOn' 
-		"] ensure: [ ""was ifCurtailed:""
-		self traceCr: 'serveConnectionsOn: ensure:. destroy accepted socket'.
-		socket destroy ]".
+		named: 'serveConnectionsOn'.
 	^ self
 ]
 
@@ -406,6 +409,12 @@ DcNet >> stop [
 DcNet >> writeResponse: response on: stream [
 
 	response
-		ifNil: [ self traceCr: 'Empty response. Not written' ]
-		ifNotNil: [ response writeOn: stream.self traceCr: 'Response sent'. ]
+		ifNil: [ 
+			self traceCr:
+				DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+				, 'Empty response. Not written' ]
+		ifNotNil: [ 
+			response writeOn: stream.
+			self traceCr: DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+				,'Response sent' ]
 ]
