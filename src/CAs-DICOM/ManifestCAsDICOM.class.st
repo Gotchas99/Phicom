@@ -9,5 +9,5 @@ Class {
 
 { #category : #'code-critics' }
 ManifestCAsDICOM class >> ruleCollectionProtocolRuleV1FalsePositive [
-	^ #(#(#(#RGClassDefinition #(#DcMessage)) #'2021-12-20T09:33:18.229+01:00') )
+	^ #(#(#(#RGClassDefinition #(#DcMessage)) #'2021-12-20T09:33:18.229+01:00') #(#(#RGMethodDefinition #(#DcDimse #fragsFromElements: #false)) #'2022-02-03T14:54:09.497+01:00') )
 ]

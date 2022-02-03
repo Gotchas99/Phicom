@@ -306,7 +306,7 @@ DcNet >> sendPDU: aPdu forAssoc: assoc [
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
 		, ' sendPDU:'.
-
+self halt.
 	ZnBufferedWriteStream
 		on: assoc stream
 		do: [ :s | aPdu writeOn: s ]
@@ -344,14 +344,15 @@ DcNet >> serveConnectionsOn: listeningSocket [
 	"self traceCr: 'serveConnectionsOn: waiting for connection '
 		, DateAndTime current printString."
 	socket := listeningSocket waitForAcceptFor: self acceptWaitTimeout.
-	socket ifNil: [ 
-		"self traceCr: 'no accepted connection'."
-		^ self ].
-	self traceCr: 'serveConnectionsOn: accepted connection'.
+	socket ifNil: [ "self traceCr: 'no accepted connection'." ^ self ].
+	self traceCr: DateAndTime current asStringYMDHMS , ' ' , self class name
+		,' ','serveConnectionsOn: accepted connection'.
 	[ 
-	self traceCr: 'serveConnectionsOn:process started **************'.
+	self traceCr:  DateAndTime current asStringYMDHMS , ' ' , self class name
+		,' ','serveConnectionsOn:process started **************'.
 	self serveConnectionOn: socket.
-	self traceCr: 'serveConnectionsOn:process stopped **************' ]
+	self traceCr:  DateAndTime current asStringYMDHMS , ' ' , self class name
+		,' ', 'serveConnectionsOn:process stopped **************' ]
 		forkAt: 32
 		named: 'serveConnectionsOn'.
 	^ self

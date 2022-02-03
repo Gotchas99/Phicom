@@ -90,12 +90,11 @@ DcPDU >> checkLength [
 	| buffstream b |
 	b := ByteArray streamContents: [ :out | 
 		     buffstream := ZnBufferedWriteStream on: out.
-		     self  writeOn: buffstream.
+		     self writeOn: buffstream.
 		     buffstream close ].
-	
-	b size = self extLength ifFalse: [ 
-	self halt ].
 
+	b size = self extLength ifFalse: [ self halt ].
+	self traceCr: self class name, ' ','checkLength passed'
 ]
 
 { #category : #writing }
@@ -173,8 +172,9 @@ DcPDU >> type [
 { #category : #writing }
 DcPDU >> writeOn: stream [
 
-		stream
+	stream
 		uint8: self type;
 		uint8: 0;
 		uint32: self lengthField
+		
 ]

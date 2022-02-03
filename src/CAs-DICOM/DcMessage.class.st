@@ -75,6 +75,21 @@ DcMessage >> addElement: anElement [
 ]
 
 { #category : #accessing }
+DcMessage >> checkLength [
+
+	| buffstream b |
+	self halt.
+	"hur räknar man här"
+	b := ByteArray streamContents: [ :out | 
+		     buffstream := ZnBufferedWriteStream on: out.
+		     self writeOn: buffstream.
+		     buffstream close ].
+
+	b size = self extLength ifFalse: [ self halt ].
+	self traceCr: self class name , ' ' , 'checkLength passed'
+]
+
+{ #category : #accessing }
 DcMessage >> cmd [
 
 	^ self cmdDict at: 'CommandField'
@@ -95,6 +110,12 @@ DcMessage >> cmdElements [
 | els el |
 els:=SortedCollection new.
  cmdDict keysAndValuesDo:  [ :key :val|el:= DcElement new keyword: key value: val.els add:el].^els
+]
+
+{ #category : #accessing }
+DcMessage >> commandGroupLength [
+
+	^ self cmdDict at: 'CommandGroupLength'
 ]
 
 { #category : #accessing }

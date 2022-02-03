@@ -107,11 +107,17 @@ DcElement class >> initializeRawValues [
 	RawCodes := Dictionary new.
 	RawCodes
 		at: 'DA' put: [ :val | val asString trimmed ];
-		at: 'DS' put: [ :val | val printString asByteArray];
+		at: 'DS' put: [ :val | val printString asByteArray ];
 		at: 'TM' put: [ :val | val asString trimmed ];
-		at: 'UI' put: [ :val | val padToEvenNull asByteArray];
-		at: 'UL' put: [ :val | val asByteArrayOfSize: 4 ];
-		at: 'US' put: [ :val | val asByteArrayOfSize: 2 ]
+		at: 'UI' put: [ :val | val padToEvenNull asByteArray ];
+		at: 'UL' put: [ :val | 
+		 	(ByteArray new: 4)
+				unsignedLongAt: 1 put: val bigEndian: false;
+				yourself ];
+		at: 'US' put: [ :val | "unsignedLongAt: 1 bigEndian: true."
+		(ByteArray new: 2)
+			unsignedShortAt: 1 put: val bigEndian: false;
+			yourself ]
 ]
 
 { #category : #initialization }
@@ -180,6 +186,19 @@ DcElement >> assoc [
 ^tag keyword -> self value.
 
 	
+]
+
+{ #category : #validating }
+DcElement >> checkLength [
+
+	| buffstream b |
+	b := ByteArray streamContents: [ :out | 
+		     buffstream := ZnBufferedWriteStream on: out.
+		     self writeOn: buffstream.
+		     buffstream close ].
+
+	b size = self groupLength ifFalse: [ self halt ].
+	self traceCr: self class name , ' ' , 'checkLength passed'
 ]
 
 { #category : #accessing }

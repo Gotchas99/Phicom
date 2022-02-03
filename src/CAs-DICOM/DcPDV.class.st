@@ -23,6 +23,19 @@ DcPDV class >> readFrom: stream [
 	^ self  new readFrom: stream
 ]
 
+{ #category : #validating }
+DcPDV >> checkLength [
+
+	| buffstream b |
+	b := ByteArray streamContents: [ :out | 
+		     buffstream := ZnBufferedWriteStream on: out.
+		     self writeOn: buffstream.
+		     buffstream close ].
+
+	b size = self extLength ifFalse: [ self halt ].
+	self traceCr: self class name , ' ' , 'checkLength passed'
+]
+
 { #category : #writing }
 DcPDV >> extLength [
 
@@ -136,5 +149,13 @@ DcPDV >> setLast: aBoolean [
 { #category : #writing }
 DcPDV >> writeOn: stream [
 
-	stream nextPut: header;nextPutAll:fragment
+	"length := (stream next: 4) unsignedLongAt: 1 bigEndian: true.
+	pduStream := DcLimitedReadStream on: stream length: length.
+	presCtxId := pduStream next."
+
+	stream
+		uint32: self lengthField;
+		nextPut: presCtxId ;
+		nextPut: header;
+		nextPutAll: fragment
 ]

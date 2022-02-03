@@ -116,20 +116,18 @@ DcDimse >> cEcho:param [
 { #category : #helper }
 DcDimse >> fragsFromElements: els [
 
-	"| bytes |
-	bytes := ByteArray streamContents: [ :s | els do: [ :el |  ] ].
-	^ bytes"
 	| frags len frag maxLen |
-	maxLen:= 16000."Find this somewhere"
-	frags:= OrderedCollection with:OrderedCollection new..
-	len:=0.
-	els do:[:el|frag:=frags last.
-		len:=len +el groupLength ..
-		len>maxLen ifTrue:[
-			"adding returns the added object"
-			frag:=	frags add: OrderedCollection new.len:=el groupLength].frag add:el
-		.].
-	^frags
+	maxLen := 16000. "Find this somewhere"
+	frags := OrderedCollection with: OrderedCollection new.
+	len := 0.
+	els do: [ :el |  
+		frag := frags last.
+		len := len + el groupLength.
+		len > maxLen ifTrue: [ "adding returns the added object"
+			frag := frags add: OrderedCollection new.
+			len := el groupLength ].
+		frag add: el ].
+	^ frags
 ]
 
 { #category : #services }
@@ -181,10 +179,10 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 
 { #category : #helper }
 DcDimse >> pdvsFromFrags: frags [
- 
+
 	| pdvs pdv bytes |
 	pdvs := frags collect: [ :frag | 
-		        bytes := ByteArray streamContents: [ :s | 
+		        bytes := ByteArray streamContents: [ :s |  
 			                 frag do: [ :el | el writeOn: s ] ].
 		        pdv := DcPDV new fragment: bytes.
 		        pdv setCommand: frag first isCommandElement ].
