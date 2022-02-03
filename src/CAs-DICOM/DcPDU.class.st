@@ -142,7 +142,7 @@ DcPDU >> myLength [
 	^ 0
 ]
 
-{ #category : #'instance creation' }
+{ #category : #reading }
 DcPDU >> readFrom: stream [
 
 	| length pduStream |
@@ -156,7 +156,7 @@ DcPDU >> readFrom: stream [
 	self readPduFrom: pduStream
 ]
 
-{ #category : #'instance creation' }
+{ #category : #reading }
 DcPDU >> readPduFrom: stream [
 
 	

@@ -23,7 +23,7 @@ DcAssociateStop >> myLength [
 	^ 1+1+1+1
 ]
 
-{ #category : #'instance creation' }
+{ #category : #reading }
 DcAssociateStop >> readPduFrom: stream [
 
 	stream skip: 1.

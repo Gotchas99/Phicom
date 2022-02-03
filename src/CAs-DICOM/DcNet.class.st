@@ -4,8 +4,7 @@ Class {
 	#instVars : [
 		'process',
 		'port',
-		'serverSocket',
-		'ulServer'
+		'serverSocket'
 	],
 	#classVars : [
 		'AlwaysRestart',
@@ -199,9 +198,9 @@ DcNet >> executeRequestResponseLoopOn: stream [
 
 	| assoc |
 	self traceCr:
-		DateAndTime current asStringYMDHMS,' ',self class name,' '
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, ' executeRequestResponseLoopOn:'.
-	assoc := DcAssociation new.
+	assoc := DcAssociation new stream:stream.
 	[ stream isConnected ] whileTrue: [ 
 		self executeOneRequestResponseOn: stream forAssoc: assoc ]
 ]
@@ -302,6 +301,18 @@ DcNet >> releaseServerSocket [
 ]
 
 { #category : #'request handling' }
+DcNet >> sendPDU: aPdu forAssoc: assoc [
+
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name
+		, ' sendPDU:'.
+
+	ZnBufferedWriteStream
+		on: assoc stream
+		do: [ :s | aPdu writeOn: s ]
+]
+
+{ #category : #'request handling' }
 DcNet >> serveConnectionOn: socket [
 
 	| stream |
@@ -316,7 +327,7 @@ DcNet >> serveConnectionOn: socket [
 					, 'serveConnectionOn: Connection error. Closing stream';
 				cr ] ] ensure: [ 
 		self traceCr:
-			DateAndTime current asStringYMDHMS , ' ' , self class name , $ 
+			DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 					, 'serveConnectionOn: closing stream'.
 		stream close ]
 ]

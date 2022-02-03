@@ -59,7 +59,7 @@ DcAssociateStart >> myLength [
 	 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #reading }
 DcAssociateStart >> readPduFrom: stream [
 
 	| it |

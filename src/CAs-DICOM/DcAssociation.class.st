@@ -6,7 +6,8 @@ Class {
 		'presCtxs',
 		'dimse',
 		'incomingMsg',
-		'nextMsgId'
+		'nextMsgId',
+		'stream'
 	],
 	#category : #'CAs-DICOM-AE'
 }
@@ -149,4 +150,16 @@ incomingMsg := DcMessage new.
 DcAssociation >> selectedPresCtxs: selectedPresCtx [
 
 	presCtxs := Dictionary new.selectedPresCtx do:[:px|presCtxs  at: px ctxID  put: px items].
+]
+
+{ #category : #accessing }
+DcAssociation >> stream [
+
+	^ stream
+]
+
+{ #category : #accessing }
+DcAssociation >> stream: anObject [
+
+	stream := anObject
 ]

@@ -7,7 +7,7 @@ Class {
 	#category : #'CAs-DICOM-UpperLayer'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #services }
 DcUpperLayerServer >> confirmation: pdu forAssoc: anAssoc [
 
 	| response service |
@@ -23,13 +23,13 @@ DcUpperLayerServer >> confirmation: pdu forAssoc: anAssoc [
 	^ response
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcUpperLayerServer >> dimseAt: aeTitle [
 
 ^	dimses at: aeTitle 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #services }
 DcUpperLayerServer >> indication: pdu forAssoc: anAssoc [
 
 	| response service |
@@ -44,13 +44,13 @@ DcUpperLayerServer >> indication: pdu forAssoc: anAssoc [
 	^ response
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 DcUpperLayerServer >> initialize [
 
 	dimses:=Dictionary new.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcUpperLayerServer >> registerDimse: aDimse for: aeTitle [
 
 	dimses at: aeTitle put: aDimse

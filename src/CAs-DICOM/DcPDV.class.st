@@ -83,8 +83,8 @@ DcPDV >> isNotLast [
 
 { #category : #writing }
 DcPDV >> lengthField [
-
-	self halt.
+"header-byte+fragment"
+	^ 1 + fragment size
 ]
 
 { #category : #accessing }
@@ -98,7 +98,7 @@ DcPDV >> presCtxId:anInt [
 	presCtxId:=anInt
 ]
 
-{ #category : #'instance creation' }
+{ #category : #reading }
 DcPDV >> readFrom: stream [
 
 	| length pduStream |
@@ -108,7 +108,7 @@ DcPDV >> readFrom: stream [
 	self readPduFrom: pduStream
 ]
 
-{ #category : #'instance creation' }
+{ #category : #reading }
 DcPDV >> readPduFrom: pduStream [
 header := pduStream next.
 	fragment := pduStream upToEnd
@@ -131,4 +131,10 @@ DcPDV >> setLast: aBoolean [
 		          (aBoolean asBit bitShift: 1)
 		
 	
+]
+
+{ #category : #writing }
+DcPDV >> writeOn: stream [
+
+	stream nextPut: header;nextPutAll:fragment
 ]

@@ -27,11 +27,18 @@ DcPDataTF >> isAssociation [
 	^ false
 ]
 
-{ #category : #'instance creation' }
+{ #category : #reading }
 DcPDataTF >> readPduFrom: stream [
 
 	| pdv |
 	[ stream atEnd ] whileFalse: [ 
 		pdv := DcPDV readFrom: stream.
 		items add: pdv ]
+]
+
+{ #category : #writing }
+DcPDataTF >> writeOn: stream [
+
+	super writeOn: stream.
+	self items do: [ :item | item writeOn: stream ]
 ]

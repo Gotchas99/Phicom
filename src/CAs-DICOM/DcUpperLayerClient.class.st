@@ -18,9 +18,13 @@ DcUpperLayerClient >> associateAET: anAET [
 ]
 
 { #category : #'as yet unclassified' }
-DcUpperLayerClient >> request: pdu forAssoc: anAssoc [
+DcUpperLayerClient >> request: pdvlist forAssoc: anAssoc [
 "expect: a list of PDV"
-	| response service |
-	self flag: 'not done'.self halt.
+	| response service pdu |
+	pdvlist flattened  do:[:pdv| 
+pdu:=		DcPDataTF new addItem:pdv.
+		.
+			DcNet new sendPDU: pdu forAssoc:   anAssoc 
+].
 	
 ]

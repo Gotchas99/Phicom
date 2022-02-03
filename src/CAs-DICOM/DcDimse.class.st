@@ -216,8 +216,7 @@ DcDimse >> responseService: service param: param forAssoc: anAssoc [
 		, 'response recieved.service: ' , service.
 	msg := self messageForService: service param: param forAssoc: anAssoc.
 	els := msg cmdElements.
-	self halt.
-	frags := self fragsFromElements: els.
+		frags := self fragsFromElements: els.
 	pdv1 := self pdvsFromFrags: frags.
 	pdvlist := OrderedCollection with: pdv1.
 	msg hasDataset ifTrue: [ 
