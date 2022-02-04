@@ -1,3 +1,8 @@
+"
+A Data Set is constructed of Data Elements
+
+The Data Elements in a Data Set shall be ordered by increasing Data Element Tag Number and shall occur at most once in a Data Set.
+"
 Class {
 	#name : #DcDataSet,
 	#superclass : #Object,

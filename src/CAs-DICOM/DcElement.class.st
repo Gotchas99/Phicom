@@ -1,7 +1,27 @@
 "
+A Data Element is uniquely identified by a Data Element Tag
+
 The encoding of the Command Set shall be Little Endian Byte Ordering as defined in PS3.5
 
 The encoding (of the command set) corresponds to the Implicit VR Data Element encoding defined in PS3.5
+
+A Data Element shall have one of three structures. Two of these structures contain the VR of the Data Element (Explicit VR) but differ in the way their lengths are expressed, while the other structure does not contain the VR (Implicit VR). All three structures contain the Data Element Tag, Value Length and Value for the Data Element. See Figure 7.1-1.
+
+Data Element Tag
+An ordered pair of 16-bit unsigned integers representing the Group Number followed by Element Number.
+
+Value Representation
+Two single byte characters containing the VR of the Data Element. The VR for a given Data Element Tag shall be as defined by the Data Dictionary as specified in PS3.6. The two byte VR shall be encoded using only upper case letters from the DICOM default character set
+
+Value Length
+Either:
+
+a 16 or 32-bit (dependent on VR and whether VR is explicit or implicit) unsigned integer containing the Explicit Length of the Value Field as the number of bytes (even) that make up the Value. It does not include the length of the Data Element Tag, Value Representation, and Value Length Fields.
+
+a 32-bit Length Field set to Undefined Length (FFFFFFFFH). Undefined Lengths may be used for Data Elements having the Value Representation (VR) Sequence of Items (SQ) and Unknown (UN). For Data Elements with Value Representation OW or OB Undefined Length may be used depending on the negotiated Transfer Syntax (see Section 10 and Annex A).
+
+Value Field
+An even number of bytes containing the Value(s) of the Data Element.
 "
 Class {
 	#name : #DcElement,
@@ -202,25 +222,21 @@ DcElement >> checkLength [
 ]
 
 { #category : #accessing }
-DcElement >> explicitVR [
-
-	^ self isCommandElement
-		  ifTrue: [ false ]
-		  ifFalse: [ explicitVR := true ]
-]
-
-{ #category : #accessing }
 DcElement >> explicitVR: aBoolean [
-explicitVR :=aBoolean 
-	
+
+ explicitVR :=	self isCommandElement
+		ifTrue: [ false ]
+		ifFalse: [  aBoolean ]
 ]
 
 { #category : #'instance creation' }
 DcElement >> from: s explicitVR: aBoolean [
 
-	explicitVR := aBoolean.
 	tag := DcTag from: s.
-	explicitVR ifTrue: [ self getVR: s ]ifFalse:[vr:=tag vr.].
+	self explicitVR: aBoolean.
+	explicitVR
+		ifTrue: [ self getVR: s ]
+		ifFalse: [ vr := tag vr ].
 	self getLength: s.
 	self getValue: s
 ]
@@ -260,12 +276,6 @@ DcElement >> groupLength [
 	^ len
 ]
 
-{ #category : #accessing }
-DcElement >> implicitVR [
-
-	explicitVR := false
-]
-
 { #category : #initialization }
 DcElement >> initialize [ 
 explicitVR :=false
@@ -286,8 +296,7 @@ DcElement >> isExplicitVR [
 { #category : #testing }
 DcElement >> isShortVR [
 
-	^self shortVRs includes:vr
-
+	^ self shortVRs includes self vr
 ]
 
 { #category : #testing }
@@ -361,7 +370,8 @@ DcElement >> tag [
 { #category : #accessing }
 DcElement >> value [
 
-	^value ifNil:[ value:=(self class VRcodes at: vr) value: rawValue]
+	^ value ifNil: [ 
+		  value := (self class VRcodes at: self vr) value: rawValue ]
 ]
 
 { #category : #accessing }
@@ -373,7 +383,7 @@ DcElement >> value: aValue [
 { #category : #accessing }
 DcElement >> vr [
 
-	^ vr ifNil:[tag vr]
+	^ vr ifNil: [ vr:= tag vr ]
 ]
 
 { #category : #writing }
@@ -397,9 +407,8 @@ DcElement >> writeOn: s [
 { #category : #writing }
 DcElement >> writeVR: s [
 
-	vr putOn:s.
-	self isShortVR ifTrue: [ s nextPutAll: #( 0 0 ) ].
-	
+self 	vr putOn: s.
+	self isShortVR ifTrue: [ s nextPutAll: #( 0 0 ) ]
 ]
 
 { #category : #writing }

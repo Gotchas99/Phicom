@@ -47,8 +47,9 @@ DcMessage >> addCommandGroupLength [
 
 	| els len |
 	els := self cmdElements.
-	len := els inject: 0 into: [ :sum :each | sum + each groupLength ].
-	self addCommand: 'CommandGroupLength' value: len
+	len := els sum: [ :each | 
+		       each groupLength ].
+self addCommand: 'CommandGroupLength' value: len
 ]
 
 { #category : #adding }

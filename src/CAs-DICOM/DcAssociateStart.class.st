@@ -39,19 +39,6 @@ DcAssociateStart >> callingAET: aString [
 	 callingAET := aString
 ]
 
-{ #category : #'as yet unclassified' }
-DcAssociateStart >> checkLength [
-
-	| buffstream b |
-	items do:[:each|each checkLength ].
-	b := ByteArray streamContents: [ :out | 
-		     buffstream := ZnBufferedWriteStream on: out.
-		     self writeOn: buffstream.
-		     buffstream close ].
-
-	b size = self extLength ifFalse: [ self halt ]
-]
-
 { #category : #writing }
 DcAssociateStart >> myLength [
 

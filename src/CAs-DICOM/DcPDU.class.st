@@ -88,13 +88,14 @@ DcPDU >> addItem: anItem [
 DcPDU >> checkLength [
 
 	| buffstream b |
-	b := ByteArray streamContents: [ :out | 
+items do: [ :each | each checkLength ].
+		b := ByteArray streamContents: [ :out | 
 		     buffstream := ZnBufferedWriteStream on: out.
 		     self writeOn: buffstream.
 		     buffstream close ].
 
 	b size = self extLength ifFalse: [ self halt ].
-	self traceCr: self class name, ' ','checkLength passed'
+	self traceCr: self class name , ' ' , 'checkLength passed'
 ]
 
 { #category : #writing }

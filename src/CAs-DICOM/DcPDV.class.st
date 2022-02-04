@@ -11,7 +11,8 @@ Class {
 	#instVars : [
 		'header',
 		'presCtxId',
-		'fragment'
+		'fragment',
+		'elements'
 	],
 	#category : #'CAs-DICOM-UpperLayer'
 }
@@ -21,6 +22,14 @@ DcPDV class >> readFrom: stream [
 
 	
 	^ self  new readFrom: stream
+]
+
+{ #category : #writing }
+DcPDV >> asByteArray [
+
+	| tmp |
+	tmp := ByteArray streamContents: [ :s | self writeOn: s ].
+	^ tmp
 ]
 
 { #category : #validating }
@@ -34,6 +43,11 @@ DcPDV >> checkLength [
 
 	b size = self extLength ifFalse: [ self halt ].
 	self traceCr: self class name , ' ' , 'checkLength passed'
+]
+
+{ #category : #accessing }
+DcPDV >> elements: aListOfElements [
+elements:=aListOfElements
 ]
 
 { #category : #writing }
@@ -62,7 +76,7 @@ DcPDV >> header [
 
 { #category : #writing }
 DcPDV >> headerLength [
-
+"Item length and pres.ctx ID"
 	^ 4+1
 ]
 
@@ -96,7 +110,7 @@ DcPDV >> isNotLast [
 
 { #category : #writing }
 DcPDV >> lengthField [
-"header-byte+fragment"
+"header-byte + fragment"
 	^ 1 + fragment size
 ]
 
@@ -153,9 +167,13 @@ DcPDV >> writeOn: stream [
 	pduStream := DcLimitedReadStream on: stream length: length.
 	presCtxId := pduStream next."
 
+	| lenBuf |
+	lenBuf := (ByteArray new: 4)
+		          unsignedLongAt: 1 put: self lengthField bigEndian: true;
+		          yourself.
 	stream
-		uint32: self lengthField;
-		nextPut: presCtxId ;
+		nextPutAll: lenBuf;
+		nextPut: presCtxId;
 		nextPut: header;
 		nextPutAll: fragment
 ]
