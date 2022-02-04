@@ -76,8 +76,10 @@ DcPDV >> header [
 
 { #category : #writing }
 DcPDV >> headerLength [
-"Item length and pres.ctx ID"
-	^ 4+1
+
+	"Item length "
+
+	^ 4 
 ]
 
 { #category : #initialization }
@@ -110,8 +112,12 @@ DcPDV >> isNotLast [
 
 { #category : #writing }
 DcPDV >> lengthField [
-"header-byte + fragment"
-	^ 1 + fragment size
+
+	"pres.ctx ID 
+	+ header-byte 
+	+ fragment"
+
+	^ 1+ 1 + fragment size
 ]
 
 { #category : #accessing }

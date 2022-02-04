@@ -133,5 +133,9 @@ DcTag >> vr [
 { #category : #writing }
 DcTag >> writeOn: s [
 
-	s nextLittleEndianNumber: 4 put:  bin
+	| group element |
+	group := bin bitShift: -16.
+	element := 65535bitAnd:bin  .
+	s nextLittleEndianNumber: 2 put: group.
+	s nextLittleEndianNumber: 2 put: element
 ]

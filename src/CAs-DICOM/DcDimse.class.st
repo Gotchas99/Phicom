@@ -208,13 +208,13 @@ DcDimse >> requestService: service param: param forAssoc: anAssoc [
 { #category : #services }
 DcDimse >> responseService: service param: param forAssoc: anAssoc [
 
-	| msg  els  frags pdv1 pdvlist pdv2 |
+	| msg els frags pdv1 pdvlist pdv2 | 
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, 'response recieved.service: ' , service.
 	msg := self messageForService: service param: param forAssoc: anAssoc.
 	els := msg cmdElements.
-		frags := self fragsFromElements: els.
+	frags := self fragsFromElements: els.
 	pdv1 := self pdvsFromFrags: frags.
 	pdvlist := OrderedCollection with: pdv1.
 	msg hasDataset ifTrue: [ 
@@ -222,7 +222,7 @@ DcDimse >> responseService: service param: param forAssoc: anAssoc [
 		frags := self fragsFromElements: els.
 		pdv2 := self pdvsFromFrags: frags.
 		pdvlist add: pdv2 ].
-	pdvlist flattened do:[:pdv|pdv presCtxId: msg ctxid.].
+	pdvlist flattened do: [ :pdv | pdv presCtxId: msg ctxid ].
 	"response is sent as pData _request_ to DUL"
 	DcUpperLayerClient default request: pdvlist forAssoc: anAssoc
 ]

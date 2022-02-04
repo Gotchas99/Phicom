@@ -78,6 +78,16 @@ DcAcse >> indication: aRequest forAssoc: anAssoc [
 ]
 
 { #category : #public }
+DcAcse >> releaseRq: aRequest forAssoc: anAssoc [
+
+		self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'A-RELEASE-RQ message recieved'.
+	ConnectionClosed signal.
+	^ nil
+]
+
+{ #category : #public }
 DcAcse >> selectTransferSyntax: px [
 
 	| asnEcho asn tsn okTsn selTsn newItems |

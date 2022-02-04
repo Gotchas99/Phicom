@@ -9,3 +9,11 @@ DcSrvParamCFind class >> messageTypes [
 
 	^ #( 'C-FIND-RQ' 'C-FIND-RSP' )
 ]
+
+{ #category : #creating }
+DcSrvParamCFind >> createFromRequest: aParam [
+
+	super createFromRequest: aParam.
+	self messageType: 'C-FIND-RSP'.
+	self sopClassUid: '1.2.840.10008.1.1'
+]
