@@ -79,7 +79,7 @@ DcSrvParam >> createFromMessage: aMsg [
 { #category : #creating }
 DcSrvParam >> createFromRequest: aParam [
 
-	messageIdResp:= aParam messageId
+	"messageIdResp := aParam messageId"
 ]
 
 { #category : #creating }

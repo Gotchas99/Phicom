@@ -19,6 +19,19 @@ DcAssociateRq >> addPresContext: aPresContext [
 	items add: aPresContext
 ]
 
+{ #category : #adding }
+DcAssociateRq >> addStandardItems [
+
+	| pres ui |
+	self addItem: DcItemAppContext new.
+	pres := DcItemPresContext new.
+	pres addItem:(DcItemAbstractSyntax verification ).
+		pres addItem:(DcItemTransferSyntax default).
+	self addItem: pres.
+	ui := DcItemUserInformation new standard.
+	self addItem: ui
+]
+
 { #category : #'as yet unclassified' }
 DcAssociateRq >> getPresentationContexts [
 

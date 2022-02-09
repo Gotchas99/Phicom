@@ -3,6 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'ae',
+		'remoteAETitle',
 		'presCtxs',
 		'dimse',
 		'incomingMsg',
@@ -138,6 +139,21 @@ DcAssociation >> presForAsn: anAbstractSyntax [
 	| tsn |
 	tsn := (presCtxs at: anAbstractSyntax) second.
 	^ DcSyntax atUid: tsn value
+]
+
+{ #category : #accessing }
+DcAssociation >> release [ 	self ae releaseAssoc: self
+]
+
+{ #category : #accessing }
+DcAssociation >> remoteAETitle [
+^remoteAETitle
+]
+
+{ #category : #accessing }
+DcAssociation >> remoteAETitle: aString [
+
+	 remoteAETitle:= aString
 ]
 
 { #category : #message }

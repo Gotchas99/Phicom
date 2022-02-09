@@ -19,7 +19,8 @@ DcAeDirectory class >> initializeNetworkDirectory [
 
 	NetworkDirectory := Dictionary new.
 	NetworkDirectory at: 'GINKGO_222' put: #( 'localhost' 1045 ).
-	NetworkDirectory at: 'GINKGO_222.IP' put: #( '127.0.0.1' 1045 )
+	NetworkDirectory at: 'GINKGO_222.IP' put: #( '127.0.0.1' 1045 ).
+	NetworkDirectory at: 'DCMRECV' put: #( '127.0.0.1' 1104 )
 ]
 
 { #category : #initialization }

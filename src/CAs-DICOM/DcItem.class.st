@@ -26,6 +26,11 @@ DcItem class >> initializeTypeMap [
 
 ]
 
+{ #category : #accessing }
+DcItem class >> itemType [
+^-1
+]
+
 { #category : #'instance creation' }
 DcItem class >> readFrom: aSocketStream [
 
@@ -94,9 +99,8 @@ DcItem >> items [
 { #category : #accessing }
 DcItem >> lengthField [
 
-	^ "lengthField ifNil: [ lengthField :="
-		  self myLength
-		  + (items inject: 0 into: [ :sum :each | sum + each extLength ]) "]"
+	^ self myLength
+	  + (items sum: [ :each | each extLength ])
 ]
 
 { #category : #accessing }

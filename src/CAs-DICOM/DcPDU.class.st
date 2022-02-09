@@ -130,7 +130,7 @@ DcPDU >> items [ ^items
 DcPDU >> lengthField [
 
 	^ self myLength
-	  + (items inject: 0 into: [ :sum :each | sum + each extLength ]) 
+	  + (items sum: [  :each |  each extLength ])
 ]
 
 { #category : #writing }

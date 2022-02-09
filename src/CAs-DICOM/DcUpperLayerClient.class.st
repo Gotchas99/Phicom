@@ -11,6 +11,16 @@ DcUpperLayerClient >> associate: anAssoc [
 ]
 
 { #category : #'as yet unclassified' }
+DcUpperLayerClient >> associate: aReq forAssoc: anAssoc [
+
+	"| pdu |
+	pdu :=ByteArray streamContents: [:s|aReq writeOn: s]."
+
+	| resp |
+	resp:=DcNet new sendAndRecievePDU: aReq forAssoc: anAssoc
+]
+
+{ #category : #'as yet unclassified' }
 DcUpperLayerClient >> associateAET: anAET [ 
 
 	^ DcAssociation new

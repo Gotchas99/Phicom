@@ -2,7 +2,8 @@ Class {
 	#name : #DcAe,
 	#superclass : #Object,
 	#instVars : [
-		'dimse'
+		'dimse',
+		'assocs'
 	],
 	#classInstVars : [
 		'default',
@@ -98,6 +99,14 @@ DcAe >> dimse: anObject [
 	dimse := anObject
 ]
 
+{ #category : #services }
+DcAe >> echo: anAETitle [
+
+	| assoc |
+	assoc := self setupAssoc: anAETitle.
+
+]
+
 { #category : #dispatch }
 DcAe >> indication: cmd with: param for: anAssoc [
 
@@ -116,6 +125,7 @@ DcAe >> initializeNetwork [
 
 	dimse := DcDimse new.
 	dimse ae: self.
+	assocs:= Dictionary new.
 ]
 
 { #category : #helper }
@@ -130,4 +140,21 @@ DcAe >> methodFromCmd: cmd [
 	rq6 := '' join: rq5.
 	rq7 := (rq6 , ':assoc:') asSymbol.
 	^ rq7
+]
+
+{ #category : #services }
+DcAe >> releaseAssoc: anAssoc [
+
+	assocs removeKey: anAssoc ifAbsent: [ self halt. ]
+]
+
+{ #category : #services }
+DcAe >> setupAssoc: anAETitle [
+
+	| assoc paramDict |
+	assoc := DcAssociation new.
+	assoc ae: self. 
+		assoc remoteAETitle: anAETitle.
+   DcAcse default	connectAssoc: assoc param:paramDict.
+	assocs at: anAETitle put: assoc
 ]

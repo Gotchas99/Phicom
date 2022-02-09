@@ -16,5 +16,9 @@ DcItemUserInformation >> standard [
 	self addItem: DcItemMaxLength new.
 	self addItem:
 		(DcItemImplementationClass new value: '1.2.276.0.7230010.3.0.3.6.99').
-	self addItem: (DcItemImplementationVersionName new value: 'PHICOM_0.1')
+	self addItem:
+		(DcItemImplementationVersionName new value: 'PHICOM_0.1').
+		self addItem:
+		(DcItemMaxLength new value: 8192)
+		
 ]

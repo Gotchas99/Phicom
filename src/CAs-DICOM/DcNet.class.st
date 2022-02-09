@@ -175,6 +175,19 @@ DcNet >> checkLength: pdu [
 ]
 
 { #category : #'request handling' }
+DcNet >> connectAET: anAETitle [
+
+	| netw clientSocket clientStream |
+	netw := DcAeDirectory networkForAET: anAETitle.
+	clientSocket := Socket newTCP.
+	clientSocket connectTo: netw first port: netw second.
+	self assert: clientSocket isConnected.
+	"clientStream := SocketStream on: clientSocket."
+clientStream :=self 	socketStreamOn:clientSocket.
+	^ clientStream
+]
+
+{ #category : #'request handling' }
 DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 
 	"Execute one single  request / response cycle on stream in 3 steps:
@@ -301,14 +314,31 @@ DcNet >> releaseServerSocket [
 ]
 
 { #category : #'request handling' }
+DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
+
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name
+		, ' sendPDU:'.
+	assoc stream ifNil: [ 
+		assoc stream: (self connectAET: assoc remoteAETitle) ].
+	ZnBufferedWriteStream
+		on: assoc stream
+		do: [ :s | aPdu writeOn: s ].
+		^ DcPDU readFrom: assoc stream.
+]
+
+{ #category : #'request handling' }
 DcNet >> sendPDU: aPdu forAssoc: assoc [
 
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
 		, ' sendPDU:'.
+	assoc stream ifNil: [ 
+		assoc stream: (self connectAET: assoc remoteAETitle) ].
 	ZnBufferedWriteStream
 		on: assoc stream
-		do: [ :s | aPdu writeOn: s ]
+		do: [ :s | 
+			aPdu writeOn: s ]
 ]
 
 { #category : #'request handling' }

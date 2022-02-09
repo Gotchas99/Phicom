@@ -24,11 +24,13 @@ DcAcse class >> reset [
 	default := nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #public }
 DcAcse >> abort: aRequest forAssoc: anAssoc [
 
-	self traceCr:DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-				, 'A-ABORT message recieved'.
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'A-ABORT message recieved'.
+	anAssoc release.
 	ConnectionClosed signal.
 	^ nil
 ]
@@ -59,6 +61,18 @@ DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 ]
 
 { #category : #public }
+DcAcse >> connectAssoc: assoc param: aParamDict [
+
+	| req |
+	req := DcAssociateRq new.
+	req callingAET: assoc ae aeTitle.
+	req calledAET: assoc remoteAETitle.
+req addStandardItems.
+	DcUpperLayerClient default associate: req forAssoc: assoc.
+	^ assoc
+]
+
+{ #category : #public }
 DcAcse >> indication: aRequest forAssoc: anAssoc [
 
 	| resp |
@@ -84,8 +98,9 @@ DcAcse >> releaseRq: aRequest forAssoc: anAssoc [
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, 'A-RELEASE-RQ message recieved'.
+		anAssoc release.
 	resp := DcReleaseRp new.
-		^ resp
+	^ resp
 ]
 
 { #category : #public }
