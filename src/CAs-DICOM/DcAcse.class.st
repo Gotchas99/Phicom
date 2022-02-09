@@ -80,11 +80,12 @@ DcAcse >> indication: aRequest forAssoc: anAssoc [
 { #category : #public }
 DcAcse >> releaseRq: aRequest forAssoc: anAssoc [
 
-		self traceCr:
+	| resp |
+	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, 'A-RELEASE-RQ message recieved'.
-	ConnectionClosed signal.
-	^ nil
+	resp := DcReleaseRp new.
+		^ resp
 ]
 
 { #category : #public }

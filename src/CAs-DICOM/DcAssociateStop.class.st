@@ -13,8 +13,9 @@ Class {
 DcAssociateStop >> initialize [
 
 	super initialize.
-	reasonDiag :=1.
-	
+	reasonDiag := 1.
+	result := 1.
+	source := 1
 ]
 
 { #category : #writing }

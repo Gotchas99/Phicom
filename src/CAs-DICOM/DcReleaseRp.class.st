@@ -15,3 +15,9 @@ DcReleaseRp class >> type [
 
 	^ 6
 ]
+
+{ #category : #initialization }
+DcReleaseRp >> initialize [ 
+super initialize .
+source:=2.
+]
