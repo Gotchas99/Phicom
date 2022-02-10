@@ -2,8 +2,7 @@ Class {
 	#name : #DcItemPresContext,
 	#superclass : #DcItemComplex,
 	#instVars : [
-		'ctxID',
-		'resultReason'
+		'ctxID'
 	],
 	#category : #'CAs-DICOM-ACSE'
 }
@@ -34,8 +33,8 @@ DcItemPresContext >> ctxID: anObject [
 DcItemPresContext >> initialize [
 
 	super initialize.
-		ctxID := 1.
-	resultReason := 0
+	ctxID := 1.
+	
 ]
 
 { #category : #accessing }
@@ -48,32 +47,17 @@ DcItemPresContext >> myLength [
 DcItemPresContext >> readMyFieldsFrom: stream [
 
 	ctxID := stream next.
-	stream skip: 1.
-	resultReason := stream next.
-	stream skip: 1.
-
-]
-
-{ #category : #accessing }
-DcItemPresContext >> resultReason [
-
-	^ resultReason
-]
-
-{ #category : #accessing }
-DcItemPresContext >> resultReason: anObject [
-
-	resultReason := anObject
+	stream skip: 1;
+ skip: 1;
+ skip: 1
 ]
 
 { #category : #writing }
 DcItemPresContext >> writeMyFieldsOn: stream [
 
-
 	stream
 		uint8: ctxID;
 		uint8: 0;
-		uint8: resultReason;
-		uint8: 0.
-	
+		uint8: 0;
+		uint8: 0
 ]
