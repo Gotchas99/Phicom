@@ -83,12 +83,12 @@ DcNet class >> shutDown: quitting [
 
 	"Our system shutDown hook: stop all servers we manage"
 
-	self traceCr: 'shutDown. quitting: ' , quitting printString.
-	(quitting or: [ self alwaysRestart ]) ifTrue: [ 
+	self traceCr: 'shutDown. quitting: ' , quitting printString
+		, ' -----------------------------------------------------'.
+	(quitting or: [ self alwaysRestart ]) ifTrue: [ "	self allInstances do: [ :srv | srv stop ]"
 		default
 			ifNil: [ self traceCr: 'no default server found.' ]
-			ifNotNil: [ default stop ] ].
-"	self allInstances do: [ :srv | srv stop ]"
+			ifNotNil: [ default stop ] ]
 ]
 
 { #category : #initialization }
@@ -124,14 +124,17 @@ DcNet class >> startDefaultOn: portNumber [
 { #category : #'system startup' }
 DcNet class >> startUp: resuming [
 
-	self traceCr: 'startUp. resuming: ' , resuming printString.
+	self traceCr: 'startUp. resuming: ' , resuming printString
+		, ' ------------------------------------------------------'.
 	"Our system startUp hook: start all servers we manage.
 	We do this using deferred startup actions to allow normal error handling."
 	(resuming or: [ self alwaysRestart ]) ifTrue: [ 
-		default ifNil:[self traceCr: 'no default server found.' .]ifNotNil: [ 
-			self traceCr: 'default server found. starting it up' .
-			SessionManager default currentSession addDeferredStartupAction: [ 
-				self startDefault ] ] ]
+		default
+			ifNil: [ self traceCr: 'no default server found.' ]
+			ifNotNil: [ 
+				self traceCr: 'default server found. starting it up'.
+				SessionManager default currentSession addDeferredStartupAction: [ 
+					self startDefault ] ] ]
 ]
 
 { #category : #initialization }
@@ -246,7 +249,7 @@ DcNet >> listenLoop [
 	After each connection we also check that the listening Socket is still valid 
 	- if not we just make a recursive call to this method to start over."
 
-	self traceCr: DateAndTime current asStringYMDHMS,' listenLoop ======================='.
+	self log: 'listenLoop ======================='.
 	self initializeServerSocket.
 	[ 
 	[ 
@@ -259,6 +262,14 @@ DcNet >> listenLoop [
 		self traceCr: 'listenloop ended (ensure:). releaseServerSocket'.
 		self releaseServerSocket ].
 	self traceCr: 'After serveConnectionsOn ----------------------------'
+]
+
+{ #category : #'request handling' }
+DcNet >> log: aString [
+
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , '->'
+		, aString
 ]
 
 { #category : #accessing }
