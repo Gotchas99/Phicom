@@ -3,19 +3,11 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'filename',
-		'contents',
 		'meta',
 		'dataset'
 	],
 	#category : #'CAs-DICOM-File'
 }
-
-{ #category : #accessing }
-DcFile >> contents [
-
-	^ contents ifNil: [ 
-		  contents := filename asFileReference binaryReadStream contents ]
-]
 
 { #category : #accessing }
 DcFile >> filename: aString [ 
@@ -47,10 +39,4 @@ DcFile >> read [
 		meta := DcFileMeta readMetaFrom: s.
 
 		dataset := DcDataSet readFrom: s explicitVR: self isExplicit ]
-]
-
-{ #category : #accessing }
-DcFile >> reset [
-
- contents:=nil
 ]

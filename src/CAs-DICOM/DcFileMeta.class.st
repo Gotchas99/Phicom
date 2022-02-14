@@ -7,22 +7,20 @@ Class {
 		'preAmble',
 		'prefix'
 	],
-	#classVars : [
-		'Registry'
-	],
 	#category : #'CAs-DICOM-File'
 }
 
 { #category : #registry }
 DcFileMeta class >> initialize [
 
-	self initializeRegistry
+"	self initializeRegistry"
 ]
 
 { #category : #registry }
 DcFileMeta class >> initializeRegistry [
 
-	Registry:= DcTable new text: self registryText cols: 5
+	self deprecated: 'init görs i dctable'.
+	"Registry := DcTable new text: self registryText cols: 5"
 ]
 
 { #category : #'as yet unclassified' }
@@ -33,13 +31,14 @@ DcFileMeta class >> readMetaFrom: s [
 
 { #category : #registry }
 DcFileMeta class >> registry [
-
-	^ Registry
+self deprecated: 'sköts i dctable'.
+	"^ Registry"
 ]
 
 { #category : #registry }
 DcFileMeta class >> registryText [
-
+self deprecated: 'sköts i dctable'
+	.
 	^ 'Tag
 
 Name
@@ -306,23 +305,22 @@ DcFileMeta >> isPrefixValid [
 { #category : #'as yet unclassified' }
 DcFileMeta >> preAmble [
 
-	^ self contents first: 128
+	^ preAmble
 ]
 
 { #category : #'as yet unclassified' }
 DcFileMeta >> prefix [
 
-	^ self contents copyFrom: 129 to: 129 + 4-1
+	^ prefix
 ]
 
 { #category : #'as yet unclassified' }
 DcFileMeta >> readMetaFrom: s [
 
 	| infoGroupLength group attr reg key |
-	preAmble := s next: 128.
-		prefix := (s next: 4) asString.
-	infoGroupLength := (DcElement from: s explicitVR: true) value
-		                  .
+	preAmble := s next: 128. 
+	prefix := (s next: 4) asString.
+	infoGroupLength := (DcElement from: s explicitVR: true) value.
 	group := s next: infoGroupLength.
 	meta := Dictionary new.
 	group readStreamDo: [ :gs | 

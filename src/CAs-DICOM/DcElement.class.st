@@ -296,7 +296,7 @@ DcElement >> isExplicitVR [
 { #category : #testing }
 DcElement >> isShortVR [
 
-	^ self shortVRs includes self vr
+	^ self shortVRs includes: self vr
 ]
 
 { #category : #testing }
@@ -337,11 +337,12 @@ DcElement >> lengthLength [
 DcElement >> printOn: aStream [
 
 	super printOn: aStream.
-
-	aStream << $(
-	<< tag keyword  << ': '.
-	self value printOn: aStream.
-	aStream << $)
+	"DcTable uidAtCode:"
+	aStream << $( << tag keyword << ': '.
+	self vr = 'UI'
+		ifTrue: [ aStream <<(DcTable uidAtCode:self value) ]
+		ifFalse: [ self value printOn: aStream. ].
+		aStream << $)
 ]
 
 { #category : #accessing }
@@ -351,6 +352,18 @@ DcElement >> rawValue [
 		  rawValue := (self class RawCodes
 			               at: self vr
 			               ifAbsent: [ [ :v | v padToEven asByteArray ] ]) value: value ]
+]
+
+{ #category : #'as yet unclassified' }
+DcElement >> readSeq [
+
+	| items el it |
+	items := OrderedCollection new.
+	rawValue readStreamDo: [ :s | [ s atEnd]whileFalse:[
+		it := self class from: s explicitVR: false.
+		el := self class from: it rawValue readStream explicitVR: true.
+		items add: el] ].
+	^ items
 ]
 
 { #category : #accessing }

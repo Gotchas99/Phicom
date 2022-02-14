@@ -7,11 +7,13 @@ Class {
 { #category : #baselines }
 BaselineOfDicom >> baseline: spec [
 
+	"requires: Beacon-Core"
+
 	<baseline>
 	spec for: #common do: [ 
 		spec blessing: #baseline.
 		spec package: 'Dicom-Core'.
-		 ";
+		";
 			""Going from Dicom model to richText""package:
 				'Pillar-ExporterRichText'
 			with: [ spec requires: #( 'Dicom-Core' ) ]"

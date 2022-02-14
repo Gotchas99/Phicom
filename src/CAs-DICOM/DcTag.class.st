@@ -71,6 +71,14 @@ DcTag >> fromString: s [
 	 self parseHexTag: s
 ]
 
+{ #category : #writing }
+DcTag >> group [
+
+	^
+	 bin bitShift: -16.
+
+]
+
 { #category : #printing }
 DcTag >> hex [
 
@@ -86,12 +94,22 @@ DcTag >> isCommand [
 	
 ]
 
+{ #category : #writing }
+DcTag >> isPrivate [
+^ self group odd
+
+]
+
 { #category : #printing }
 DcTag >> keyword [
 
 	^ keyword ifNil: [ 
-		  [ keyword:=(DcTable tagAt: bin) at: #Keyword ifAbsent: [ '???' ] ] 
-			  onErrorDo: [ '***' ] ]
+		  keyword := [ 
+		             self isPrivate
+			             ifTrue: [ 'Private tag' ]
+			             ifFalse: [ 
+			             (DcTable tagAt: bin) at: #Keyword ifAbsent: [ '???' ] ] ] 
+			             onErrorDo: [ '***' ] ]
 ]
 
 { #category : #'instance creation' }
