@@ -329,13 +329,21 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
-		, ' sendPDU:'.
+		, ' sendAndRecievePDU:'.
 	assoc stream ifNil: [ 
 		assoc stream: (self connectAET: assoc remoteAETitle) ].
+	[ 
 	ZnBufferedWriteStream
 		on: assoc stream
 		do: [ :s | aPdu writeOn: s ].
-		^ DcPDU readFrom: assoc stream.
+	^ DcPDU readFrom: assoc stream ]
+		on: ConnectionClosed , ConnectionTimedOut
+		do: [ :ex | 
+			Transcript
+				show:
+					DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+					, 'sendAndRecievePDU: Connection error. Closing stream';
+				cr.		assoc stream close  ]
 ]
 
 { #category : #'request handling' }

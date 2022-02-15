@@ -256,7 +256,7 @@ DcElement >> checkLength [
 		     self writeOn: buffstream.
 		     buffstream close ].
 
-	b size = self groupLength ifFalse: [ self halt ].
+	b size = self groupLength ifFalse: [ self error:'invalid length' ].
 	self traceCr: self class name , ' ' , 'checkLength passed'
 ]
 

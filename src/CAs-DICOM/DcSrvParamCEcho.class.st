@@ -30,7 +30,7 @@ DcSrvParamCEcho >> createFromRequest: aParam [
 
 	super createFromRequest: aParam.
 	self messageType: 'C-ECHO-RSP'.
-	self sopClassUid: '1.2.840.10008.1.1'
+	self sopClassUid: (DcTable uidAtKeyword: #Verification)
 ]
 
 { #category : #creating }

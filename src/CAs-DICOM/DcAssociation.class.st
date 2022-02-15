@@ -81,7 +81,7 @@ DcAssociation >> dimse: anObject [
 DcAssociation >> initialize [
 
 	self resetIncoming.
-	nextMsgId := 0
+presCtxs := Dictionary new..	nextMsgId := 0
 ]
 
 { #category : #'accessing - deprecated' }
@@ -114,6 +114,12 @@ DcAssociation >> lastFragment [
 DcAssociation >> nextMsgId [
 nextMsgId:=nextMsgId+1.
 ^nextMsgId
+]
+
+{ #category : #accessing }
+DcAssociation >> nextMsgId:anInt [
+
+	nextMsgId := anInt
 ]
 
 { #category : #'accessing - deprecated' }

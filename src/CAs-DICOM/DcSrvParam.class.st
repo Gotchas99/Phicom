@@ -88,7 +88,7 @@ DcSrvParam >> createFromResponse: aParam [
 	messageIdResp := aParam messageId
 ]
 
-{ #category : #accessing }
+{ #category : #initialization }
 DcSrvParam >> initialize [ 
 dict:= Dictionary new
 ]

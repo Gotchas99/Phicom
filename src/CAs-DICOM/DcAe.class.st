@@ -102,15 +102,17 @@ DcAe >> dimse: anObject [
 { #category : #services }
 DcAe >> echo: anAETitle [
 
-	| assoc |
+	| assoc  req |
 	assoc := self setupAssoc: anAETitle.
-
+	req := DcSrvParamCEcho new createFromRequest: nil.
+	dimse responseService: req messageType param: req forAssoc: assoc
 ]
 
 { #category : #dispatch }
 DcAe >> indication: cmd with: param for: anAssoc [
 
 	| method |
+	anAssoc nextMsgId: param messageId .
 	method := self methodFromCmd: cmd.
 	^ self perform: method with: param with: anAssoc
 ]
@@ -145,7 +147,7 @@ DcAe >> methodFromCmd: cmd [
 { #category : #services }
 DcAe >> releaseAssoc: anAssoc [
 
-	assocs removeKey: anAssoc ifAbsent: [ self halt. ]
+	assocs removeKey: anAssoc ifAbsent: [  ]
 ]
 
 { #category : #services }
@@ -153,8 +155,9 @@ DcAe >> setupAssoc: anAETitle [
 
 	| assoc paramDict |
 	assoc := DcAssociation new.
-	assoc ae: self. 
-		assoc remoteAETitle: anAETitle.
-   DcAcse default	connectAssoc: assoc param:paramDict.
-	assocs at: anAETitle put: assoc
+	assoc ae: self.
+	assoc remoteAETitle: anAETitle.
+	paramDict := Dictionary new.
+	DcAcse default connectAssoc: assoc param: paramDict.
+	assocs at: anAETitle put: assoc.^assoc
 ]

@@ -4,12 +4,6 @@ Class {
 	#category : #'CAs-DICOM-UpperLayer'
 }
 
-{ #category : #converting }
-DcUpperLayerClient >> associate: anAssoc [
-
-	self halt.
-]
-
 { #category : #'as yet unclassified' }
 DcUpperLayerClient >> associate: aReq forAssoc: anAssoc [
 
@@ -17,14 +11,7 @@ DcUpperLayerClient >> associate: aReq forAssoc: anAssoc [
 	pdu :=ByteArray streamContents: [:s|aReq writeOn: s]."
 
 	| resp |
-	resp:=DcNet new sendAndRecievePDU: aReq forAssoc: anAssoc
-]
-
-{ #category : #'as yet unclassified' }
-DcUpperLayerClient >> associateAET: anAET [ 
-
-	^ DcAssociation new
-		  aet: anAET
+	resp := DcNet new sendAndRecievePDU: aReq forAssoc: anAssoc.^resp
 ]
 
 { #category : #'as yet unclassified' }

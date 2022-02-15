@@ -36,6 +36,17 @@ DcAcse >> abort: aRequest forAssoc: anAssoc [
 ]
 
 { #category : #public }
+DcAcse >> associateAc: aRequest forAssoc: anAssoc [
+
+	| ae respPresCtx | 
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'A-ASSOCIATE-AC message recieved'.
+	respPresCtx := aRequest getPresentationContexts.
+	self halt
+]
+
+{ #category : #public }
 DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 
 	| ae resp respPresCtx ui |
@@ -63,12 +74,13 @@ DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 { #category : #public }
 DcAcse >> connectAssoc: assoc param: aParamDict [
 
-	| req |
-	req := DcAssociateRq new.
+	| req pdu |
+	req := DcAssociateRq new. 
 	req callingAET: assoc ae aeTitle.
 	req calledAET: assoc remoteAETitle.
-req addStandardItems.
-	DcUpperLayerClient default associate: req forAssoc: assoc.
+	req addStandardItems.
+	pdu := DcUpperLayerClient default associate: req forAssoc: assoc.
+	self indication: pdu forAssoc: assoc.
 	^ assoc
 ]
 
