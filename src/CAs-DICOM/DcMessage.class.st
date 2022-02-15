@@ -96,7 +96,7 @@ DcMessage >> cmd [
 	^ self cmdDict at: 'CommandField'
 ]
 
-{ #category : #adding }
+{ #category : #accessing }
 DcMessage >> cmdDict [
 
 	^ cmdDict ifEmpty: [  
@@ -141,7 +141,7 @@ DcMessage >> dataElements [
 	^ els
 ]
 
-{ #category : #adding }
+{ #category : #testing }
 DcMessage >> hasDataset [
 
 	^dataElements isNotEmpty 
@@ -167,7 +167,7 @@ DcMessage >> param: param [
 	self halt.
 ]
 
-{ #category : #adding }
+{ #category : #testing }
 DcMessage >> requiresDataset [
 
 	^ (self cmdDict at: 'CommandDataSetType') ~= self noDataset

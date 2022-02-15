@@ -166,7 +166,7 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 		ctx := anAssoc presCtxAt: pdv presCtxId.
 		fs := pdv fragment readStream.
 		[ fs atEnd ] whileFalse: [ 
-			element := DcElement from: fs explicitVR: ctx isExplictVR.
+			element := DcElement from: fs explicitVR: ctx isExplicitVR.
 			anAssoc addIncomingElement: element ].
 		pdv isLast ifTrue: [ 
 			msg := anAssoc lastElement.

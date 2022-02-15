@@ -4,14 +4,14 @@ Class {
 	#instVars : [
 		'uid',
 		'name',
-		'explictVR',
-		'littleEndian'
+		'littleEndian',
+		'explicitVR'
 	],
 	#classVars : [
 		'SyntaxName',
 		'SyntaxUid'
 	],
-	#category : #'CAs-DICOM-Dimse'
+	#category : #'CAs-DICOM-Core'
 }
 
 { #category : #'class initialization' }
@@ -75,22 +75,22 @@ DcSyntax >> asSyntax [
 { #category : #accessing }
 DcSyntax >> explictVR [
 
-	^ explictVR
+	^ explicitVR
 ]
 
 { #category : #accessing }
 DcSyntax >> explictVR: aBoolean [
 
-	explictVR := aBoolean
+	explicitVR := aBoolean
 
 
 
 ]
 
 { #category : #testing }
-DcSyntax >> isExplictVR [
+DcSyntax >> isExplicitVR [
 
-	^ explictVR
+	^ explicitVR
 ]
 
 { #category : #accessing }

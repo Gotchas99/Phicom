@@ -10,6 +10,10 @@ Class {
 }
 
 { #category : #accessing }
+DcFile >> dataset [ ^dataset
+]
+
+{ #category : #accessing }
 DcFile >> filename: aString [ 
 filename:=aString 
 ]
@@ -21,9 +25,9 @@ self flag:#todo.
 ]
 
 { #category : #'as yet unclassified' }
-DcFile >> isExplicit [
+DcFile >> isExplicitVR [
 
-	^ (meta at: 'TransferSyntaxUID')value = '1.2.840.10008.1.2.1'
+	^ (meta isExplicitVR ) 
 ]
 
 { #category : #accessing }
@@ -38,5 +42,5 @@ DcFile >> read [
 	filename asFileReference binaryReadStreamDo: [ :s | 
 		meta := DcFileMeta readMetaFrom: s.
 
-		dataset := DcDataSet readFrom: s explicitVR: self isExplicit ]
+		dataset := DcDataSet readFrom: s explicitVR: self isExplicitVR ]
 ]

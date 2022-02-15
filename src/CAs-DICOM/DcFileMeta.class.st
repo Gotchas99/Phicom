@@ -290,31 +290,40 @@ DcFileMeta >> at:aKey [
 ^meta at: aKey
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #documentation }
 DcFileMeta >> docs [
 "https://dicom.nema.org/medical/dicom/current/output/chtml/part10/chapter_7.html"
 "File Meta Information shall be encoded using the Explicit VR Little Endian Transfer Syntax (UID=1.2.840.10008.1.2.1) as defined in DICOM PS3.5. Values of each File Meta Element shall be padded when necessary to achieve an even length, as specified in PS3.5 by their corresponding Value Representation."
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
+DcFileMeta >> isExplicitVR [
+
+	| tsn uid |
+	uid := (self at: 'TransferSyntaxUID') value.
+	tsn := DcSyntax atUid: uid.
+	^ tsn isExplicitVR
+]
+
+{ #category : #testing }
 DcFileMeta >> isPrefixValid [
 
 	^ self prefix asString = 'DICM'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcFileMeta >> preAmble [
 
 	^ preAmble
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcFileMeta >> prefix [
 
 	^ prefix
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #reading }
 DcFileMeta >> readMetaFrom: s [
 
 	| infoGroupLength group attr reg key |

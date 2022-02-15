@@ -117,6 +117,7 @@ DcElement class >> initializeRawValues [
 	OW=Other Word
 	PN=Person Name
 	SH=Short String
+	SQ=Sequence
 	TM=Time
 	UI=UID
 	UL=Unsigned Long
@@ -128,10 +129,13 @@ DcElement class >> initializeRawValues [
 	RawCodes
 		at: 'DA' put: [ :val | val asString trimmed ];
 		at: 'DS' put: [ :val | val printString asByteArray ];
+		at: 'SQ' put: [ :val | 
+			self halt.
+			val asString trimmed ];
 		at: 'TM' put: [ :val | val asString trimmed ];
 		at: 'UI' put: [ :val | val padToEvenNull asByteArray ];
 		at: 'UL' put: [ :val | 
-		 	(ByteArray new: 4)
+			(ByteArray new: 4)
 				unsignedLongAt: 1 put: val bigEndian: false;
 				yourself ];
 		at: 'US' put: [ :val | "unsignedLongAt: 1 bigEndian: true."
@@ -147,12 +151,13 @@ DcElement class >> initializeVRvalues [
 	CS=Code String
 	DA=Date
 	DS=Decimal String
-	IS=not sure. dimensions for image?
+	IS=Integer String
 	LO=Long string
 	OB=Other byte
 	OW=Other Word
 	PN=Person Name
 	SH=Short String
+	SQ=Sequence
 	TM=Time
 	UI=UID
 	UL=Unsigned Long
@@ -160,26 +165,23 @@ DcElement class >> initializeVRvalues [
 
 	VRvalueCode := Dictionary new.
 	VRvalueCode
-		at: 'AS' put: [ :raw | raw asString trimmed ];
-		at: 'CS' put: [ :raw | raw asString trimmed ];
+		at: 'AS' put: #asString;
+		at: 'CS' put: #asString;
 		"needs to be converted to real date
-		"at: 'DA'
-		put: [ :raw | raw asString trimmed ];
-		at: 'DS' put: [ :raw | raw asString trimmed asNumber ];
-		at: 'IS'
-		put: [ :raw | raw asString trimmed ];
-	at: 'LO' put: [ :raw | raw asString trimmed ];
-		at: 'OB' put: [ :raw | raw ];
-		at: 'OW' put: [ :raw | raw ];
-		at: 'PN' put: [ :raw | raw asString trimmed ];
-		at: 'SH' put: [ :raw | raw asString trimmed ];
+		"at: 'DA' put: #asString;
+		at: 'DS' put: #asNumber;
+		at: 'IS' put: #asNumber;
+		at: 'LO' put: #asString;
+		at: 'OB' put: #asRaw;
+		at: 'OW' put: #asRaw;
+		at: 'PN' put: #asString;
+		at: 'SH' put: #asString;
+		at: 'SQ' put: #asSeq;
 		"needs to be converted to real time
-		"at: 'TM'
-		put: [ :raw | raw asString trimmed ];
-		at: 'UI'
-		put: [ :raw | (raw reject: [ :b | b = 0 ]) asString trimmed ];
-		at: 'UL' put: [ :raw | raw unsignedLongAt: 1 bigEndian: false ];
-		at: 'US' put: [ :raw | raw unsignedShortAt: 1 bigEndian: false ]
+		"at: 'TM' put: #asString;
+		at: 'UI' put: #asUID;
+		at: 'UL' put: #asLong;
+		at: 'US' put: #asShort
 ]
 
 { #category : #comparing }
@@ -188,17 +190,54 @@ DcElement >> <= otherElement [
 	^ tag <= otherElement tag
 ]
 
-{ #category : #accessing }
+{ #category : #converting }
 DcElement >> asLong [
 
 	^ rawValue longAt: 1 bigEndian: false
 ]
 
-{ #category : #accessing }
+{ #category : #converting }
+DcElement >> asNumber [
+
+	^ rawValue asString trimmed asNumber 
+]
+
+{ #category : #converting }
+DcElement >> asRaw [
+
+	^ rawValue 
+]
+
+{ #category : #converting }
+DcElement >> asSeq [
+
+	| items it |
+	items := OrderedCollection new.
+	rawValue readStreamDo: [ :s | 
+		[ s atEnd ] whileFalse: [ 
+			it := DcSqItem from: s explicitVR: explicitVR .
+			items add: it ] ].
+	^ items
+]
+
+{ #category : #converting }
 DcElement >> asShort [
 
 	^ rawValue  shortAt: 1
 		                   bigEndian: false.
+]
+
+{ #category : #converting }
+DcElement >> asString [
+
+	^ rawValue asString trimmed
+]
+
+{ #category : #converting }
+DcElement >> asUID [
+
+	^ (rawValue reject: [ :b | b = 0 ]) asString trimmed
+
 ]
 
 { #category : #accessing }
@@ -337,12 +376,13 @@ DcElement >> lengthLength [
 DcElement >> printOn: aStream [
 
 	super printOn: aStream.
-	"DcTable uidAtCode:"
-	aStream << $( << tag keyword << ': '.
+	aStream << $( << tag keyword << 
+	'('<< self vr<<')'<<
+	': '.
 	self vr = 'UI'
-		ifTrue: [ aStream <<(DcTable uidAtCode:self value) ]
-		ifFalse: [ self value printOn: aStream. ].
-		aStream << $)
+		ifTrue: [ aStream << (DcTable uidAtCode: self value) ]
+		ifFalse: [ self value printOn: aStream ].
+	aStream << $)
 ]
 
 { #category : #accessing }
@@ -352,18 +392,6 @@ DcElement >> rawValue [
 		  rawValue := (self class RawCodes
 			               at: self vr
 			               ifAbsent: [ [ :v | v padToEven asByteArray ] ]) value: value ]
-]
-
-{ #category : #'as yet unclassified' }
-DcElement >> readSeq [
-
-	| items el it |
-	items := OrderedCollection new.
-	rawValue readStreamDo: [ :s | [ s atEnd]whileFalse:[
-		it := self class from: s explicitVR: false.
-		el := self class from: it rawValue readStream explicitVR: true.
-		items add: el] ].
-	^ items
 ]
 
 { #category : #accessing }
@@ -384,7 +412,7 @@ DcElement >> tag [
 DcElement >> value [
 
 	^ value ifNil: [ 
-		  value := (self class VRcodes at: self vr) value: rawValue ]
+		  value :=self perform: (self class VRcodes at: self vr)  ]
 ]
 
 { #category : #accessing }
