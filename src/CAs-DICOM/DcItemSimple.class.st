@@ -26,7 +26,7 @@ DcItemSimple >> printOn: stream [
 
 	super printOn: stream.
 	stream nextPut: $(.
-	stream<<value  .
+	stream << value asString.
 	stream nextPut: $)
 ]
 

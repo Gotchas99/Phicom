@@ -327,6 +327,7 @@ DcNet >> releaseServerSocket [
 { #category : #'request handling' }
 DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 
+	| pdu |
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
 		, ' sendAndRecievePDU:'.
@@ -336,14 +337,16 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 	ZnBufferedWriteStream
 		on: assoc stream
 		do: [ :s | aPdu writeOn: s ].
-	^ DcPDU readFrom: assoc stream ]
+	pdu := DcPDU readFrom: assoc stream.
+	^ pdu ]
 		on: ConnectionClosed , ConnectionTimedOut
 		do: [ :ex | 
 			Transcript
 				show:
 					DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 					, 'sendAndRecievePDU: Connection error. Closing stream';
-				cr.		assoc stream close  ]
+				cr.
+			assoc stream close ]
 ]
 
 { #category : #'request handling' }

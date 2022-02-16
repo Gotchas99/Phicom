@@ -14,8 +14,9 @@ DcAssociateAc class >> type [
 ]
 
 { #category : #'as yet unclassified' }
-DcAssociateAc >> invalid:resultCode [
+DcAssociateAc >> invalid: resultCode [
 
+	self halt.
 ]
 
 { #category : #accessing }

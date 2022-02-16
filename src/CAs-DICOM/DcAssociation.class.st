@@ -4,11 +4,12 @@ Class {
 	#instVars : [
 		'ae',
 		'remoteAETitle',
-		'presCtxs',
 		'dimse',
 		'incomingMsg',
-		'nextMsgId',
-		'stream'
+		'stream',
+		'offeredPresCtxs',
+		'agreedPresCtxs',
+		'lastKnownMsgId'
 	],
 	#category : #'CAs-DICOM-AE'
 }
@@ -59,7 +60,7 @@ DcAssociation >> asnForService: aService [
 { #category : #accessing }
 DcAssociation >> ctxidForSopUid: anAbstractSyntax [
 
-	presCtxs keysAndValuesDo: [ :key :value | 
+	agreedPresCtxs keysAndValuesDo: [ :key :value | 
 		value first value = anAbstractSyntax ifTrue: [ ^ key ] ].
 	Error signal: 'ctxId notefound'
 
@@ -81,7 +82,8 @@ DcAssociation >> dimse: anObject [
 DcAssociation >> initialize [
 
 	self resetIncoming.
-presCtxs := Dictionary new..	nextMsgId := 0
+	offeredPresCtxs := Dictionary new.agreedPresCtxs := Dictionary new.
+	lastKnownMsgId := 0
 ]
 
 { #category : #'accessing - deprecated' }
@@ -111,15 +113,15 @@ DcAssociation >> lastFragment [
 ]
 
 { #category : #accessing }
-DcAssociation >> nextMsgId [
-nextMsgId:=nextMsgId+1.
-^nextMsgId
+DcAssociation >> lastKnownMsgId: anInt [
+
+	lastKnownMsgId := lastKnownMsgId max: anInt
 ]
 
 { #category : #accessing }
-DcAssociation >> nextMsgId:anInt [
-
-	nextMsgId := anInt
+DcAssociation >> nextMsgId [
+lastKnownMsgId:=lastKnownMsgId+1.
+^lastKnownMsgId
 ]
 
 { #category : #'accessing - deprecated' }
@@ -134,7 +136,7 @@ DcAssociation >> presCtxAt: aPresCtxID [
 
 
 	| tsn |
-	tsn:=(presCtxs at: aPresCtxID) second.
+	tsn:=(agreedPresCtxs at: aPresCtxID) second.
 	^DcSyntax atUid: tsn value.
 	
 ]
@@ -143,7 +145,7 @@ DcAssociation >> presCtxAt: aPresCtxID [
 DcAssociation >> presForAsn: anAbstractSyntax [
 
 	| tsn |
-	tsn := (presCtxs at: anAbstractSyntax) second.
+	tsn := (agreedPresCtxs at: anAbstractSyntax) second.
 	^ DcSyntax atUid: tsn value
 ]
 
@@ -171,7 +173,9 @@ incomingMsg := DcMessage new.
 { #category : #accessing }
 DcAssociation >> selectedPresCtxs: selectedPresCtx [
 
-	presCtxs := Dictionary new.selectedPresCtx do:[:px|presCtxs  at: px ctxID  put: px items].
+	agreedPresCtxs := Dictionary new. 
+	selectedPresCtx do: [ :px | 
+		agreedPresCtxs at: px ctxID put: px items ]
 ]
 
 { #category : #accessing }

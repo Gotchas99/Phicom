@@ -39,6 +39,23 @@ DcAssociateStart >> callingAET: aString [
 	 callingAET := aString
 ]
 
+{ #category : #accessing }
+DcAssociateStart >> getPresentationContexts [
+
+	| presCtxs |
+	presCtxs := items
+		            select: [ :it | it itemType = DcItemPresContext itemType ]
+		          	.^ presCtxs 
+]
+
+{ #category : #testing }
+DcAssociateStart >> isValidateAppContext [
+
+	| appCtx |
+	appCtx := items detect: [ :it | it itemType =DcItemAppContext itemType  ] ifNone: [ ^ false ].
+	^ appCtx isValid
+]
+
 { #category : #writing }
 DcAssociateStart >> myLength [
 
@@ -61,7 +78,7 @@ DcAssociateStart >> readPduFrom: stream [
 	 ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcAssociateStart >> version [
 ^version
 ]

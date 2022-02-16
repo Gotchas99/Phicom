@@ -52,7 +52,7 @@ DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 	| ae resp respPresCtx ui |
 	self traceCr: DateAndTime current asStringYMDHMS ,  ' ' , self class name ,  ' '
 				,'A-ASSOCIATE-RQ message recieved'.
-	aRequest validateAppContext ifFalse: [ 
+	aRequest isValidateAppContext ifFalse: [ 
 		^ DcAssociateRj invalidAppContext ].
 	[ ae := DcAeDirectory ourAET: aRequest calledAET ]
 		on: KeyNotFound
