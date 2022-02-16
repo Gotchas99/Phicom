@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #printing }
+DcItemUid >> fromKeyword: aString [
+
+	value := DcTable uidAtKeyword:  aString
+]
+
+{ #category : #printing }
 DcItemUid >> keyword [
 
 	^DcTable uidAtCode: value.

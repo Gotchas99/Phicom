@@ -29,7 +29,7 @@ DcSrvParamCEcho >> createFromMessage: aMsg [
 DcSrvParamCEcho >> createFromRequest: aParam [
 
 	super createFromRequest: aParam.
-	self messageType: 'C-ECHO-RSP'.
+	self messageType: 'C-ECHO-RQ'.
 	self sopClassUid: (DcTable uidAtKeyword: #Verification)
 ]
 

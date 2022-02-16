@@ -7,6 +7,7 @@ Class {
 		'dimse',
 		'incomingMsg',
 		'stream',
+		'ctxID',
 		'offeredPresCtxs',
 		'agreedPresCtxs',
 		'lastKnownMsgId'
@@ -27,6 +28,14 @@ DcAssociation >> addFragment: aFrag isCmd: isCmd [
 DcAssociation >> addIncomingElement: element [
 
 	incomingMsg addElement: element
+]
+
+{ #category : #'presentation context' }
+DcAssociation >> addOfferedPresCtxs: asn tsn: tsn [
+
+	| sn |
+	sn := (OrderedCollection with:asn)  , tsn.
+	offeredPresCtxs at: self nextCtxID put: sn
 ]
 
 { #category : #accessing }
@@ -53,11 +62,23 @@ self deprecated:'not needed here'.
 	"aet := anAET"
 ]
 
-{ #category : #accessing }
+{ #category : #'presentation context' }
+DcAssociation >> agreedPresCtxs: acceptedPresCtx [
+
+	| asn sn tsn |
+	agreedPresCtxs := Dictionary new.
+	acceptedPresCtx do: [ :px | 
+		asn:= (offeredPresCtxs at:px ctxID)first.
+		tsn:= DcTable uidAtCode:(px items first value).
+		sn:= OrderedCollection with:asn with:tsn.
+		agreedPresCtxs at: px ctxID put: sn ]
+]
+
+{ #category : #'presentation context' }
 DcAssociation >> asnForService: aService [
 ]
 
-{ #category : #accessing }
+{ #category : #'presentation context' }
 DcAssociation >> ctxidForSopUid: anAbstractSyntax [
 
 	agreedPresCtxs keysAndValuesDo: [ :key :value | 
@@ -119,9 +140,26 @@ DcAssociation >> lastKnownMsgId: anInt [
 ]
 
 { #category : #accessing }
+DcAssociation >> nextCtxID [
+
+	^ ctxID := ctxID ifNil: [ 1 ] ifNotNil: [ ctxID + 2 ]
+]
+
+{ #category : #accessing }
 DcAssociation >> nextMsgId [
 lastKnownMsgId:=lastKnownMsgId+1.
 ^lastKnownMsgId
+]
+
+{ #category : #'presentation context' }
+DcAssociation >> offeredPresCtxs [
+^
+	offeredPresCtxs
+]
+
+{ #category : #'presentation context' }
+DcAssociation >> offeredPresCtxs: pctxs [
+offeredPresCtxs:= pctxs
 ]
 
 { #category : #'accessing - deprecated' }
@@ -131,7 +169,7 @@ DcAssociation >> port: aPort [
 	"port := aPort"
 ]
 
-{ #category : #accessing }
+{ #category : #'presentation context' }
 DcAssociation >> presCtxAt: aPresCtxID [
 
 
@@ -141,7 +179,7 @@ DcAssociation >> presCtxAt: aPresCtxID [
 	
 ]
 
-{ #category : #accessing }
+{ #category : #'presentation context' }
 DcAssociation >> presForAsn: anAbstractSyntax [
 
 	| tsn |
@@ -164,13 +202,19 @@ DcAssociation >> remoteAETitle: aString [
 	 remoteAETitle:= aString
 ]
 
+{ #category : #initialization }
+DcAssociation >> reset [
+
+	ae :=  dimse:= incomingMsg:= stream:= offeredPresCtxs:= agreedPresCtxs:=nil
+]
+
 { #category : #message }
 DcAssociation >> resetIncoming [
 incomingMsg := DcMessage new.
 	"cmdFragments := OrderedCollection new.	dataFragments := OrderedCollection new."
 ]
 
-{ #category : #accessing }
+{ #category : #'presentation context' }
 DcAssociation >> selectedPresCtxs: selectedPresCtx [
 
 	agreedPresCtxs := Dictionary new. 

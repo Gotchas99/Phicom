@@ -38,12 +38,12 @@ DcAcse >> abort: aRequest forAssoc: anAssoc [
 { #category : #public }
 DcAcse >> associateAc: aRequest forAssoc: anAssoc [
 
-	| ae respPresCtx | 
+	|  respPresCtx |
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, 'A-ASSOCIATE-AC message recieved'.
 	respPresCtx := aRequest getPresentationContexts.
-	self halt
+	anAssoc agreedPresCtxs: respPresCtx
 ]
 
 { #category : #public }
@@ -74,14 +74,32 @@ DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 { #category : #public }
 DcAcse >> connectAssoc: assoc param: aParamDict [
 
-	| req pdu |
-	req := DcAssociateRq new. 
+	| req pdu pctxItems |
+	req := DcAssociateRq new.
 	req callingAET: assoc ae aeTitle.
 	req calledAET: assoc remoteAETitle.
+	pctxItems := self createPctxItems: assoc.
+	pctxItems do:[:i|req addPresContext: i].
 	req addStandardItems.
 	pdu := DcUpperLayerClient default associate: req forAssoc: assoc.
 	self indication: pdu forAssoc: assoc.
 	^ assoc
+]
+
+{ #category : #helper }
+DcAcse >> createPctxItems: assoc [
+
+	| offered pitems px |
+	offered := assoc offeredPresCtxs.
+	pitems := OrderedCollection new.
+	offered keysAndValuesDo: [ :k :v | 
+		px := DcItemPresContext new.
+		px ctxID: k.
+		px addItem: (DcItemAbstractSyntax new fromKeyword: v first).
+		v allButFirst do: [ :tsn | 
+			px addItem: (DcItemTransferSyntax new fromKeyword: tsn) ].
+		pitems add: px ].
+	^ pitems
 ]
 
 { #category : #public }

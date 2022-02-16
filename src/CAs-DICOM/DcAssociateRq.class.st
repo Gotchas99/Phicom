@@ -1,9 +1,6 @@
 Class {
 	#name : #DcAssociateRq,
 	#superclass : #DcAssociateStart,
-	#instVars : [
-		'ctxID'
-	],
 	#category : #'CAs-DICOM-ACSE'
 }
 
@@ -14,8 +11,7 @@ DcAssociateRq class >> type [ ^1
 { #category : #accessing }
 DcAssociateRq >> addPresContext: aPresContext [
 
-	|  |
-	aPresContext id: self nextCtxID.
+"	aPresContext ctxID: self nextCtxID."
 	items add: aPresContext
 ]
 
@@ -24,15 +20,10 @@ DcAssociateRq >> addStandardItems [
 
 	| pres ui |
 	self addItem: DcItemAppContext new.
-	pres := DcItemPresContext new.
-	pres addItem:(DcItemAbstractSyntax verification ).
-		pres addItem:(DcItemTransferSyntax default).
-	self addItem: pres.
+	"pres := DcItemPresContext new.
+	pres addItem: DcItemAbstractSyntax verification.
+	pres addItem: DcItemTransferSyntax default.
+	self addPresContext: pres."
 	ui := DcItemUserInformation new standard.
 	self addItem: ui
-]
-
-{ #category : #accessing }
-DcAssociateRq >> nextCtxID [
-^ctxID := ctxID ifNil: [ 1 ] ifNotNil: [ ctxID+2 ]
 ]

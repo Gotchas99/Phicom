@@ -200,8 +200,8 @@ DcDimse >> requestService: service param: param forAssoc: anAssoc [
 	self halt.
 	param messageType: service.
 	msg := param asMessage.
-	els := msg cmdElements.
-	ctxid := anAssoc ctxidForSopUid: service.
+els := msg cmdElements.
+	ctxid := anAssoc ctxidForSopUid: msg sopClassUid.
 	DcUpperLayerClient default request: msg forAssoc: anAssoc
 ]
 

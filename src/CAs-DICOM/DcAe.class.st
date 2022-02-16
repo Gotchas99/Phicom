@@ -105,7 +105,8 @@ DcAe >> echo: anAETitle [
 	| assoc  req |
 	assoc := self setupAssoc: anAETitle.
 	req := DcSrvParamCEcho new createFromRequest: nil.
-	dimse responseService: req messageType param: req forAssoc: assoc
+	req messageId: assoc nextMsgId .
+	dimse requestService: req messageType param: req forAssoc: assoc
 ]
 
 { #category : #dispatch }
@@ -130,7 +131,7 @@ DcAe >> initializeNetwork [
 	assocs:= Dictionary new.
 ]
 
-{ #category : #helper }
+{ #category : #private }
 DcAe >> methodFromCmd: cmd [
 
 	"cmd := 'C-ECHO-RQ'."
@@ -150,14 +151,18 @@ DcAe >> releaseAssoc: anAssoc [
 	assocs removeKey: anAssoc ifAbsent: [  ]
 ]
 
-{ #category : #services }
+{ #category : #private }
 DcAe >> setupAssoc: anAETitle [
 
-	| assoc paramDict |
+	| assoc paramDict  |
 	assoc := DcAssociation new.
 	assoc ae: self.
 	assoc remoteAETitle: anAETitle.
 	paramDict := Dictionary new.
+	assoc
+		addOfferedPresCtxs: #Verification
+		tsn: #( #ImplicitVRLittleEndian ).
 	DcAcse default connectAssoc: assoc param: paramDict.
-	assocs at: anAETitle put: assoc.^assoc
+	assocs at: anAETitle put: assoc.
+	^ assoc
 ]

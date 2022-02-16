@@ -43,9 +43,9 @@ DcAssociateStart >> callingAET: aString [
 DcAssociateStart >> getPresentationContexts [
 
 	| presCtxs |
-	presCtxs := items
-		            select: [ :it | it itemType = DcItemPresContext itemType ]
-		          	.^ presCtxs 
+	presCtxs := items select: [ :it | 
+		            it  isKindOf: DcItemPresContext  ].
+	^ presCtxs
 ]
 
 { #category : #testing }

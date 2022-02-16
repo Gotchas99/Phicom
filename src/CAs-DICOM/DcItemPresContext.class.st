@@ -14,10 +14,6 @@ DcItemPresContext class >> itemType [
 	^ Integer readFrom: '20H' base: 16
 ]
 
-{ #category : #'as yet unclassified' }
-DcItemPresContext >> abstractSyntax [
-]
-
 { #category : #accessing }
 DcItemPresContext >> ctxID [
 
