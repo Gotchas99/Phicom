@@ -218,12 +218,11 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 
 { #category : #'request handling' }
 DcNet >> executeRequestResponseLoopOn: assoc [
-
-	|  |
+ 
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, ' executeRequestResponseLoopOn:'.
-		[assoc  stream isConnected ] whileTrue: [ 
+	[ assoc stream isConnected ] whileTrue: [ 
 		self executeOneRequestResponseOn: assoc stream forAssoc: assoc ]
 ]
 
@@ -270,7 +269,7 @@ DcNet >> listenLoop [
 	self traceCr: 'After serveConnectionsOn ----------------------------'
 ]
 
-{ #category : #'request handling' }
+{ #category : #private }
 DcNet >> log: aString [
 
 	self traceCr:
@@ -345,7 +344,19 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 		do: [ :s | aPdu writeOn: s ].
 	pdu := DcPDU readFrom: assoc stream.
 	self halt.
-	(pdu class=DcAssociateAc )ifTrue:[self executeRequestResponseLoopOn: assoc].
+	pdu class = DcAssociateAc ifTrue: [ 
+		[ "self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'serveConnectionsOn:process started **************'."
+	[ assoc stream isConnected ] whileTrue: [ "self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'serveConnectionsOn:process stopped **************'" 
+		self executeRequestResponseLoopOn: assoc] ]
+		forkAt: 32
+		named: 'serveConnectionsOnAc'
+		
+		
+		 ].
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
 		, ' sendAndRecievePDU: <' , pdu class name.
@@ -482,7 +493,7 @@ DcNet >> stop [
 	process := nil.	self traceCr: 'server stopped **************'
 ]
 
-{ #category : #'request handling' }
+{ #category : #private }
 DcNet >> writeResponse: response on: stream [
 
 	response

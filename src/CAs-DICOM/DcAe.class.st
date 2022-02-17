@@ -78,11 +78,20 @@ DcAe >> cEchoRq: param assoc: anAssoc [
 	dimse responseService: rsp messageType param: rsp forAssoc: anAssoc
 ]
 
+{ #category : #services }
+DcAe >> cEchoRsp: param assoc: anAssoc [
+
+	| rsp |
+	rsp := DcSrvParamCEcho new createFromResponse: param.
+	rsp status: 0.
+	dimse responseService: rsp messageType param: rsp forAssoc: anAssoc
+]
+
 { #category : #dispatch }
 DcAe >> confirmation: cmd with: param for: anAssoc [
 
 	| method |
-	"method := self class CmdTable at: cmd."
+	"anAssoc lastKnownMsgId: param messageId."
 	method := self methodFromCmd: cmd.
 	^ self perform: method with: param with: anAssoc
 ]

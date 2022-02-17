@@ -9,7 +9,7 @@ Class {
 
 { #category : #'code-critics' }
 ManifestCAsDICOM class >> ruleBadMessageRule2V1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#DcAe #indication:with:for: #false)) #'2022-02-15T16:29:30.121+01:00') )
+	^ #(#(#(#RGMethodDefinition #(#DcAe #indication:with:for: #false)) #'2022-02-15T16:29:30.121+01:00') #(#(#RGMethodDefinition #(#DcAe #confirmation:with:for: #false)) #'2022-02-17T14:24:11.301+01:00') )
 ]
 
 { #category : #'code-critics' }
