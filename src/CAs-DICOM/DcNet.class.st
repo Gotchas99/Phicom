@@ -60,6 +60,11 @@ DcNet class >> initialize [
 	default := nil
 ]
 
+{ #category : #'system startup' }
+DcNet class >> loggingClass [
+^TranscriptLogger
+]
+
 { #category : #'instance creation' }
 DcNet class >> on: aNumber [
 
@@ -88,7 +93,8 @@ DcNet class >> shutDown: quitting [
 	(quitting or: [ self alwaysRestart ]) ifTrue: [ "	self allInstances do: [ :srv | srv stop ]"
 		default
 			ifNil: [ self traceCr: 'no default server found.' ]
-			ifNotNil: [ default stop ] ]
+			ifNotNil: [ default stop ] ].
+	self loggingClass stop
 ]
 
 { #category : #initialization }
@@ -124,6 +130,7 @@ DcNet class >> startDefaultOn: portNumber [
 { #category : #'system startup' }
 DcNet class >> startUp: resuming [
 
+	self loggingClass  start.
 	self traceCr: 'startUp. resuming: ' , resuming printString
 		, ' ------------------------------------------------------'.
 	"Our system startUp hook: start all servers we manage.
@@ -330,7 +337,7 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 	| pdu |
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
-		, ' sendAndRecievePDU:'.
+		, ' sendAndRecievePDU: >' , aPdu class name.
 	assoc stream ifNil: [ 
 		assoc stream: (self connectAET: assoc remoteAETitle) ].
 	[ 
@@ -338,6 +345,9 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 		on: assoc stream
 		do: [ :s | aPdu writeOn: s ].
 	pdu := DcPDU readFrom: assoc stream.
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name
+		, ' sendAndRecievePDU: <' , pdu class name.
 	^ pdu ]
 		on: ConnectionClosed , ConnectionTimedOut
 		do: [ :ex | 
@@ -354,13 +364,12 @@ DcNet >> sendPDU: aPdu forAssoc: assoc [
 
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
-		, ' sendPDU:'.
+		, ' sendPDU:', aPdu class name.
 	assoc stream ifNil: [ 
 		assoc stream: (self connectAET: assoc remoteAETitle) ].
 	ZnBufferedWriteStream
 		on: assoc stream
-		do: [ :s | 
-			aPdu writeOn: s ]
+		do: [ :s | aPdu writeOn: s ]
 ]
 
 { #category : #'request handling' }

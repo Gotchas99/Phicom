@@ -22,7 +22,14 @@ DcSyntax class >> add: paramArray [
 	| tsn |
 	tsn := self new.
 	tsn uid: paramArray first.
-	tsn name: paramArray second.
+	tsn name:
+	
+	((paramArray size >= 2 and:[paramArray second isNotNil])
+			 ifTrue: [ paramArray second ]
+			 ifFalse: [ DcTable uidAtCode: paramArray first ])
+			
+			
+	.
 	tsn explictVR: (paramArray size >= 3
 			 ifTrue: [ paramArray third ]
 			 ifFalse: [ true ]).
@@ -30,8 +37,13 @@ DcSyntax class >> add: paramArray [
 			 ifTrue: [ paramArray fourth ]
 			 ifFalse: [ true ]).
 	SyntaxUid at: tsn uid put: tsn.
-	SyntaxName at:
-	tsn name put: tsn
+	SyntaxName at: tsn name put: tsn
+]
+
+{ #category : #'class initialization' }
+DcSyntax class >> atName: aString [
+
+	^ SyntaxName at: aString
 ]
 
 { #category : #'class initialization' }
@@ -42,8 +54,10 @@ DcSyntax class >> atUid: aUid [
 
 { #category : #'class initialization' }
 DcSyntax class >> initialize [
-SyntaxUid := Dictionary new.
+
+	SyntaxUid := Dictionary new.
 	SyntaxName := Dictionary new.
+	self initializeAbstractSyntaxes.
 	self initializeTransferSyntaxes
 ]
 
@@ -52,18 +66,16 @@ DcSyntax class >> initializeAbstractSyntaxes [
 
 	"uid, name, explicit_VR(optional, default explicit)"
 
-	self add: #( '1.2.840.10008.1.1' 'abst syntax ???' ).
-
+	self add: #( '1.2.840.10008.1.1'  )
 ]
 
 { #category : #'class initialization' }
 DcSyntax class >> initializeTransferSyntaxes [
 
-	
 	"uid, name, explicit_VR(optional, default explicit), endianness(optional, default little endian)"
-	self add: #( '1.2.840.10008.1.2' 'Implicit VR Little Endian'
-		   false ).
-	self add: #( '1.2.840.10008.1.2.1' 'Explicit VR Little Endian' )
+
+	self add: #( '1.2.840.10008.1.2' nil false ).
+	self add: #( '1.2.840.10008.1.2.1'  )
 ]
 
 { #category : #converting }

@@ -15,25 +15,25 @@ DcAssociateStart class >> serviceName [
 	^ #aAssociate
 ]
 
-{ #category : #writing }
+{ #category : #accessing }
 DcAssociateStart >> calledAET [
 
 	^ calledAET 
 ]
 
-{ #category : #writing }
+{ #category : #accessing }
 DcAssociateStart >> calledAET: aString [
 
 		calledAET := aString
 ]
 
-{ #category : #writing }
+{ #category : #accessing }
 DcAssociateStart >> callingAET [
 
 	^ callingAET 
 ]
 
-{ #category : #writing }
+{ #category : #accessing }
 DcAssociateStart >> callingAET: aString [
 
 	 callingAET := aString
@@ -56,7 +56,7 @@ DcAssociateStart >> isValidateAppContext [
 	^ appCtx isValid
 ]
 
-{ #category : #writing }
+{ #category : #accessing }
 DcAssociateStart >> myLength [
 
 	^ 2 + 2 + 16 + 16 + 32

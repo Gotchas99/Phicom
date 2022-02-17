@@ -50,14 +50,16 @@ DcAcse >> associateAc: aRequest forAssoc: anAssoc [
 DcAcse >> associateRq: aRequest forAssoc: anAssoc [
 
 	| ae resp respPresCtx ui |
-	self traceCr: DateAndTime current asStringYMDHMS ,  ' ' , self class name ,  ' '
-				,'A-ASSOCIATE-RQ message recieved'.
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'A-ASSOCIATE-RQ message recieved'.
 	aRequest isValidateAppContext ifFalse: [ 
 		^ DcAssociateRj invalidAppContext ].
 	[ ae := DcAeDirectory ourAET: aRequest calledAET ]
 		on: KeyNotFound
 		do: [ ^ DcAssociateRj aeNotrecognized ].
 	anAssoc ae: ae default.
+	anAssoc remoteAETitle: aRequest callingAET .
 	anAssoc dimse: ae default dimse.
 	resp := DcAssociateAc new.
 	resp rq: aRequest.
@@ -122,6 +124,15 @@ DcAcse >> indication: aRequest forAssoc: anAssoc [
 ]
 
 { #category : #public }
+DcAcse >> releaseAssoc: assoc param: aParamDict [
+
+	| req |
+	req := DcReleaseRq new.
+	DcUpperLayerClient default release: req forAssoc: assoc.
+
+]
+
+{ #category : #public }
 DcAcse >> releaseRq: aRequest forAssoc: anAssoc [
 
 	| resp |
@@ -133,7 +144,7 @@ DcAcse >> releaseRq: aRequest forAssoc: anAssoc [
 	^ resp
 ]
 
-{ #category : #public }
+{ #category : #helper }
 DcAcse >> selectTransferSyntax: px [
 
 	| asnEcho asn tsn okTsn selTsn newItems |

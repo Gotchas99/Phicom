@@ -102,18 +102,20 @@ DcAe >> dimse: anObject [
 { #category : #services }
 DcAe >> echo: anAETitle [
 
-	| assoc  req |
+	| assoc req |
 	assoc := self setupAssoc: anAETitle.
 	req := DcSrvParamCEcho new createFromRequest: nil.
-	req messageId: assoc nextMsgId .
-	dimse requestService: req messageType param: req forAssoc: assoc
+	req messageId: assoc nextMsgId.
+	"lånar response en stund"
+	dimse responseService: req messageType param: req forAssoc: assoc.
+	self releaseAssoc: assoc 
 ]
 
 { #category : #dispatch }
 DcAe >> indication: cmd with: param for: anAssoc [
 
 	| method |
-	anAssoc nextMsgId: param messageId .
+	anAssoc lastKnownMsgId: param messageId .
 	method := self methodFromCmd: cmd.
 	^ self perform: method with: param with: anAssoc
 ]
@@ -147,7 +149,7 @@ DcAe >> methodFromCmd: cmd [
 
 { #category : #services }
 DcAe >> releaseAssoc: anAssoc [
-
+DcAcse default releaseAssoc: anAssoc param: nil.
 	assocs removeKey: anAssoc ifAbsent: [  ]
 ]
 

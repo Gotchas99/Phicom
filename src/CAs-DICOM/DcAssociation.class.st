@@ -79,12 +79,13 @@ DcAssociation >> asnForService: aService [
 ]
 
 { #category : #'presentation context' }
-DcAssociation >> ctxidForSopUid: anAbstractSyntax [
+DcAssociation >> ctxidForSopUid: anAbstractSyntaxUID [
 
+	| asn |
+	asn := DcTable uidAtCode: anAbstractSyntaxUID.
 	agreedPresCtxs keysAndValuesDo: [ :key :value | 
-		value first value = anAbstractSyntax ifTrue: [ ^ key ] ].
-	Error signal: 'ctxId notefound'
-
+		value first value = asn ifTrue: [ ^ key ] ].
+	Error signal: 'ctxId not found'
 ]
 
 { #category : #accessing }
@@ -175,7 +176,7 @@ DcAssociation >> presCtxAt: aPresCtxID [
 
 	| tsn |
 	tsn:=(agreedPresCtxs at: aPresCtxID) second.
-	^DcSyntax atUid: tsn value.
+	^DcSyntax atName: tsn .
 	
 ]
 
@@ -217,9 +218,9 @@ incomingMsg := DcMessage new.
 { #category : #'presentation context' }
 DcAssociation >> selectedPresCtxs: selectedPresCtx [
 
-	agreedPresCtxs := Dictionary new. 
+	agreedPresCtxs := Dictionary new.
 	selectedPresCtx do: [ :px | 
-		agreedPresCtxs at: px ctxID put: px items ]
+		agreedPresCtxs at: px ctxID put: (px items collect:[:it|it asSyntax name]) ]
 ]
 
 { #category : #accessing }
