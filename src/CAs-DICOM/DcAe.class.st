@@ -106,9 +106,8 @@ DcAe >> echo: anAETitle [
 	assoc := self setupAssoc: anAETitle.
 	req := DcSrvParamCEcho new createFromRequest: nil.
 	req messageId: assoc nextMsgId.
-	"lånar response en stund"
-	dimse responseService: req messageType param: req forAssoc: assoc.
-	self releaseAssoc: assoc 
+	dimse requestService: req messageType param: req forAssoc: assoc.
+	self releaseAssoc: assoc
 ]
 
 { #category : #dispatch }
@@ -150,7 +149,7 @@ DcAe >> methodFromCmd: cmd [
 { #category : #services }
 DcAe >> releaseAssoc: anAssoc [
 DcAcse default releaseAssoc: anAssoc param: nil.
-	assocs removeKey: anAssoc ifAbsent: [  ]
+	assocs removeKey: anAssoc remoteAETitle  ifAbsent: [ self traceCr: 'assoc not found when releasing' ]
 ]
 
 { #category : #private }

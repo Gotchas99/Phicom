@@ -10,7 +10,8 @@ Class {
 		'ctxID',
 		'offeredPresCtxs',
 		'agreedPresCtxs',
-		'lastKnownMsgId'
+		'lastKnownMsgId',
+		'outstanding'
 	],
 	#category : #'CAs-DICOM-AE'
 }
@@ -36,6 +37,12 @@ DcAssociation >> addOfferedPresCtxs: asn tsn: tsn [
 	| sn |
 	sn := (OrderedCollection with:asn)  , tsn.
 	offeredPresCtxs at: self nextCtxID put: sn
+]
+
+{ #category : #initialization }
+DcAssociation >> addOutstanding: aMsg [
+
+	^ outstanding at: aMsg messageId  put: aMsg
 ]
 
 { #category : #accessing }
@@ -104,8 +111,10 @@ DcAssociation >> dimse: anObject [
 DcAssociation >> initialize [
 
 	self resetIncoming.
-	offeredPresCtxs := Dictionary new.agreedPresCtxs := Dictionary new.
-	lastKnownMsgId := 0
+	offeredPresCtxs := Dictionary new.
+	agreedPresCtxs := Dictionary new.
+	lastKnownMsgId := 0.
+	outstanding:= Dictionary new.
 ]
 
 { #category : #'accessing - deprecated' }
@@ -161,6 +170,16 @@ DcAssociation >> offeredPresCtxs [
 { #category : #'presentation context' }
 DcAssociation >> offeredPresCtxs: pctxs [
 offeredPresCtxs:= pctxs
+]
+
+{ #category : #initialization }
+DcAssociation >> outstandingID: aMsgId [
+
+	| msg |
+	msg := outstanding
+		       at: aMsgId
+		       ifAbsent: [ Error signal: 'outstanding message not found' ].
+		outstanding removeKey: aMsgId .^msg
 ]
 
 { #category : #'accessing - deprecated' }

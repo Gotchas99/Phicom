@@ -109,10 +109,6 @@ DcDimse >> ae: anAE [
 	dul registerDimse: self for: ae aeTitle
 ]
 
-{ #category : #commands }
-DcDimse >> cEcho:param [
-]
-
 { #category : #helper }
 DcDimse >> fragsFromElements: els [
 
@@ -174,7 +170,7 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 				cmd := self class cmdAt: msg cmd.
 				"convert message to req"
 				param := DcSrvParam fromMessage: msg.
-				anAssoc ae indication: cmd with: param for: anAssoc ] ] ]
+			anAssoc ae indication: cmd with: param for: anAssoc ] ] ]
 ]
 
 { #category : #helper }
@@ -193,16 +189,24 @@ DcDimse >> pdvsFromFrags: frags [
 { #category : #services }
 DcDimse >> requestService: service param: param forAssoc: anAssoc [
 
-	| msg ctxid els |
+	| msg els frags pdv1 pdvlist pdv2 |
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, 'request recieved.service: ' , service.
-	self halt.
-	param messageType: service.
-	msg := param asMessage.
-els := msg cmdElements.
-	ctxid := anAssoc ctxidForSopUid: msg sopClassUid.
-	DcUpperLayerClient default request: msg forAssoc: anAssoc
+	anAssoc addOutstanding: param.
+	msg := self messageForService: service param: param forAssoc: anAssoc.
+	els := msg cmdElements.
+	frags := self fragsFromElements: els.
+	pdv1 := self pdvsFromFrags: frags.
+	pdvlist := OrderedCollection with: pdv1.
+	msg hasDataset ifTrue: [ 
+		els := msg dataElements.
+		frags := self fragsFromElements: els.
+		pdv2 := self pdvsFromFrags: frags.
+		pdvlist add: pdv2 ].
+	pdvlist flattened do: [ :pdv | pdv presCtxId: msg ctxid ].
+	"response is sent as pData _request_ to DUL"
+	DcUpperLayerClient default request: pdvlist forAssoc: anAssoc
 ]
 
 { #category : #services }

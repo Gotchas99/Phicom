@@ -7,7 +7,8 @@ Class {
 		'messageIdResp',
 		'sopClassUid',
 		'status',
-		'dict'
+		'dict',
+		'originalParam'
 	],
 	#category : #'CAs-DICOM-Dimse'
 }
@@ -125,6 +126,18 @@ DcSrvParam >> messageType [ ^messageType
 DcSrvParam >> messageType: aMessageType [
 
  messageType:=aMessageType
+]
+
+{ #category : #accessing }
+DcSrvParam >> originalParam [
+
+	^ originalParam
+]
+
+{ #category : #accessing }
+DcSrvParam >> originalParam: anObject [
+
+	originalParam := anObject
 ]
 
 { #category : #accessing }

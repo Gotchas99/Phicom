@@ -16,7 +16,7 @@ DcUpperLayerClient >> associate: aReq forAssoc: anAssoc [
 DcUpperLayerClient >> release: aReq forAssoc: anAssoc [
 
 	| resp |
-	resp := DcNet new sendPDU: aReq forAssoc: anAssoc.
+	resp := DcNet new sendAndRecievePDU:  aReq forAssoc: anAssoc.
 	^ resp 
 ]
 
