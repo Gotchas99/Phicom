@@ -69,7 +69,7 @@ DcSrvParam >> createFromMessage: aMsg [
 
 	| cmds |
 	cmds := aMsg cmdDict.
-	messageId := cmds at: #MessageID.
+	messageId := cmds at: #MessageID ifAbsent: [ nil ]..
 	messageIdResp := cmds
 		                 at: #MessageIDBeingRespondedTo
 		                 ifAbsent: [ nil ].

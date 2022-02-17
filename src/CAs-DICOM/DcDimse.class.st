@@ -109,6 +109,21 @@ DcDimse >> ae: anAE [
 	dul registerDimse: self for: ae aeTitle
 ]
 
+{ #category : #services }
+DcDimse >> confirmationService: service param: param forAssoc: anAssoc [
+
+	| resp |
+	self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'confirmation recieved.service: ' , service.
+
+	#pData = service ifTrue: [ 
+		self pData: param forAssoc: anAssoc.
+		resp := nil ].
+
+	^ resp
+]
+
 { #category : #helper }
 DcDimse >> fragsFromElements: els [
 

@@ -15,9 +15,9 @@ DcUpperLayerServer >> confirmation: pdu forAssoc: anAssoc [
 		            ifTrue: [ 
 		            DcAcse default indication: pdu forAssoc: anAssoc ]
 		            ifFalse: [ 
-			            service := self serviceForType: pdu type.
+			            service := self serviceForType: pdu type .
 			            anAssoc dimse
-				            indicationService: service
+				            confirmationService: service
 				            param: pdu items
 				            forAssoc: anAssoc ].
 	^ response

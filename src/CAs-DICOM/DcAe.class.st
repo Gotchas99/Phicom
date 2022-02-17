@@ -81,10 +81,9 @@ DcAe >> cEchoRq: param assoc: anAssoc [
 { #category : #services }
 DcAe >> cEchoRsp: param assoc: anAssoc [
 
-	| rsp |
-	rsp := DcSrvParamCEcho new createFromResponse: param.
-	rsp status: 0.
-	dimse responseService: rsp messageType param: rsp forAssoc: anAssoc
+	|  orig |
+	orig := anAssoc outstandingID: param messageIdResp.
+	self doneWithAssoc: anAssoc
 ]
 
 { #category : #dispatch }
@@ -109,6 +108,13 @@ DcAe >> dimse: anObject [
 ]
 
 { #category : #services }
+DcAe >> doneWithAssoc: anAssoc [
+anAssoc isEmpty ifTrue:
+[self releaseAssoc: anAssoc .
+]
+]
+
+{ #category : #services }
 DcAe >> echo: anAETitle [
 
 	| assoc req |
@@ -116,16 +122,17 @@ DcAe >> echo: anAETitle [
 	req := DcSrvParamCEcho new createFromRequest: nil.
 	req messageId: assoc nextMsgId.
 	dimse requestService: req messageType param: req forAssoc: assoc.
-	self releaseAssoc: assoc
+	"self releaseAssoc: assoc"
 ]
 
 { #category : #dispatch }
 DcAe >> indication: cmd with: param for: anAssoc [
 
 	| method |
-	anAssoc lastKnownMsgId: param messageId .
+	anAssoc lastKnownMsgId: param messageId.
 	method := self methodFromCmd: cmd.
-	^ self perform: method with: param with: anAssoc
+	self flag:'release assoc here?'.	^ self perform: method with: param with: anAssoc.
+
 ]
 
 { #category : #initialization }
@@ -164,10 +171,11 @@ DcAcse default releaseAssoc: anAssoc param: nil.
 { #category : #private }
 DcAe >> setupAssoc: anAETitle [
 
-	| assoc paramDict  |
+	| assoc paramDict |
 	assoc := DcAssociation new.
 	assoc ae: self.
 	assoc remoteAETitle: anAETitle.
+	assoc dimse: self dimse.
 	paramDict := Dictionary new.
 	assoc
 		addOfferedPresCtxs: #Verification

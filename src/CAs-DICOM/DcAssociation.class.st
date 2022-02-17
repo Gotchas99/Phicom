@@ -124,6 +124,12 @@ DcAssociation >> ip: anIP [
 	"ip := NetNameResolver addressForName: anIP timeout: 10"
 ]
 
+{ #category : #testing }
+DcAssociation >> isEmpty [
+
+	^ outstanding isEmpty 
+]
+
 { #category : #message }
 DcAssociation >> lastElement [
 
@@ -146,7 +152,7 @@ DcAssociation >> lastFragment [
 { #category : #accessing }
 DcAssociation >> lastKnownMsgId: anInt [
 
-	lastKnownMsgId := lastKnownMsgId max: anInt
+	anInt ifNotNil:[lastKnownMsgId := lastKnownMsgId max: anInt]
 ]
 
 { #category : #accessing }

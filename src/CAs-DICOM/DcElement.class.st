@@ -193,7 +193,7 @@ DcElement >> <= otherElement [
 { #category : #converting }
 DcElement >> asLong [
 
-	^ rawValue longAt: 1 bigEndian: false
+	^ rawValue unsignedLongAt: 1 bigEndian: false
 ]
 
 { #category : #converting }
@@ -223,8 +223,8 @@ DcElement >> asSeq [
 { #category : #converting }
 DcElement >> asShort [
 
-	^ rawValue  shortAt: 1
-		                   bigEndian: false.
+	^ rawValue  unsignedShortAt: 1
+		                   bigEndian: false. 
 ]
 
 { #category : #converting }

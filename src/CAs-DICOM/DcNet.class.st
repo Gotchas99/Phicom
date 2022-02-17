@@ -343,20 +343,18 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 		on: assoc stream
 		do: [ :s | aPdu writeOn: s ].
 	pdu := DcPDU readFrom: assoc stream.
-	self halt.
 	pdu class = DcAssociateAc ifTrue: [ 
-		[ "self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, 'serveConnectionsOn:process started **************'."
-	[ assoc stream isConnected ] whileTrue: [ "self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, 'serveConnectionsOn:process stopped **************'" 
-		self executeRequestResponseLoopOn: assoc] ]
-		forkAt: 32
-		named: 'serveConnectionsOnAc'
-		
-		
-		 ].
+		[ 
+		self traceCr:
+			DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+			, 'sendAndRecievePDU:process started **************'.
+		[ assoc stream isConnected ] whileTrue: [ 
+			self traceCr:
+				DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+				, 'sendAndRecievePDU:process stopped **************'.
+			self executeRequestResponseLoopOn: assoc ] ]
+			forkAt: 32
+			named: 'sendAndRecievePDU' ].
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
 		, ' sendAndRecievePDU: <' , pdu class name.
