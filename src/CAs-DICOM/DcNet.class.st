@@ -217,15 +217,14 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 ]
 
 { #category : #'request handling' }
-DcNet >> executeRequestResponseLoopOn: stream [
+DcNet >> executeRequestResponseLoopOn: assoc [
 
-	| assoc |
+	|  |
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, ' executeRequestResponseLoopOn:'.
-	assoc := DcAssociation new stream:stream.
-	[ stream isConnected ] whileTrue: [ 
-		self executeOneRequestResponseOn: stream forAssoc: assoc ]
+		[assoc  stream isConnected ] whileTrue: [ 
+		self executeOneRequestResponseOn: assoc stream forAssoc: assoc ]
 ]
 
 { #category : #private }
@@ -345,6 +344,8 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 		on: assoc stream
 		do: [ :s | aPdu writeOn: s ].
 	pdu := DcPDU readFrom: assoc stream.
+	self halt.
+	(pdu class=DcAssociateAc )ifTrue:[self executeRequestResponseLoopOn: assoc].
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name
 		, ' sendAndRecievePDU: <' , pdu class name.
@@ -375,10 +376,11 @@ DcNet >> sendPDU: aPdu forAssoc: assoc [
 { #category : #'request handling' }
 DcNet >> serveConnectionOn: socket [
 
-	| stream |
+	| stream assoc |
 	stream := self socketStreamOn: socket.
+	assoc := DcAssociation new stream: stream.
 	[ 
-	[ self executeRequestResponseLoopOn: stream ]
+	[ self executeRequestResponseLoopOn: assoc ]
 		on: ConnectionClosed , ConnectionTimedOut
 		do: [ :ex | 
 			Transcript
@@ -388,7 +390,7 @@ DcNet >> serveConnectionOn: socket [
 				cr ] ] ensure: [ 
 		self traceCr:
 			DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-					, 'serveConnectionOn: closing stream'.
+			, 'serveConnectionOn: closing stream'.
 		stream close ]
 ]
 
