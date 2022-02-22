@@ -7,15 +7,24 @@ Class {
 { #category : #baselines }
 BaselineOfDicom >> baseline: spec [
 
-	"requires: Beacon-Core"
-
 	<baseline>
 	spec for: #common do: [ 
 		spec blessing: #baseline.
-		spec package: 'Dicom-Core'.
-		";
-			""Going from Dicom model to richText""package:
-				'Pillar-ExporterRichText'
-			with: [ spec requires: #( 'Dicom-Core' ) ]"
-		spec group: 'default' with: #( 'Core' ) ]
+		spec
+			package: 'Dicom-Util';
+			package: 'Dicom-Core'
+			with: [ spec requires: #( 'Dicom-Util' 'Beacon-Core' ) ];
+			package: 'Dicom-File' with: [ spec requires: #( 'Dicom-Core' ) ];
+			package: 'Dicom-Net' with: [ spec requires: #( 'Dicom-Core' ) ];
+			package: 'Dicom-UpperLayer'
+			with: [ spec requires: #( 'Dicom-Net' ) ];
+			package: 'Dicom-ACSE'
+			with: [ spec requires: #( 'Dicom-UpperLayer' ) ];
+			package: 'Dicom-Dimse'
+			with: [ spec requires: #( 'Dicom-UpperLayer' ) ];
+			package: 'Dicom-AE'
+			with: [ spec requires: #( 'Dicom-ACSE' 'Dicom-Dimse' ) ].
+		spec
+			group: 'Core' with: #( 'Dicom-Core' );
+			group: 'default' with: #( 'Dicom-AE' ) ]
 ]
