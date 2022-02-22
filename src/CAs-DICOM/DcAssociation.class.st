@@ -39,7 +39,7 @@ DcAssociation >> addOfferedPresCtxs: asn tsn: tsn [
 	offeredPresCtxs at: self nextCtxID put: sn
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 DcAssociation >> addOutstanding: aMsg [
 
 	^ outstanding at: aMsg messageId  put: aMsg
@@ -178,7 +178,7 @@ DcAssociation >> offeredPresCtxs: pctxs [
 offeredPresCtxs:= pctxs
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 DcAssociation >> outstandingID: aMsgId [
 
 	| msg |

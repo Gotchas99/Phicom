@@ -7,22 +7,6 @@ Class {
 	#category : #'CAs-DICOM-UpperLayer'
 }
 
-{ #category : #services }
-DcUpperLayerServer >> confirmation: pdu forAssoc: anAssoc [
-
-	| response service |
-	response := pdu isAssociation
-		            ifTrue: [ 
-		            DcAcse default indication: pdu forAssoc: anAssoc ]
-		            ifFalse: [ 
-			            service := self serviceForType: pdu type .
-			            anAssoc dimse
-				            confirmationService: service
-				            param: pdu items
-				            forAssoc: anAssoc ].
-	^ response
-]
-
 { #category : #accessing }
 DcUpperLayerServer >> dimseAt: aeTitle [
 
