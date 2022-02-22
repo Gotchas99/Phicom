@@ -130,9 +130,10 @@ DcNet class >> startDefaultOn: portNumber [
 { #category : #'system startup' }
 DcNet class >> startUp: resuming [
 
-	self loggingClass  start.
 	self traceCr: 'startUp. resuming: ' , resuming printString
 		, ' ------------------------------------------------------'.
+	self loggingClass start.
+StringSignal emit:	'Logging enabled' .
 	"Our system startUp hook: start all servers we manage.
 	We do this using deferred startup actions to allow normal error handling."
 	(resuming or: [ self alwaysRestart ]) ifTrue: [ 
@@ -253,8 +254,8 @@ DcNet >> listenLoop [
 	"We create a listening Socket, then wait for a connection.
 	After each connection we also check that the listening Socket is still valid 
 	- if not we just make a recursive call to this method to start over."
-
-	self log: 'listenLoop ======================='.
+StringSignal emit: 'listenLoop ======================='.
+"	self log: 'listenLoop ======================='."
 	self initializeServerSocket.
 	[ 
 	[ 
