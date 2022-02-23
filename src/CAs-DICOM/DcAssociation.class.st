@@ -17,15 +17,6 @@ Class {
 }
 
 { #category : #message }
-DcAssociation >> addFragment: aFrag isCmd: isCmd [
-
-	self deprecated: 'use messages'.
-	"isCmd
-		ifTrue: [ cmdFragments add: aFrag ]
-		ifFalse: [ dataFragments add: aFrag ]"
-]
-
-{ #category : #message }
 DcAssociation >> addIncomingElement: element [
 
 	incomingMsg addElement: element
@@ -55,18 +46,6 @@ DcAssociation >> ae [
 DcAssociation >> ae: anObject [
 
 	ae := anObject
-]
-
-{ #category : #'accessing - deprecated' }
-DcAssociation >> aet [
-self deprecated:'not needed here'.
-	"^ aet"
-]
-
-{ #category : #'accessing - deprecated' }
-DcAssociation >> aet: anAET [
-self deprecated:'not needed here'.
-	"aet := anAET"
 ]
 
 { #category : #'presentation context' }
@@ -117,13 +96,6 @@ DcAssociation >> initialize [
 	outstanding:= Dictionary new.
 ]
 
-{ #category : #'accessing - deprecated' }
-DcAssociation >> ip: anIP [
-
-	self deprecated: 'not needed here'.
-	"ip := NetNameResolver addressForName: anIP timeout: 10"
-]
-
 { #category : #testing }
 DcAssociation >> isEmpty [
 
@@ -139,14 +111,6 @@ DcAssociation >> lastElement [
 	tmp := incomingMsg .
 		self resetIncoming.
 	^ tmp
-]
-
-{ #category : #message }
-DcAssociation >> lastFragment [
-	self deprecated: 'use messages'.
-
-	self halt.
-	self resetIncoming
 ]
 
 { #category : #accessing }
@@ -186,13 +150,6 @@ DcAssociation >> outstandingID: aMsgId [
 		       at: aMsgId
 		       ifAbsent: [ Error signal: 'outstanding message not found' ].
 		outstanding removeKey: aMsgId .^msg
-]
-
-{ #category : #'accessing - deprecated' }
-DcAssociation >> port: aPort [
-
-	self deprecated: 'not needed here'.
-	"port := aPort"
 ]
 
 { #category : #'presentation context' }
