@@ -13,7 +13,7 @@ Class {
 	#category : #'CAs-DICOM-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #documentation }
 DcDataSet class >> docsTransferSyntax [
 
 	"https://dicom.nema.org/medical/dicom/current/output/chtml/part05/chapter_A.html#sect_A.1"
@@ -23,7 +23,7 @@ DcDataSet class >> docsTransferSyntax [
 	"This DICOM Explicit VR Little Endian Transfer Syntax shall be identified by a UID of Value ""1.2.840.10008.1.2.1""."
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 DcDataSet class >> readFrom: aStream explicitVR: aBoolean [
 
 ^	(self new) explicitVR:aBoolean;readFrom:aStream
@@ -33,7 +33,8 @@ DcDataSet class >> readFrom: aStream explicitVR: aBoolean [
 DcDataSet >> asDictionary [
 
 	| tmp |
-	tmp := elements collect: #assoc.^tmp
+	tmp := (elements collect: #assoc)asDictionary .
+	^ tmp
 ]
 
 { #category : #accessing }

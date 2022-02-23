@@ -2,7 +2,6 @@ Class {
 	#name : #DcFileMeta,
 	#superclass : #Object,
 	#instVars : [
-		'version',
 		'meta',
 		'preAmble',
 		'prefix'

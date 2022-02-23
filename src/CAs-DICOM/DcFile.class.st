@@ -24,7 +24,7 @@ self flag:#todo.
 	^ 0
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 DcFile >> isExplicitVR [
 
 	^ (meta isExplicitVR ) 
@@ -41,6 +41,5 @@ DcFile >> read [
 
 	filename asFileReference binaryReadStreamDo: [ :s | 
 		meta := DcFileMeta readMetaFrom: s.
-
-		dataset := DcDataSet readFrom: s explicitVR: self isExplicitVR ]
+		dataset := DcDataSet readFrom: s explicitVR: meta isExplicitVR ]
 ]
