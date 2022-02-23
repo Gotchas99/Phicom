@@ -8,8 +8,6 @@ Class {
 		'tagKeyword'
 	],
 	#classVars : [
-		'TableCache',
-		'TableIndex',
 		'TagTable',
 		'UidTable'
 	],
@@ -378,34 +376,12 @@ US
 Contains the Message ID (0000,0110) of the C-MOVE-RQ Message from which this C-STORE sub-operation is being performed.'
 ]
 
-{ #category : #accessing }
-DcTable class >> in: tblId atBin: bin [
-
-	| tbl |
-	tbl := TableIndex at: tblId ifAbsentPut: [ self new table_6_1 ].
-	^tbl atBin: bin
-]
-
 { #category : #'class initialization' }
 DcTable class >> initialize [
 
 	TagTable := nil.
-	self initializeTableIndex.
-	self initializeCache.
 	self initializeTagTable.
 	self initializeUidTable
-]
-
-{ #category : #'class initialization' }
-DcTable class >> initializeCache [
-
-	TableCache:=Dictionary new.
-]
-
-{ #category : #'class initialization' }
-DcTable class >> initializeTableIndex [
-
-	TableIndex := Dictionary new
 ]
 
 { #category : #'class initialization' }
@@ -465,8 +441,7 @@ DcTable class >> tagAt: aTag [
 { #category : #accessing }
 DcTable class >> tagTable [
 
-	^ TagTable ifNil: [ 
-		  self initializeTagTable]
+	^ TagTable 
 ]
 
 { #category : #accessing }
@@ -499,38 +474,12 @@ DcTable >> atHex: aHexTag fld: aFieldName [
 	^( tagHex at: aHexTag)at:aFieldName
 ]
 
-{ #category : #'as yet unclassified' }
-DcTable >> file: aFilename cols: numCols headers: headers [
-
-	| fs |
-	fs := (self class baseDir / aFilename) readStream.
-	self stream: fs cols: numCols headers: headers
-	
-]
-
 { #category : #initialization }
 DcTable >> initialize [
 
 	tagHex := Dictionary new.
 	tagBin := Dictionary new.tagKeyword := Dictionary new.
 	tblUid := Dictionary new
-]
-
-{ #category : #'as yet unclassified' }
-DcTable >> oldReader [
-"lines := aStream lines reject: [ :l | l isEmpty ].
-	hdr := lines first: numCols.
-	tblHex := Dictionary new.
-	tblBin := Dictionary new.
-	(lines allButFirst: numCols) readStreamDo: [ :s | 
-		[ s atEnd ] whileFalse: [ 
-			d := Dictionary new.
-			(s next: numCols) with: hdr do: [ :val :h | d at: h put: val ].
-			d at: 'Tag' ifPresent: [ :t | 
-				tag := DcTag fromString: t.
-				d at: #TagHex put: tag bin.
-				tblHex at: (d at: 'Tag') put: d.
-				tblBin at: tag bin put: d ] ] ]"
 ]
 
 { #category : #initialization }
@@ -624,53 +573,6 @@ DcTable >> saveRow: aDict [
 		tagHex at: (aDict at: 'Tag') put: aDict.
 		tagBin at: tag bin put: aDict.
 		tagKeyword at: (aDict at: 'Keyword') put: aDict ]
-]
-
-{ #category : #'as yet unclassified' }
-DcTable >> stream: aStream cols: numCols headers: headers [
-
-	| line hdr d |
-	[ tagHex := Dictionary new.
-	tagBin := Dictionary new.
-	hdr := self readLine: aStream cols: numCols.
-	headers ifNotNil: [ hdr := headers ].
-	[ aStream atEnd ] whileFalse: [ 
-		d := Dictionary new.
-		line := self readLine: aStream cols: numCols.
-		line with: hdr do: [ :val :h | d at: h put: val ].
-		self removeUnprintablesInKey: 'Keyword' from: d.
-		self saveRow: d ] ] ensure: [ aStream close ]
-]
-
-{ #category : #'as yet unclassified' }
-DcTable >> table_6_1 [
-
-	| fname root chapters chapter table thead hdrs tbody items d hdr61 url |
-	self deprecated:'use the one with xml root param'.
-	fname := 'C:\Misc\dicomref\part06.xml'.
-	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml'.
-
-	root := (XMLDOMParser parseURL: url) root.
-	"	root := (XMLDOMParser parse: fname asFileReference) root."
-	chapters := root nodes elementsAt: 'chapter'.
-	chapter := chapters elementsDetect: [ :ch | 
-		           'chapter_6'
-		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
-	table := (chapter elementsAt: 'table') elementsDetect: [ :tab | 
-		         'table_6-1'
-		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
-	thead := (table elementsAt: 'thead') first elements first.
-	hdrs := thead elements collect: [ :th | th contentString trim ].
-	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
-	tbody := (table elementsAt: 'tbody') first elements.
-	items := tbody collect: [ :tr | 
-		         tr elements collect: [ :td | 
-			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
-	items do: [ :line | 
-		d := Dictionary new.
-		line with: hdr61 do: [ :val :h | d at: h put: val ].
-		self removeUnprintablesInKey: 'Keyword' from: d.
-		self saveRow: d ]
 ]
 
 { #category : #initialization }
@@ -782,39 +684,6 @@ DcTable >> table_A_1: anXmlRoot [
 		tblUid at: (d at:#UID) put:(d at:#Keyword) ]
 ]
 
-{ #category : #'as yet unclassified' }
-DcTable >> table_E_1_1 [
-
-	| fname root chapters chapter table thead hdrs tbody items d hdre11 url section |	self deprecated:'use the one with xml root param'.
-	fname := 'C:\Misc\dicomref\part07.xml'.
-	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part07/part07.xml'.
-
-	root := (XMLDOMParser parseURL: url) root.
-	"	root := (XMLDOMParser parse: fname asFileReference) root."
-	chapters := root nodes elementsAt: 'chapter'.
-	chapter := chapters elementsDetect: [ :ch | 
-		           'chapter_E'
-		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
-	section := (chapter elementsAt: 'section') elementsDetect: [ :se | 
-		           'sect_E.1'
-		           = (se attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
-	table := (section elementsAt: 'table') elementsDetect: [ :tab | 
-		         'table_E.1-1'
-		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
-	thead := (table elementsAt: 'thead') first elements first.
-	hdrs := thead elements collect: [ :th | th contentString trim ].
-	hdre11 := #( #Tag #Name #Keyword #VR #VM #Comment ).
-	tbody := (table elementsAt: 'tbody') first elements.
-	items := tbody collect: [ :tr | 
-		         tr elements collect: [ :td | 
-			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
-	items do: [ :line | 
-		d := Dictionary new.
-		line with: hdrs do: [ :val :h | d at: h put: val ].
-		self removeUnprintablesInKey: 'Keyword' from: d.
-		self saveRow: d ]
-]
-
 { #category : #initialization }
 DcTable >> table_E_1_1: anXmlRoot [
 
@@ -884,31 +753,6 @@ DcTable >> tagAt: aTag [
 	aTag class = DcTag ifTrue: [ tmp := tagBin at: aTag bin ].
 	tmp ifNil: [ Error signal: 'unknown tag' ].
 	^ tmp
-]
-
-{ #category : #'as yet unclassified' }
-DcTable >> text: aString cols: numCols [
-self text: aString cols: numCols headers: nil
-]
-
-{ #category : #'as yet unclassified' }
-DcTable >> text: aString cols: numCols headers: headers [
-
-	"| lines hdr d tag |"
-	self stream: aString readStream cols: numCols headers: headers
-	"lines := aString lines reject: [ :l | l isEmpty ].
-	hdr := lines first: numCols.
-	tblHex := Dictionary new.
-	tblBin := Dictionary new.
-	(lines allButFirst: numCols) readStreamDo: [ :s | 
-		[ s atEnd ] whileFalse: [ 
-			d := Dictionary new.
-			(s next: numCols) with: hdr do: [ :val :h | d at: h put: val ].
-			d at: 'Tag' ifPresent: [ :t | 
-				tag := DcTag fromString: t.
-				d at: #TagHex put: tag bin.
-				tblHex at: (d at: 'Tag') put: d.
-				tblBin at: tag bin put: d ] ] ]"
 ]
 
 { #category : #accessing }
