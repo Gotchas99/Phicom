@@ -11,20 +11,19 @@ BaselineOfDicom >> baseline: spec [
 	spec for: #common do: [ 
 		spec blessing: #baseline.
 		spec
-			package: 'Dicom-Util';
-			package: 'Dicom-Core'
-			with: [ spec requires: #( 'Dicom-Util'  ) ];
-			package: 'Dicom-File' with: [ spec requires: #( 'Dicom-Core' ) ];
-			package: 'Dicom-Net' with: [ spec requires: #( 'Dicom-Core' ) ];
-			package: 'Dicom-UpperLayer'
-			with: [ spec requires: #( 'Dicom-Net' ) ];
-			package: 'Dicom-ACSE'
-			with: [ spec requires: #( 'Dicom-UpperLayer' ) ];
-			package: 'Dicom-Dimse'
-			with: [ spec requires: #( 'Dicom-UpperLayer' ) ];
-			package: 'Dicom-AE'
-			with: [ spec requires: #( 'Dicom-ACSE' 'Dicom-Dimse' ) ].
+			package: 'CAs-DICOM-Util';
+			package: 'CAs-DICOM-Core' with: [ spec requires: #( 'CAs-DICOM-Util' ) ];
+			package: 'CAs-DICOM-File' with: [ spec requires: #( 'CAs-DICOM-Core' ) ];
+			package: 'CAs-DICOM-Net' with: [ spec requires: #( 'CAs-DICOM-Core' ) ];
+			package: 'CAs-DICOM-UpperLayer'
+			with: [ spec requires: #( 'CAs-DICOM-Net' ) ];
+			package: 'CAs-DICOM-ACSE'
+			with: [ spec requires: #( 'CAs-DICOM-UpperLayer' ) ];
+			package: 'CAs-DICOM-Dimse'
+			with: [ spec requires: #( 'CAs-DICOM-UpperLayer' ) ];
+			package: 'CAs-DICOM-AE'
+			with: [ spec requires: #( 'CAs-DICOM-ACSE' 'CAs-DICOM-Dimse' ) ].
 		spec
-			group: 'Core' with: #( 'Dicom-Core' );
-			group: 'default' with: #( 'Dicom-AE' ) ]
+			group: 'Core' with: #( 'CAs-DICOM-Core' );
+			group: 'default' with: #( 'CAs-DICOM-AE' ) ]
 ]
