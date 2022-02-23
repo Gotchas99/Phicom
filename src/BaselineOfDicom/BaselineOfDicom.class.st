@@ -13,7 +13,7 @@ BaselineOfDicom >> baseline: spec [
 		spec
 			package: 'Dicom-Util';
 			package: 'Dicom-Core'
-			with: [ spec requires: #( 'Dicom-Util' 'Beacon-Core' ) ];
+			with: [ spec requires: #( 'Dicom-Util'  ) ];
 			package: 'Dicom-File' with: [ spec requires: #( 'Dicom-Core' ) ];
 			package: 'Dicom-Net' with: [ spec requires: #( 'Dicom-Core' ) ];
 			package: 'Dicom-UpperLayer'
