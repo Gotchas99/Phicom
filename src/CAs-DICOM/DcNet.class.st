@@ -207,7 +207,8 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 
 	| request response |
 	self traceCr:
-		DateAndTime current asStringYMDHMS ,' ', self class name,' executeOneRequestResponseOn:'.
+		DateAndTime current asStringYMDHMS , ' ' , self class name
+		, ' executeOneRequestResponseOn:' , assoc remoteAETitle.
 	request := DcPDU readFrom: stream.
 	response := DcUpperLayerServer default
 		            indication: request
@@ -219,10 +220,10 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 
 { #category : #'request handling' }
 DcNet >> executeRequestResponseLoopOn: assoc [
- 
+
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, ' executeRequestResponseLoopOn:'.
+		, 'executeRequestResponseLoopOn: ' , assoc remoteAETitle.
 	[ assoc stream isConnected ] whileTrue: [ 
 		self executeOneRequestResponseOn: assoc stream forAssoc: assoc ]
 ]

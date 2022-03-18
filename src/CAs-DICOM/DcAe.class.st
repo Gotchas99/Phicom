@@ -82,7 +82,7 @@ DcAe >> cEchoRq: param assoc: anAssoc [
 DcAe >> cEchoRsp: param assoc: anAssoc [
 
 	|  orig |
-	orig := anAssoc outstandingID: param messageIdResp.
+	orig := anAssoc receiveOutstandingID: param messageIdResp.
 	self doneWithAssoc: anAssoc
 ]
 

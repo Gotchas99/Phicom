@@ -66,7 +66,8 @@ DcSyntax class >> initializeAbstractSyntaxes [
 
 	"uid, name, explicit_VR(optional, default explicit)"
 
-	self add: #( '1.2.840.10008.1.1'  )
+	self add: #( '1.2.840.10008.1.1' ).
+	self add: #( '1.2.840.10008.5.1.4.1.2.2.1' )
 ]
 
 { #category : #'class initialization' }

@@ -8,7 +8,9 @@ Class {
 		'sopClassUid',
 		'status',
 		'dict',
-		'originalParam'
+		'originalParam',
+		'cmds',
+		'dataset'
 	],
 	#category : #'CAs-DICOM-Dimse'
 }
@@ -67,9 +69,9 @@ self 	status ifNotNil: [  :val |
 { #category : #creating }
 DcSrvParam >> createFromMessage: aMsg [
 
-	| cmds |
 	cmds := aMsg cmdDict.
-	messageId := cmds at: #MessageID ifAbsent: [ nil ]..
+	dataset:= aMsg dataDict.
+	messageId := cmds at: #MessageID ifAbsent: [ nil ].
 	messageIdResp := cmds
 		                 at: #MessageIDBeingRespondedTo
 		                 ifAbsent: [ nil ].

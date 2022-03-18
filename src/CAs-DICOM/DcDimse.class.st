@@ -168,9 +168,12 @@ DcDimse >> pData: pdvList forAssoc: anAssoc [
 			msg := anAssoc lastElement.
 			msg ifNotNil: [ 
 				cmd := self class cmdAt: msg cmd.
+					self traceCr:
+		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
+		, 'pData, cmd: ' , cmd.
 				"convert message to req"
 				param := DcSrvParam fromMessage: msg.
-			anAssoc ae indication: cmd with: param for: anAssoc ] ] ]
+				anAssoc ae indication: cmd with: param for: anAssoc ] ] ]
 ]
 
 { #category : #helper }
@@ -212,10 +215,10 @@ DcDimse >> requestService: service param: param forAssoc: anAssoc [
 { #category : #services }
 DcDimse >> responseService: service param: param forAssoc: anAssoc [
 
-	| msg els frags pdv1 pdvlist pdv2 | 
+	| msg els frags pdv1 pdvlist pdv2 |
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, 'response recieved.service: ' , service.
+		, 'response recieved. service: ' , service.
 	msg := self messageForService: service param: param forAssoc: anAssoc.
 	els := msg cmdElements.
 	frags := self fragsFromElements: els.

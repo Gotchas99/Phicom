@@ -90,10 +90,11 @@ DcAssociation >> dimse: anObject [
 DcAssociation >> initialize [
 
 	self resetIncoming.
+	remoteAETitle:='<UNKNOWN AE>'.
 	offeredPresCtxs := Dictionary new.
 	agreedPresCtxs := Dictionary new.
 	lastKnownMsgId := 0.
-	outstanding:= Dictionary new.
+	outstanding := Dictionary new
 ]
 
 { #category : #testing }
@@ -142,16 +143,6 @@ DcAssociation >> offeredPresCtxs: pctxs [
 offeredPresCtxs:= pctxs
 ]
 
-{ #category : #accessing }
-DcAssociation >> outstandingID: aMsgId [
-
-	| msg |
-	msg := outstanding
-		       at: aMsgId
-		       ifAbsent: [ Error signal: 'outstanding message not found' ].
-		outstanding removeKey: aMsgId .^msg
-]
-
 { #category : #'presentation context' }
 DcAssociation >> presCtxAt: aPresCtxID [
 
@@ -168,6 +159,16 @@ DcAssociation >> presForAsn: anAbstractSyntax [
 	| tsn |
 	tsn := (agreedPresCtxs at: anAbstractSyntax) second.
 	^ DcSyntax atUid: tsn value
+]
+
+{ #category : #accessing }
+DcAssociation >> receiveOutstandingID: aMsgId [
+
+	| msg |
+	msg := outstanding
+		       at: aMsgId
+		       ifAbsent: [ Error signal: 'outstanding message not found' ].
+		outstanding removeKey: aMsgId .^msg
 ]
 
 { #category : #accessing }

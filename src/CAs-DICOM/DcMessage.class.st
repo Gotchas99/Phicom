@@ -96,7 +96,7 @@ DcMessage >> cmd [
 	^ self cmdDict at: 'CommandField'
 ]
 
-{ #category : #accessing }
+{ #category : #converting }
 DcMessage >> cmdDict [
 
 	^ cmdDict ifEmpty: [  
@@ -128,6 +128,15 @@ DcMessage >> ctxid [
 { #category : #accessing }
 DcMessage >> ctxid: aCtxid [
 ctxid:= aCtxid
+]
+
+{ #category : #converting }
+DcMessage >> dataDict [
+
+	^ dataDict ifEmpty: [ 
+		  dataDict := Dictionary new.
+		  dataElements do: [ :el | dataDict add: el assoc ].
+		  dataDict ]
 ]
 
 { #category : #converting }
