@@ -139,8 +139,9 @@ DcAcse >> releaseRq: aRequest forAssoc: anAssoc [
 	self traceCr:
 		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
 		, 'A-RELEASE-RQ message recieved'.
-	anAssoc release.
-	resp := nil. "nil response, since reply is already sent by assoc. used to be: DcReleaseRp new"
+	anAssoc ae releaseAssocRq: anAssoc.
+	"	anAssoc release."
+	resp := DcReleaseRp new.
 	^ resp
 ]
 

@@ -215,7 +215,8 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 		            forAssoc: assoc.
 	ZnBufferedWriteStream
 		on: stream
-		do: [ :s | self writeResponse: response on: s ]
+		do: [ :s | self writeResponse: response on: s ].
+	response class = DcReleaseRp ifTrue: [ stream close ]
 ]
 
 { #category : #'request handling' }

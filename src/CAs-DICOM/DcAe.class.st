@@ -151,7 +151,8 @@ DcAe >> initializeNetwork [
 { #category : #private }
 DcAe >> methodFromCmd: cmd [
 
-	"cmd := 'C-ECHO-RQ'."
+	"cmd := 'C-ECHO-RQ'.
+	=> 'cEchoRq:assoc:' "
 
 	| rq3 rq4 rq5 rq6 rq7 |
 	rq3 := $- split: cmd asLowercase.
@@ -166,6 +167,15 @@ DcAe >> methodFromCmd: cmd [
 DcAe >> releaseAssoc: anAssoc [
 DcAcse default releaseAssoc: anAssoc param: nil.
 	assocs removeKey: anAssoc remoteAETitle  ifAbsent: [ self traceCr: 'assoc not found when releasing' ]
+]
+
+{ #category : #services }
+DcAe >> releaseAssocRq: anAssoc [
+
+	"DcAcse default releaseAssoc: anAssoc param: nil."
+	assocs
+		removeKey: anAssoc remoteAETitle
+		ifAbsent: [ self traceCr: 'assoc not found when releasing' ]
 ]
 
 { #category : #private }

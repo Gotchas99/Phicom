@@ -172,7 +172,9 @@ DcAssociation >> receiveOutstandingID: aMsgId [
 ]
 
 { #category : #accessing }
-DcAssociation >> release [ 	self ae releaseAssoc: self
+DcAssociation >> release [
+
+	"self ae releaseAssoc: self"
 ]
 
 { #category : #accessing }
