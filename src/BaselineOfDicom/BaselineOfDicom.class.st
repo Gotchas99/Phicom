@@ -11,10 +11,15 @@ BaselineOfDicom >> baseline: spec [
 	spec for: #common do: [ 
 		spec blessing: #baseline.
 		spec
+			package: 'SQLite3'
+			with: [ spec repository: 'github://pharo-rdbms/Pharo-SQLite3/src' ];
 			package: 'CAs-DICOM-Util';
-			package: 'CAs-DICOM-Core' with: [ spec requires: #( 'CAs-DICOM-Util' ) ];
-			package: 'CAs-DICOM-File' with: [ spec requires: #( 'CAs-DICOM-Core' ) ];
-			package: 'CAs-DICOM-Net' with: [ spec requires: #( 'CAs-DICOM-Core' ) ];
+			package: 'CAs-DICOM-Core'
+			with: [ spec requires: #( 'CAs-DICOM-Util' ) ];
+			package: 'CAs-DICOM-File'
+			with: [ spec requires: #( 'CAs-DICOM-Core' 'SQLite3' ) ];
+			package: 'CAs-DICOM-Net'
+			with: [ spec requires: #( 'CAs-DICOM-Core' ) ];
 			package: 'CAs-DICOM-UpperLayer'
 			with: [ spec requires: #( 'CAs-DICOM-Net' ) ];
 			package: 'CAs-DICOM-ACSE'
