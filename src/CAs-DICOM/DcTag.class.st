@@ -94,10 +94,26 @@ DcTag >> isCommand [
 	
 ]
 
+{ #category : #testing }
+DcTag >> isItemDelimiter [
+
+	"(FFFE,E00D) = ItemDelimitationItem"
+
+	^bin=4294893581
+]
+
 { #category : #writing }
 DcTag >> isPrivate [
 ^ self group odd
 
+]
+
+{ #category : #testing }
+DcTag >> isSeqDelimiter [
+
+	"(FFFE,E0DD) = SequenceDelimitationItem"
+
+	^bin=4294893789
 ]
 
 { #category : #printing }

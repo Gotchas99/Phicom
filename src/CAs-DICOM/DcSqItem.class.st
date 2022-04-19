@@ -23,15 +23,30 @@ DcSqItem >> elements [
 { #category : #'instance creation' }
 DcSqItem >> from: s explicitVR: aBoolean [
 
-	| el dict |
+	| el dict endOflist |
 	tag := DcTag from: s.
 	length := s nextLittleEndianNumber: 4.
 	elements := OrderedCollection new.
-	[ s atEnd ] whileFalse: [ 
+	endOflist := s atEnd or:[tag isSeqDelimiter ].
+	[ endOflist ] whileFalse: [ 
 		el := DcElement from: s explicitVR: aBoolean.
-		elements add: el ].
+		el isItemDelimiter
+			ifTrue: [ endOflist := true ]
+			ifFalse: [ 
+				elements add: el.
+				endOflist := s atEnd ] ].
 	dict := (elements collect: #assoc) asDictionary.
 	^ dict
+]
+
+{ #category : #testing }
+DcSqItem >> isItemDelimiter [
+
+	
+]
+
+{ #category : #testing }
+DcSqItem >> isSeqDelimiter [
 ]
 
 { #category : #testing }

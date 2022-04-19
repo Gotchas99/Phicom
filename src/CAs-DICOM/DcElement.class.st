@@ -273,11 +273,11 @@ DcElement >> from: s explicitVR: aBoolean [
 
 	tag := DcTag from: s.
 	self explicitVR: aBoolean.
-	explicitVR
+self isExplicitVR
 		ifTrue: [ self getVR: s ]
 		ifFalse: [ vr := tag vr ].
 	self getLength: s.
-	self getValue: s
+	self tag isItemDelimiter  ifFalse: [ self getValue: s ]
 ]
 
 { #category : #'instance creation' }
@@ -301,7 +301,18 @@ DcElement >> getValue: s [
 
 	"Undefined Length = FFFFFFFFH"
 
-	rawValue := s next: length.value:=nil.
+	| items it |
+	self isUndefined
+		ifTrue: [ 
+			self vr = 'SQ'
+				ifTrue: [ 
+					items := OrderedCollection new.
+					[ (it := DcSqItem from: s explicitVR: explicitVR) isEmpty ] 
+						whileFalse: [ items add: it ].
+					rawValue := items ]
+				ifFalse: [ self halt "vad är detta?" ] ]
+		ifFalse: [ rawValue := s next: length ].
+	value := nil
 ]
 
 { #category : #accessing }
@@ -329,7 +340,21 @@ DcElement >> isCommandElement [
 { #category : #testing }
 DcElement >> isExplicitVR [
 
-	^ explicitVR
+	 
+	self tag isItemDelimiter ifTrue:[^false].
+		self tag isSeqDelimiter  ifTrue:[^false].
+^	explicitVR
+]
+
+{ #category : #testing }
+DcElement >> isItemDelimiter [
+^tag isItemDelimiter
+]
+
+{ #category : #testing }
+DcElement >> isSeqDelimiter [
+
+	^ tag isSeqDelimiter
 ]
 
 { #category : #testing }
@@ -376,9 +401,13 @@ DcElement >> lengthLength [
 DcElement >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream << $( << tag keyword << 
-	'('<< self vr<<')'<<
-	': '.
+	self isItemDelimiter ifTrue: [ 
+		aStream << '(ItemDelimiter)'.
+		^ self ].
+	self isSeqDelimiter ifTrue: [ 
+		aStream << '(SeqDelimiter)'.
+		^ self ].
+	aStream << $( << tag keyword << '(' << self vr << ')' << ': '.
 	self vr = 'UI'
 		ifTrue: [ aStream << (DcTable uidAtCode: self value) ]
 		ifFalse: [ self value printOn: aStream ].
