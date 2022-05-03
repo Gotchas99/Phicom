@@ -111,17 +111,23 @@ DcElement class >> initializeRawValues [
 	CS=Code String
 	DA=Date
 	DS=Decimal String
+	FD=(Float) Double 
+	FL=Float
 	IS=not sure. dimensions for image?
 	LO=Long string
+	LT=Long text
 	OB=Other byte
 	OW=Other Word
 	PN=Person Name
 	SH=Short String
+	SL=Signed Long
 	SQ=Sequence
+	SS=Signed short
 	TM=Time
 	UI=UID
 	UL=Unsigned Long
-	US=Unsigned Short"
+	US=Unsigned Short
+	UT=Unlilmited Text"
 
 	"DA and TM need to be converted from real date and time	"
 
@@ -129,15 +135,31 @@ DcElement class >> initializeRawValues [
 	RawCodes
 		at: 'DA' put: [ :val | val asString trimmed ];
 		at: 'DS' put: [ :val | val printString asByteArray ];
+		at: 'FD' put: [ :val | 
+			(ByteArray new: 8)
+				doubleAt: 1 put: val bigEndian: false;
+				yourself ];
+		at: 'FL' put: [ :val | 
+		(ByteArray new: 4)
+			floatAt: 1 put: val bigEndian: false;
+			yourself ];
+		at: 'SL' put: [ :val | 
+		(ByteArray new: 4)
+			longAt: 1 put: val bigEndian: false;
+			yourself ];
 		at: 'SQ' put: [ :val | 
-			self halt.
-			val asString trimmed ];
+		self halt.
+		val asString trimmed ];
+		at: 'SS' put: [ :val | 
+		(ByteArray new: 2)
+			shortAt: 1 put: val bigEndian: false;
+			yourself ];
 		at: 'TM' put: [ :val | val asString trimmed ];
 		at: 'UI' put: [ :val | val padToEvenNull asByteArray ];
 		at: 'UL' put: [ :val | 
-			(ByteArray new: 4)
-				unsignedLongAt: 1 put: val bigEndian: false;
-				yourself ];
+		(ByteArray new: 4)
+			unsignedLongAt: 1 put: val bigEndian: false;
+			yourself ];
 		at: 'US' put: [ :val | "unsignedLongAt: 1 bigEndian: true."
 		(ByteArray new: 2)
 			unsignedShortAt: 1 put: val bigEndian: false;
@@ -151,17 +173,25 @@ DcElement class >> initializeVRvalues [
 	CS=Code String
 	DA=Date
 	DS=Decimal String
+	DT=Date Time
+	FD=(Float) Double
+	FL=Float
 	IS=Integer String
 	LO=Long string
+	LT=Long text
 	OB=Other byte
 	OW=Other Word
 	PN=Person Name
 	SH=Short String
+	SL=Signed Long
 	SQ=Sequence
+	SS=Signed Short
+	ST=Short text
 	TM=Time
 	UI=UID
 	UL=Unsigned Long
-	US=Unsigned Short"
+	US=Unsigned Short
+	UT=Unlimited Text"
 
 	VRvalueCode := Dictionary new.
 	VRvalueCode
@@ -169,19 +199,27 @@ DcElement class >> initializeVRvalues [
 		at: 'CS' put: #asString;
 		"needs to be converted to real date
 		"at: 'DA' put: #asString;
+		at: 'DT' put: #asString;
 		at: 'DS' put: #asNumber;
+		at: 'FD' put: #asDouble;
+		at: 'FL' put: #asFloat;
 		at: 'IS' put: #asNumber;
 		at: 'LO' put: #asString;
+		at: 'LT' put: #asString;
 		at: 'OB' put: #asRaw;
 		at: 'OW' put: #asRaw;
 		at: 'PN' put: #asString;
 		at: 'SH' put: #asString;
+		at: 'SL' put: #asSignedLong;
 		at: 'SQ' put: #asSeq;
 		"needs to be converted to real time
-		"at: 'TM' put: #asString;
+		"at: 'SS' put: #asSignedShort;
+		at: 'ST' put: #asString;
+		at: 'TM' put: #asString;
 		at: 'UI' put: #asUID;
-		at: 'UL' put: #asLong;
-		at: 'US' put: #asShort
+		at: 'UL' put: #asUnsignedLong;
+		at: 'US' put: #asUnsignedShort;
+		at: 'UT' put: #asString
 ]
 
 { #category : #comparing }
@@ -191,9 +229,15 @@ DcElement >> <= otherElement [
 ]
 
 { #category : #converting }
-DcElement >> asLong [
+DcElement >> asDouble [
 
-	^ rawValue unsignedLongAt: 1 bigEndian: false
+	^ rawValue doubleAt: 1 bigEndian: false
+]
+
+{ #category : #converting }
+DcElement >> asFloat [
+
+	^ rawValue floatAt: 1 bigEndian: false
 ]
 
 { #category : #converting }
@@ -211,20 +255,25 @@ DcElement >> asRaw [
 { #category : #converting }
 DcElement >> asSeq [
 
-	| items it |
+	"| items it |
 	items := OrderedCollection new.
 	rawValue readStreamDo: [ :s | 
 		[ s atEnd ] whileFalse: [ 
 			it := DcSqItem from: s explicitVR: explicitVR .
-			items add: it ] ].
-	^ items
+			items add: it ] ]."
+	^ rawValue
 ]
 
 { #category : #converting }
-DcElement >> asShort [
+DcElement >> asSignedLong [
 
-	^ rawValue  unsignedShortAt: 1
-		                   bigEndian: false. 
+	^ rawValue unsignedLongAt: 1 bigEndian: false
+]
+
+{ #category : #converting }
+DcElement >> asSignedShort [
+
+	^ rawValue unsignedShortAt: 1 bigEndian: false
 ]
 
 { #category : #converting }
@@ -238,6 +287,19 @@ DcElement >> asUID [
 
 	^ (rawValue reject: [ :b | b = 0 ]) asString trimmed
 
+]
+
+{ #category : #converting }
+DcElement >> asUnsignedLong [
+
+	^ rawValue unsignedLongAt: 1 bigEndian: false
+]
+
+{ #category : #converting }
+DcElement >> asUnsignedShort [
+
+	^ rawValue  unsignedShortAt: 1
+		                   bigEndian: false. 
 ]
 
 { #category : #accessing }

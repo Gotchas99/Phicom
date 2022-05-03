@@ -32,8 +32,16 @@ DcDataSet class >> readFrom: aStream explicitVR: aBoolean [
 { #category : #converting }
 DcDataSet >> asDictionary [
 
-	| tmp |
-	tmp := (elements collect: #assoc)asDictionary .
+	| tmp nextTagId assoc key |
+	nextTagId := 0.
+	tmp := (elements collect: [ :el | 
+		        assoc := el assoc.
+		        key := assoc key = 'Private tag'
+			               ifTrue: [ 
+				               nextTagId := nextTagId + 1.
+				               assoc key , ' ' , el tag hex ]
+			               ifFalse: [ assoc key ].
+		        key -> assoc value ]) asDictionary.
 	^ tmp
 ]
 
