@@ -400,6 +400,17 @@ DcElement >> isCommandElement [
 ]
 
 { #category : #testing }
+DcElement >> isConcept [
+
+	^ tag bin = 4235331
+]
+
+{ #category : #testing }
+DcElement >> isConceptName [
+^tag bin=4235331
+]
+
+{ #category : #testing }
 DcElement >> isExplicitVR [
 
 	 
