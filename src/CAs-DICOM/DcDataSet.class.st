@@ -8,7 +8,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'elements',
-		'explicitVR'
+		'explicitVR',
+		'dict'
 	],
 	#category : #'CAs-DICOM-Core'
 }
@@ -32,9 +33,10 @@ DcDataSet class >> readFrom: aStream explicitVR: aBoolean [
 { #category : #converting }
 DcDataSet >> asDictionary [
 
-	| tmp nextTagId assoc key |
+	|  nextTagId assoc key |
+	dict ifNotNil: [ ^ dict ].
 	nextTagId := 0.
-	tmp := (elements collect: [ :el | 
+	dict := (elements collect: [ :el | 
 		        assoc := el assoc.
 		        key := assoc key = 'Private tag'
 			               ifTrue: [ 
@@ -42,7 +44,26 @@ DcDataSet >> asDictionary [
 				               assoc key , ' ' , el tag hex ]
 			               ifFalse: [ assoc key ].
 		        key -> assoc value ]) asDictionary.
+	^ dict
+]
+
+{ #category : #converting }
+DcDataSet >> asSR [
+
+	| tmp |
+	self isSR ifFalse: [ Error signal: 'not an SR' ].
+	tmp := DcSR new.
+
 	^ tmp
+]
+
+{ #category : #accessing }
+DcDataSet >> at: aKey [
+
+	^ elements
+		  detect: [ :el | el keyword = aKey ]
+		  ifFound: [ :el | el value ]
+		  ifNone: [ Error signal: 'element key not found' ]
 ]
 
 { #category : #accessing }
@@ -53,6 +74,12 @@ DcDataSet >> elements [
 { #category : #accessing }
 DcDataSet >> explicitVR:aBoolean [
 explicitVR:=aBoolean 
+]
+
+{ #category : #testing }
+DcDataSet >> isSR [
+
+	^ (self asDictionary at: 'Modality') = 'SR' 
 ]
 
 { #category : #accessing }
