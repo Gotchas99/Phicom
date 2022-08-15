@@ -42,8 +42,10 @@ DcLimitedReadStream >> next: anInteger [
 	Must override because default uses OrderedCollection."
 
 	| newArray |
-	newArray := ByteArray  new: anInteger.
-	1 to: anInteger do: [ :index | newArray at: index put: self next ].
+	newArray := decoratedStream collectionSpecies new: anInteger.
+	1 to: anInteger do: [ :index | 
+self atEnd ifTrue:[		SubscriptOutOfBounds signalFor: index].
+		newArray at: index put: self next ].
 	^ newArray
 ]
 
