@@ -1,0 +1,27 @@
+Class {
+	#name : #DcSrvParamCFind,
+	#superclass : #DcSrvParam,
+	#category : #'DICOM-Dimse'
+}
+
+{ #category : #'as yet unclassified' }
+DcSrvParamCFind class >> messageTypes [
+
+	^ #( 'C-FIND-RQ' 'C-FIND-RSP' )
+]
+
+{ #category : #creating }
+DcSrvParamCFind >> createFromRequest: aParam [
+
+	super createFromRequest: aParam.
+	self messageType: 'C-FIND-RSP'.
+	self sopClassUid: '1.2.840.10008.1.1'
+]
+
+{ #category : #creating }
+DcSrvParamCFind >> createFromResponse: aParam [
+
+	super createFromResponse: aParam.
+	self messageType: 'C-FIND-RSP'.
+	self sopClassUid: aParam sopClassUid 
+]
