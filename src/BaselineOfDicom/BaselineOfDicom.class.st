@@ -13,22 +13,22 @@ BaselineOfDicom >> baseline: spec [
 		spec
 			package: 'SQLite3'
 			with: [ spec repository: 'github://pharo-rdbms/Pharo-SQLite3/src' ];
-			package: 'CAs-DICOM-Util';
-			package: 'CAs-DICOM-Core'
-			with: [ spec requires: #( 'CAs-DICOM-Util' ) ];
-			package: 'CAs-DICOM-File'
-			with: [ spec requires: #( 'CAs-DICOM-Core' 'SQLite3' ) ];
-			package: 'CAs-DICOM-Net'
-			with: [ spec requires: #( 'CAs-DICOM-Core' ) ];
-			package: 'CAs-DICOM-UpperLayer'
-			with: [ spec requires: #( 'CAs-DICOM-Net' ) ];
-			package: 'CAs-DICOM-ACSE'
-			with: [ spec requires: #( 'CAs-DICOM-UpperLayer' ) ];
-			package: 'CAs-DICOM-Dimse'
-			with: [ spec requires: #( 'CAs-DICOM-UpperLayer' ) ];
-			package: 'CAs-DICOM-AE'
-			with: [ spec requires: #( 'CAs-DICOM-ACSE' 'CAs-DICOM-Dimse' ) ].
+			package: 'DICOM-Util';
+			package: 'DICOM-Core'
+			with: [ spec requires: #( 'DICOM-Util' ) ];
+			package: 'DICOM-File'
+			with: [ spec requires: #( 'DICOM-Core' 'SQLite3' ) ];
+			package: 'DICOM-Net'
+			with: [ spec requires: #( 'DICOM-Core' ) ];
+			package: 'DICOM-UpperLayer'
+			with: [ spec requires: #( 'DICOM-Net' ) ];
+			package: 'DICOM-ACSE'
+			with: [ spec requires: #( 'DICOM-UpperLayer' ) ];
+			package: 'DICOM-Dimse'
+			with: [ spec requires: #( 'DICOM-UpperLayer' ) ];
+			package: 'DICOM-AE'
+			with: [ spec requires: #( 'DICOM-ACSE' 'DICOM-Dimse' ) ].
 		spec
-			group: 'Core' with: #( 'CAs-DICOM-Core' );
-			group: 'default' with: #( 'CAs-DICOM-AE' ) ]
+			group: 'Core' with: #( 'DICOM-Core' );
+			group: 'default' with: #( 'DICOM-AE' ) ]
 ]
