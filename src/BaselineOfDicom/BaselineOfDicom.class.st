@@ -11,9 +11,9 @@ BaselineOfDicom >> baseline: spec [
 	spec for: #common do: [ 
 		spec blessing: #baseline.
 		spec
-			package: 'SQLite3'
+		baseline: 'SQLite3'
 			with: [ spec repository: 'github://pharo-rdbms/Pharo-SQLite3/src' ];
-			package: 'XML-Parser'
+		baseline: 'XML-Parser'
 			with: [ 
 				spec repository: 'github://pharo-contributions/XML-XMLParser/src' ];
 			package: 'DICOM' with: [ spec requires: #( 'XML-Parser' ) ].
