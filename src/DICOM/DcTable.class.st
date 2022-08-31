@@ -446,13 +446,13 @@ DcTable class >> tagTable [
 
 { #category : #accessing }
 DcTable class >> uidAtCode: aUidCode [
-
+UidTable ifNil:[self initializeUidTable ].
 	^ UidTable uidAtCode: aUidCode
 ]
 
 { #category : #accessing }
 DcTable class >> uidAtKeyword: aKeyword [
-
+UidTable ifNil: [ self initializeUidTable ].
 	^ UidTable uidAtKeyword: aKeyword
 ]
 
