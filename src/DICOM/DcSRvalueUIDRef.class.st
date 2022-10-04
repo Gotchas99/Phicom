@@ -20,3 +20,10 @@ DcSRvalueUIDRef >> from: elementList [
 	super from: elementList.
 	uid := self at: 'UID' inList: elementList
 ]
+
+{ #category : #'instance creation' }
+DcSRvalueUIDRef >> printOn: aStream [
+
+	super printOn: aStream.
+	aStream << '=' << uid
+]

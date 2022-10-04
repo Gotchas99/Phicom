@@ -24,5 +24,5 @@ DcSRvalueDateTime >> from: elementList [
 DcSRvalueDateTime >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream << ':' << datetime 
+	aStream << '=' << datetime
 ]

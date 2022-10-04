@@ -24,6 +24,5 @@ DcSRvalueText >> from: elementList [
 DcSRvalueText >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream  << ':'
-	<< text
+	aStream << '=' << text
 ]

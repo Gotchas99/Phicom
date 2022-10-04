@@ -2,7 +2,8 @@ Class {
 	#name : #DcSRvalueNum,
 	#superclass : #DcSRvalueRel,
 	#instVars : [
-		'num'
+		'num',
+		'unit'
 	],
 	#category : #'DICOM-SR'
 }
@@ -16,6 +17,17 @@ DcSRvalueNum class >> valueType [
 { #category : #'instance creation' }
 DcSRvalueNum >> from: elementList [
 
+	| numTemp |
 	super from: elementList.
-	num := (self at: 'MeasuredValueSequence' inList: elementList) first
+	numTemp := (self at: 'MeasuredValueSequence' inList: elementList)
+		           first.
+	num := numTemp at: #NumericValue.
+	unit := ((numTemp at: #MeasurementUnitsCodeSequence)first )at:#CodeMeaning
+]
+
+{ #category : #'instance creation' }
+DcSRvalueNum >> printOn: aStream [
+
+	super printOn: aStream.
+	aStream << '=' << num asString <<' '<<unit
 ]
