@@ -16,3 +16,8 @@ ManifestDICOM class >> ruleBadMessageRule2V1FalsePositive [
 ManifestDICOM class >> ruleCollectionProtocolRuleV1FalsePositive [
 	^ #(#(#(#RGClassDefinition #(#DcMessage)) #'2021-12-20T09:33:18.229+01:00') #(#(#RGMethodDefinition #(#DcDimse #fragsFromElements: #false)) #'2022-02-03T14:54:09.497+01:00') )
 ]
+
+{ #category : #'code-critics' }
+ManifestDICOM class >> ruleRefersToClassRuleV1FalsePositive [
+	^ #(#(#(#RGMethodDefinition #(#DcContentItem #from: #false)) #'2022-10-04T14:56:46.606+02:00') )
+]
