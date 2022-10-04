@@ -17,5 +17,5 @@ DcSRvalueNum class >> valueType [
 DcSRvalueNum >> from: elementList [
 
 	super from: elementList.
-	num := self at: 'MeasuredValueSequence' inList: elementList
+	num := (self at: 'MeasuredValueSequence' inList: elementList) first
 ]

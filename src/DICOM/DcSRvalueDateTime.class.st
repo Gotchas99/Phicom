@@ -19,3 +19,10 @@ DcSRvalueDateTime >> from: elementList [
 	super from: elementList.
 	datetime := self at: 'DateTime' inList: elementList
 ]
+
+{ #category : #printing }
+DcSRvalueDateTime >> printOn: aStream [
+
+	super printOn: aStream.
+	aStream << ':' << datetime 
+]

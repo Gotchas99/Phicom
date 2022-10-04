@@ -22,3 +22,9 @@ DcSRvalueContainer >> from: elementList [
 	contentElements := self at: 'ContentSequence' inList: elementList.
 	content := contentElements collect: [ :el | DcContentItem from: el ]
 ]
+
+{ #category : #printing }
+DcSRvalueContainer >> printOn: aStream [
+
+	aStream << valueType << ':' << conceptName meaning 
+]

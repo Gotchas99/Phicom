@@ -56,15 +56,16 @@ DcContentItem >> at: aKey inList: elements [
 { #category : #'instance creation' }
 DcContentItem >> from: elementList [
 
-		valueType := self at: 'ValueType' inList: elementList.
+	valueType := self at: 'ValueType' inList: elementList.
 	conceptName := DcTriplet fromSeq:
 		               (self
 			                at: 'ConceptNameCodeSequence'
-			                inList: elementList).self halt.
+			                inList: elementList).
+
 ]
 
 { #category : #printing }
 DcContentItem >> printOn: aStream [
 
-	aStream << valueType << ':' << conceptName meaning
+	aStream "<< valueType << ':'" << conceptName meaning
 ]

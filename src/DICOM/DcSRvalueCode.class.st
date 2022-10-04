@@ -21,3 +21,10 @@ DcSRvalueCode >> from: elementList [
 	               DcTriplet fromSeq:
 		               (self at: 'ConceptCodeSequence' inList: elementList) 
 ]
+
+{ #category : #printing }
+DcSRvalueCode >> printOn: aStream [
+
+	super printOn: aStream.
+	aStream << ':' << conceptCode meaning
+]

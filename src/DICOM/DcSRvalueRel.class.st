@@ -17,6 +17,6 @@ DcSRvalueRel >> from: elementList [
 { #category : #printing }
 DcSRvalueRel >> printOn: aStream [
 
-	aStream << valueType  << ':' << relationship << ':' << conceptName meaning
-	
+	aStream "<< valueType << ':' "<< relationship << ':'
+	<< conceptName meaning
 ]
