@@ -76,6 +76,15 @@ DcDataSet >> explicitVR:aBoolean [
 explicitVR:=aBoolean 
 ]
 
+{ #category : #initialization }
+DcDataSet >> initialize [
+
+	elements := SortedCollection new.
+
+
+	
+]
+
 { #category : #testing }
 DcDataSet >> isSR [
 
@@ -83,11 +92,11 @@ DcDataSet >> isSR [
 ]
 
 { #category : #accessing }
-DcDataSet >> readFrom: s [
+DcDataSet >> readFrom: aStream [
 
 	| e |
-	elements := OrderedCollection new.
-	[ s atEnd ] whileFalse: [ 
-		e := DcElement from: s explicitVR: explicitVR.
+	elements := SortedCollection  new.
+	[ aStream atEnd ] whileFalse: [ 
+		e := DcElement from: aStream explicitVR: explicitVR.
 		elements add: e ]
 ]

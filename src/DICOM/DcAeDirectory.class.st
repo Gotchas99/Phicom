@@ -27,9 +27,7 @@ DcAeDirectory class >> initializeNetworkDirectory [
 DcAeDirectory class >> initializeOurDirectory [
 
 	OurDirectory := Dictionary new.
-	DcAe allSubclassesDo: [ :c | 
-		OurDirectory at: c AETitle put: c ]."OurDirectory at: 'PHICOM_ST' put: DcAeStorage.
-	OurDirectory at: 'PHICOM_QR' put: DcAeQuery" 
+	DcAe allSubclassesDo: [ :c | OurDirectory at: c AETitle put: c ] 
 ]
 
 { #category : #accessing }

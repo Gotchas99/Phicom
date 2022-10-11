@@ -212,10 +212,10 @@ DcElement class >> initializeVRvalues [
 		at: 'SH' put: #asString;
 		at: 'SL' put: #asSignedLong;
 		at: 'SQ' put: #asSeq;
-		"needs to be converted to real time
-		"at: 'SS' put: #asSignedShort;
+		at: 'SS' put: #asSignedShort;
 		at: 'ST' put: #asString;
-		at: 'TM' put: #asString;
+		"needs to be converted to real time
+		"at: 'TM' put: #asString;
 		at: 'UI' put: #asUID;
 		at: 'UL' put: #asUnsignedLong;
 		at: 'US' put: #asUnsignedShort;
@@ -335,11 +335,11 @@ DcElement >> from: s explicitVR: aBoolean [
 
 	tag := DcTag from: s.
 	self explicitVR: aBoolean.
-self isExplicitVR
+	self isExplicitVR
 		ifTrue: [ self getVR: s ]
 		ifFalse: [ vr := tag vr ].
 	self getLength: s.
-	self tag isItemDelimiter  ifFalse: [ self getValue: s ]
+	self  isItemDelimiter ifFalse: [ self getValue: s ]
 ]
 
 { #category : #'instance creation' }
@@ -372,7 +372,7 @@ DcElement >> getValue: s [
 					[ (it := DcSqItem from: s explicitVR: explicitVR) isEmpty ] 
 						whileFalse: [ items add: it ].
 					rawValue := items ]
-				ifFalse: [ self halt "vad är detta?" ] ]
+				ifFalse: [ self error: 'undefined length but NOT SQ ... Not right!' ] ]
 		ifFalse: [ rawValue := s next: length ].
 	value := nil
 ]
@@ -382,8 +382,8 @@ DcElement >> groupLength [
 
 	| len |
 	len := 4. "tag"
+	self isExplicitVR ifTrue: [ len := len + 2 "VR field" ].
 	len := len + self lengthLength.
-	self isExplicitVR ifTrue: [ len := len + self lengthLength ].
 	len := len + self rawValue size.
 	^ len
 ]
@@ -434,6 +434,13 @@ DcElement >> isSeqDelimiter [
 DcElement >> isShortVR [
 
 	^ self shortVRs includes: self vr
+]
+
+{ #category : #testing }
+DcElement >> isTagname:aTagname [
+
+
+	^ tag isKeyword: aTagname 
 ]
 
 { #category : #testing }
@@ -533,9 +540,8 @@ DcElement >> vr [
 DcElement >> writeLength: s [
 
 	"Undefined Length = FFFFFFFFH"
- s
-		          nextLittleEndianNumber: self lengthLength
-		          put: self rawValue size
+
+	s nextLittleEndianNumber: self lengthLength put: self rawValue size 
 ]
 
 { #category : #writing }
@@ -551,7 +557,7 @@ DcElement >> writeOn: s [
 DcElement >> writeVR: s [
 
 self 	vr putOn: s.
-	self isShortVR ifTrue: [ s nextPutAll: #( 0 0 ) ]
+	"varför detta??? ==> self isShortVR ifTrue: [ s nextPutAll: #( 0 0 ) ]"
 ]
 
 { #category : #writing }

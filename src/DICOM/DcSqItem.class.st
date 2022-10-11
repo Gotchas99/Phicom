@@ -27,7 +27,7 @@ DcSqItem >> from: s explicitVR: aBoolean [
 	tag := DcTag from: s.
 	length := s nextLittleEndianNumber: 4.
 	elements := OrderedCollection new.
-	endOflist := s atEnd or:[tag isSeqDelimiter ].
+	endOflist := s atEnd or: [ tag isSeqDelimiter ].
 	[ endOflist ] whileFalse: [ 
 		el := DcElement from: s explicitVR: aBoolean.
 		el isItemDelimiter
@@ -35,8 +35,9 @@ DcSqItem >> from: s explicitVR: aBoolean [
 			ifFalse: [ 
 				elements add: el.
 				endOflist := s atEnd ] ].
-	dict := (elements collect: #assoc) asDictionary.
-	^ dict
+"	dict := (elements collect: #assoc) asDictionary.
+	^ dict"
+	^elements
 ]
 
 { #category : #testing }

@@ -36,6 +36,13 @@ DcTag >> <= otherTag [
 	^bin <= otherTag bin
 ]
 
+{ #category : #comparing }
+DcTag >> = aTag [
+
+	aTag class = self class ifFalse: [ ^ false ].
+	^bin=aTag bin
+]
+
 { #category : #accessing }
 DcTag >> bin [
 ^bin
@@ -79,6 +86,12 @@ DcTag >> group [
 
 ]
 
+{ #category : #comparing }
+DcTag >> hash [
+
+	^bin
+]
+
 { #category : #printing }
 DcTag >> hex [
 
@@ -100,6 +113,12 @@ DcTag >> isItemDelimiter [
 	"(FFFE,E00D) = ItemDelimitationItem"
 
 	^bin=4294893581
+]
+
+{ #category : #testing }
+DcTag >> isKeyword: aKeyword [
+
+	^keyword=aKeyword  
 ]
 
 { #category : #writing }
@@ -168,8 +187,8 @@ DcTag >> vr [
 DcTag >> writeOn: s [
 
 	| group element |
-	group := bin bitShift: -16.
-	element := 65535bitAnd:bin  .
+	group := bin bitShift: -16. 
+	element := 65535 bitAnd: bin.
 	s nextLittleEndianNumber: 2 put: group.
 	s nextLittleEndianNumber: 2 put: element
 ]

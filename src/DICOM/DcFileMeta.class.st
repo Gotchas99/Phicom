@@ -296,6 +296,14 @@ DcFileMeta >> docs [
 ]
 
 { #category : #testing }
+DcFileMeta >> isDirectoryStorage [
+
+| uid |
+uid:=	self mediaStorageSOPClassUID value.
+^(	DcTable uidAtCode: uid )=#MediaStorageDirectoryStorage
+]
+
+{ #category : #testing }
 DcFileMeta >> isExplicitVR [
 
 	| tsn uid |
@@ -308,6 +316,12 @@ DcFileMeta >> isExplicitVR [
 DcFileMeta >> isPrefixValid [
 
 	^ self prefix asString = 'DICM'
+]
+
+{ #category : #accessing }
+DcFileMeta >> mediaStorageSOPClassUID [
+
+	^meta at: #MediaStorageSOPClassUID
 ]
 
 { #category : #accessing }
