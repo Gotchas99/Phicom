@@ -118,13 +118,15 @@ DcTag >> isItemDelimiter [
 { #category : #testing }
 DcTag >> isKeyword: aKeyword [
 
-	^keyword=aKeyword  
+	^self  keyword = aKeyword
 ]
 
-{ #category : #writing }
+{ #category : #testing }
 DcTag >> isPrivate [
-^ self group odd
 
+	| group |
+	group := bin bitShift: -16.
+	^ group odd
 ]
 
 { #category : #testing }

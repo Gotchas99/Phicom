@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'meta',
-		'filename'
+		'filename',
+		'explicitVR'
 	],
 	#category : #'DICOM-File'
 }
@@ -30,5 +31,6 @@ DcFile >> read [
 
 	filename asFileReference binaryReadStreamDo: [ :s | 
 		meta := DcFileMeta readMetaFrom: s.
-		self  readFrom: s ]
+		explicitVR := meta isExplicitVR.
+		self readFrom: s ]
 ]

@@ -2,7 +2,8 @@ Class {
 	#name : #DcDirFile,
 	#superclass : #DcFile,
 	#instVars : [
-		'root'
+		'root',
+		'offsetFirstRecord'
 	],
 	#category : #'DICOM-File'
 }
@@ -13,7 +14,21 @@ self filename: aPath , '/DICOMDIR'
 ]
 
 { #category : #'instance creation' }
-DcDirFile >> readFrom: s [
+DcDirFile >> readFrom: aStream [
 
-	root := DcDirEntity new readFrom: s explicitVR: meta isExplicitVR
+	| fileSetId consistencyTag els el |
+	consistencyTag := DcTag fromString: '(0004,1212)'.
+	els := OrderedCollection new.
+	fileSetId := DcElement from: aStream explicitVR: explicitVR.
+	[ 
+	el := DcElement from: aStream explicitVR: explicitVR.
+	els add: el ] doWhileFalse: [ el tag = consistencyTag ].
+	offsetFirstRecord := (els detect: [ :e | 
+		                      e isTagname:
+			                      'OffsetoftheFirstDirectoryRecordoftheRootDirectoryEntity' ])
+		                     value.
+	root := DcDirEntity new
+		        readFrom: aStream
+		        atPos:offsetFirstRecord
+		        explicitVR: explicitVR
 ]

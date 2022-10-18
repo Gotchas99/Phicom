@@ -480,18 +480,19 @@ DcElement >> lengthLength [
 { #category : #printing }
 DcElement >> printOn: aStream [
 
-	super printOn: aStream.
+	"super printOn: aStream."
+
 	self isItemDelimiter ifTrue: [ 
 		aStream << '(ItemDelimiter)'.
 		^ self ].
 	self isSeqDelimiter ifTrue: [ 
 		aStream << '(SeqDelimiter)'.
 		^ self ].
-	aStream << $( << tag keyword << '(' << self vr << ')' << ': '.
+	aStream <<  tag keyword << '(' << self vr << ')' << ': '.
 	self vr = 'UI'
 		ifTrue: [ aStream << (DcTable uidAtCode: self value) ]
 		ifFalse: [ self value printOn: aStream ].
-	aStream << $)
+	
 ]
 
 { #category : #accessing }

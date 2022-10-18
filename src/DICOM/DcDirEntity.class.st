@@ -2,7 +2,12 @@ Class {
 	#name : #DcDirEntity,
 	#superclass : #Object,
 	#instVars : [
-		'records'
+		'records',
+		'nextEntity',
+		'nextRecord',
+		'offsetLowerEntity',
+		'type',
+		'properties'
 	],
 	#category : #'DICOM-File'
 }
@@ -14,14 +19,16 @@ DcDirEntity >> initialize [
 ]
 
 { #category : #'instance creation' }
-DcDirEntity >> readFrom: aStream explicitVR: explicitVR [
+DcDirEntity >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 
-	| fileSetId consistency els el |
-	consistency := DcTag fromString: '(0004,1212)'.
-	els := OrderedCollection new.
-	fileSetId := DcElement from: aStream explicitVR: explicitVR.
-	[ 
-	el := DcElement from: aStream explicitVR: explicitVR.
-	els add: el ] doWhileFalse: [ el tag = consistency ].
-self halt.el := DcElement from: aStream explicitVR: explicitVR.
+	| els inUse |
+	aStream position: startPos.
+	els := DcSqItem from: aStream explicitVR: explicitVR.
+	nextRecord := els first.
+	inUse := els second.
+	offsetLowerEntity := els third.
+	type := els fourth.
+	properties := els allButFirst: 4.
+	self halt
+
 ]
