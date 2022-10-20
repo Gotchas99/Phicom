@@ -6,7 +6,9 @@ Class {
 		'flds',
 		'currentMedia',
 		'ds',
-		'els'
+		'els',
+		'srTree',
+		'srFlds'
 	],
 	#category : #'DICOM-Ui'
 }
@@ -14,13 +16,17 @@ Class {
 { #category : #initialization }
 DcPresenterMain class >> defaultSpec [
 
-	| topRow |
+	| topRow srBox |
 	topRow := SpBoxLayout newLeftToRight
 		          add: #files;
 		          add: #els expand: true.
+	srBox := SpBoxLayout newLeftToRight
+		         add: #srTree expand: true;
+		         add: #srFlds expand: true.
 	^ SpBoxLayout newTopToBottom
 		  add: topRow height: 165;
-		  add: #flds expand: true;
+		  "add: #flds expand: true;"
+		  add: srBox expand: true;
 		  yourself
 ]
 
@@ -29,15 +35,20 @@ DcPresenterMain >> connectPresenters [
 
 	| sel fname |
 	files whenSelectionChangedDo: [ :selection | 
-		[ :elem |  
+		[ :elem | 
 		sel := elem first.
 		fname := elem third ] cull: selection selectedItem.
 		currentMedia := DcObjectFile new filename: fname.
 		ds := currentMedia read dataset.
-		els items: ds elements ].
+		els items: ds elements.
+		ds isSR ifTrue: [ srTree roots: { ds asSR } ] ].
 	els whenSelectionChangedDo: [ :selection | 
 		[ :elem | elem ifNotNil: [ flds items: elem parse ] ] cull:
-			selection selectedItem ]
+			selection selectedItem ].
+	srTree whenSelectionChangedDo: [ :selection | 
+		[ :elem | 
+		elem ifNotNil: [ 
+			srFlds items: elem values ] ] cull: selection selectedItem ]
 ]
 
 { #category : #initialization }
@@ -58,7 +69,7 @@ DcPresenterMain >> initializePresenters [
 		addColumn:
 			(SpStringTableColumn title: 'Description' evaluated: #second);
 		items: self sampleMessages.
-	els := self newList  display: [ :el | el printString ].
+	els := self newList display: [ :el | el printString ].
 	flds := SpTablePresenter new
 		        addColumn:
 			        ((SpStringTableColumn title: 'Index' evaluated: #first) 
@@ -67,7 +78,26 @@ DcPresenterMain >> initializePresenters [
 			        (SpStringTableColumn title: 'Field' evaluated: #second);
 		        addColumn:
 			        (SpStringTableColumn title: 'Value' evaluated: #last);
-		        yourself
+		        yourself.
+	srTree := self newTreeTable
+		          addColumn:
+			          (SpStringTableColumn
+				           title: 'SR Structure'
+				           evaluated: #printString);
+		          children: [ :aNode | aNode children ];
+		          beResizable;
+		          activateOnDoubleClick;
+		          whenActivatedDo: [ :selection | 
+			          self halt.
+			          "selection selectedItem browse "].
+	srFlds := self newTable.
+	srFlds
+		beResizable;
+		addColumn:
+			((SpStringTableColumn title: 'Concept' evaluated: #conceptName) 
+				 width: 25);
+		addColumn:
+			(SpStringTableColumn title: 'Value' evaluated: #printString)
 ]
 
 { #category : #initialization }
