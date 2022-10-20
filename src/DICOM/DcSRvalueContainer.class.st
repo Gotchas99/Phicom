@@ -2,7 +2,8 @@ Class {
 	#name : #DcSRvalueContainer,
 	#superclass : #DcContentItem,
 	#instVars : [
-		'content'
+		'content',
+		'template'
 	],
 	#category : #'DICOM-SR'
 }
@@ -28,10 +29,11 @@ DcSRvalueContainer >> from: elementList [
 
 	"ContentSequence = Tag(0040,a730)"
 
-	| contentElements | 
+	| contentElements |
 	super from: elementList.
 	contentElements := self at: 'ContentSequence' inList: elementList.
-	content := contentElements collect: [ :el | DcContentItem from: el ]
+	content := contentElements collect: [ :el | DcContentItem from: el ].
+	self readTemplateFrom: elementList
 ]
 
 { #category : #testing }
@@ -44,6 +46,19 @@ DcSRvalueContainer >> isContainer [
 DcSRvalueContainer >> printOn: aStream [
 
 	aStream << valueType << ':' << conceptName meaning 
+]
+
+{ #category : #'instance creation' }
+DcSRvalueContainer >> readTemplateFrom: elementList [
+
+	| tempElements |
+	[ 
+	tempElements := self
+		                at: 'ContentTemplateSequence'
+		                inList: elementList ]
+		on: Error 
+		do: [ :ex | "ignore missing template" ^ self ].
+	template := self at: 'TemplateIdentifier' inList: tempElements first
 ]
 
 { #category : #accessing }
