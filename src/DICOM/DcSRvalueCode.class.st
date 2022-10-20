@@ -26,5 +26,5 @@ DcSRvalueCode >> from: elementList [
 DcSRvalueCode >> printOn: aStream [
 
 	super printOn: aStream.
-	aStream << ':' << conceptCode meaning
+	aStream << ': ' << conceptCode meaning
 ]

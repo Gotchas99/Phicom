@@ -24,11 +24,12 @@ DcTriplet >> codeValue [
 { #category : #'instance creation' }
 DcTriplet >> fromSeq: aSeq [
 
-	| dict  |
-	dict := aSeq value first.
-	scheme := dict at: 'CodingSchemeDesignator'.
-	meaning := dict at: 'CodeMeaning'.
-	codeValue := dict at: 'CodeValue'
+	| sq |
+	sq := aSeq value first.
+	scheme := (sq detect: [ :e | e keyword = 'CodingSchemeDesignator' ])
+		          value. 
+	meaning := (sq detect: [ :e | e keyword = 'CodeMeaning' ]) value.
+	codeValue := (sq detect: [ :e | e keyword = 'CodeValue' ]) value
 ]
 
 { #category : #accessing }

@@ -52,7 +52,7 @@ DcDataSet >> asSR [
 
 	| tmp |
 	self isSR ifFalse: [ Error signal: 'not an SR' ].
-	tmp := DcSR new.
+	tmp := DcSR new from: elements.
 
 	^ tmp
 ]

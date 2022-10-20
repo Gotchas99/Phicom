@@ -17,12 +17,15 @@ DcSRvalueNum class >> valueType [
 { #category : #'instance creation' }
 DcSRvalueNum >> from: elementList [
 
-	| numTemp |
+	| numTemp unitSeq |
 	super from: elementList.
 	numTemp := (self at: 'MeasuredValueSequence' inList: elementList)
 		           first.
-	num := numTemp at: #NumericValue.
-	unit := ((numTemp at: #MeasurementUnitsCodeSequence)first )at:#CodeMeaning
+	num := (numTemp detect: [ :e | e keyword = #NumericValue ])
+		          value. 
+	unitSeq := (numTemp detect: [ :e | e keyword = #MeasurementUnitsCodeSequence ])
+		          value .	
+			unit := (unitSeq first detect: [ :e | e keyword = #CodeMeaning ])  value
 ]
 
 { #category : #'instance creation' }

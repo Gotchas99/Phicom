@@ -12,6 +12,17 @@ DcSRvalueContainer class >> valueType [
 ^'CONTAINER'
 ]
 
+{ #category : #accessing }
+DcSRvalueContainer >> children [
+
+	^ content select: [ :each | each isContainer ]
+]
+
+{ #category : #'instance creation' }
+DcSRvalueContainer >> content [
+^content
+]
+
 { #category : #'instance creation' }
 DcSRvalueContainer >> from: elementList [
 
@@ -23,8 +34,20 @@ DcSRvalueContainer >> from: elementList [
 	content := contentElements collect: [ :el | DcContentItem from: el ]
 ]
 
+{ #category : #testing }
+DcSRvalueContainer >> isContainer [
+
+	^ true
+]
+
 { #category : #printing }
 DcSRvalueContainer >> printOn: aStream [
 
 	aStream << valueType << ':' << conceptName meaning 
+]
+
+{ #category : #accessing }
+DcSRvalueContainer >> values [
+
+	^content select:[:each|each isSimple ]
 ]

@@ -53,6 +53,14 @@ DcContentItem >> at: aKey inList: elements [
 ^self class at: aKey inList: elements
 ]
 
+{ #category : #printing }
+DcContentItem >> conceptName [
+
+^conceptName 
+
+	
+]
+
 { #category : #'instance creation' }
 DcContentItem >> from: elementList [
 
@@ -62,6 +70,16 @@ DcContentItem >> from: elementList [
 			                at: 'ConceptNameCodeSequence'
 			                inList: elementList).
 
+]
+
+{ #category : #testing }
+DcContentItem >> isContainer [
+^false
+]
+
+{ #category : #testing }
+DcContentItem >> isSimple [
+	^ self isContainer not
 ]
 
 { #category : #printing }
