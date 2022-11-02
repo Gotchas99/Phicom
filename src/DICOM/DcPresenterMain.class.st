@@ -88,8 +88,8 @@ DcPresenterMain >> initializePresenters [
 		          beResizable;
 		          activateOnDoubleClick;
 		          whenActivatedDo: [ :selection | 
-			          self halt.
-			          "selection selectedItem browse "].
+			          self halt
+			          "selection selectedItem browse " ].
 	srFlds := self newTable.
 	srFlds
 		beResizable;
@@ -97,7 +97,7 @@ DcPresenterMain >> initializePresenters [
 			((SpStringTableColumn title: 'Concept' evaluated: #conceptName) 
 				 width: 25);
 		addColumn:
-			(SpStringTableColumn title: 'Value' evaluated: #printString)
+			(SpStringTableColumn title: 'Value' evaluated: #valueString)
 ]
 
 { #category : #initialization }

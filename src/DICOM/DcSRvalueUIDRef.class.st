@@ -27,3 +27,9 @@ DcSRvalueUIDRef >> printOn: aStream [
 	super printOn: aStream.
 	aStream << '=' << uid
 ]
+
+{ #category : #'instance creation' }
+DcSRvalueUIDRef >> valueString [
+
+	^  uid
+]

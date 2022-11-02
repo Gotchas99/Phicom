@@ -26,3 +26,9 @@ DcSRvalueDateTime >> printOn: aStream [
 	super printOn: aStream.
 	aStream << '=' << datetime
 ]
+
+{ #category : #printing }
+DcSRvalueDateTime >> valueString [
+
+	^  datetime
+]

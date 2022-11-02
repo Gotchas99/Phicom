@@ -87,3 +87,9 @@ DcContentItem >> printOn: aStream [
 
 	aStream "<< valueType << ':'" << conceptName meaning
 ]
+
+{ #category : #printing }
+DcContentItem >> valueString [
+
+	^'???'
+]

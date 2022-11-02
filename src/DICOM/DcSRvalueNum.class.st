@@ -34,3 +34,9 @@ DcSRvalueNum >> printOn: aStream [
 	super printOn: aStream.
 	aStream << '=' << num asString <<' '<<unit
 ]
+
+{ #category : #'instance creation' }
+DcSRvalueNum >> valueString [
+
+	^ num asString , ' ' , unit
+]

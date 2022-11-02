@@ -28,3 +28,10 @@ DcSRvalueCode >> printOn: aStream [
 	super printOn: aStream.
 	aStream << ': ' << conceptCode meaning
 ]
+
+{ #category : #printing }
+DcSRvalueCode >> valueString [
+
+	
+	^ conceptCode meaning
+]
