@@ -2,9 +2,9 @@ Class {
 	#name : #DcFile,
 	#superclass : #Object,
 	#instVars : [
-		'meta',
 		'filename',
-		'explicitVR'
+		'explicitVR',
+		'meta'
 	],
 	#category : #'DICOM-File'
 }
@@ -29,8 +29,19 @@ DcFile >> meta [
 { #category : #'as yet unclassified' }
 DcFile >> read [
 
-	filename asFileReference binaryReadStreamDo: [ :s | 
+	self readStreamDo: [ :s | 
 		meta := DcFileMeta readMetaFrom: s.
 		explicitVR := meta isExplicitVR.
 		self readFrom: s ]
+]
+
+{ #category : #'instance creation' }
+DcFile >> readFrom: aStream [
+self subclassResponsibility 
+]
+
+{ #category : #'as yet unclassified' }
+DcFile >> readStreamDo: aBlock [
+
+	filename asFileReference binaryReadStreamDo: aBlock
 ]

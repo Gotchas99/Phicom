@@ -27,8 +27,13 @@ DcDirFile >> readFrom: aStream [
 		                      e isTagname:
 			                      'OffsetoftheFirstDirectoryRecordoftheRootDirectoryEntity' ])
 		                     value.
-	root := DcDirEntity new
+	root := DcDirEntity new file: self;
 		        readFrom: aStream
-		        atPos:offsetFirstRecord
+		        atPos: offsetFirstRecord
 		        explicitVR: explicitVR
+]
+
+{ #category : #'as yet unclassified' }
+DcDirFile >> rootEntity [
+^root
 ]

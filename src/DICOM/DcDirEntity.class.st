@@ -2,33 +2,51 @@ Class {
 	#name : #DcDirEntity,
 	#superclass : #Object,
 	#instVars : [
+		'file',
 		'records',
-		'nextEntity',
-		'nextRecord',
-		'offsetLowerEntity',
-		'type',
-		'properties'
+		'explicit'
 	],
 	#category : #'DICOM-File'
 }
 
-{ #category : #initialization }
-DcDirEntity >> initialize [
+{ #category : #accessing }
+DcDirEntity >> file:aDirFile [
+file:=aDirFile 
+]
 
-	records := OrderedCollection new.
+{ #category : #printing }
+DcDirEntity >> printOn: aStream [
+
+ aStream << self type 
 ]
 
 { #category : #'instance creation' }
 DcDirEntity >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 
-	| els inUse |
-	aStream position: startPos.
-	els := DcSqItem from: aStream explicitVR: explicitVR.
-	nextRecord := els first.
-	inUse := els second.
-	offsetLowerEntity := els third.
-	type := els fourth.
-	properties := els allButFirst: 4.
-	self halt
+	| newRec recordPos |
+	explicit := explicitVR.
+	recordPos := startPos.
+	records := OrderedCollection new.
+	[ recordPos = 0 ] whileFalse: [ 
+		newRec := DcDirRecord new
+			          file: file;
+			          readFrom: aStream
+			          atPos: recordPos
+			          explicitVR: explicitVR.
+		recordPos := newRec nextRecord.
+		records add: newRec ]
+]
 
+{ #category : #accessing }
+DcDirEntity >> records [ ^records 
+
+]
+
+{ #category : #printing }
+DcDirEntity >> type [
+
+	| types |
+	records isEmpty ifTrue: [ ^ 'EMPTY' ].
+	types := records collect: [ :rec | rec type ].
+	(types asSet size >1)ifTrue:[^'MIXED'].^types first
 ]

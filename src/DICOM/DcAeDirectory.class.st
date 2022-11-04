@@ -44,8 +44,6 @@ DcAeDirectory class >> networkForAET: anAET [
 { #category : #accessing }
 DcAeDirectory class >> ourAET: anAET [
 
-	| tmp |
-	tmp := OurDirectory at: anAET.
+	^ OurDirectory at: anAET.
 
-	^ tmp
 ]

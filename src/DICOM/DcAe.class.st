@@ -59,7 +59,8 @@ DcAe class >> reset [
 { #category : #initialization }
 DcAe class >> startUp: resuming [
 
-	self traceCr: self name, ' startUp. resuming: ' , resuming printString.
+	"self traceCr:
+		self name , ' startUp. resuming: ' , resuming printString."
 	SessionManager default currentSession addDeferredStartupAction: [ 
 		self allSubclassesDo: [ :c | c reset ] ]
 ]

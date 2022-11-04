@@ -133,14 +133,14 @@ DcNet class >> startUp: resuming [
 	self traceCr: 'startUp. resuming: ' , resuming printString
 		, ' ------------------------------------------------------'.
 	self loggingClass start.
-StringSignal emit:	'Logging enabled' .
+"StringSignal emit:	'Logging enabled' ."
 	"Our system startUp hook: start all servers we manage.
 	We do this using deferred startup actions to allow normal error handling."
 	(resuming or: [ self alwaysRestart ]) ifTrue: [ 
 		default
-			ifNil: [ self traceCr: 'no default server found.' ]
+			ifNil: [ StringSignal emit: 'no default server found.' ]
 			ifNotNil: [ 
-				self traceCr: 'default server found. starting it up'.
+				StringSignal emit:'default server found. starting it up'.
 				SessionManager default currentSession addDeferredStartupAction: [ 
 					self startDefault ] ] ]
 ]
