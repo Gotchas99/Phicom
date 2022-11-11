@@ -222,9 +222,7 @@ DcNet >> executeOneRequestResponseOn: stream forAssoc: assoc [
 { #category : #'request handling' }
 DcNet >> executeRequestResponseLoopOn: assoc [
 
-	self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, 'executeRequestResponseLoopOn: ' , assoc remoteAETitle.
+	StringSignal emit: 'executeRequestResponseLoopOn: ' , assoc remoteAETitle.
 	[ assoc stream isConnected ] whileTrue: [ 
 		self executeOneRequestResponseOn: assoc stream forAssoc: assoc ]
 ]
@@ -256,20 +254,18 @@ DcNet >> listenLoop [
 	"We create a listening Socket, then wait for a connection.
 	After each connection we also check that the listening Socket is still valid 
 	- if not we just make a recursive call to this method to start over."
-StringSignal emit: 'listenLoop ======================='.
-"	self log: 'listenLoop ======================='."
-	self initializeServerSocket.
+
+	StringSignal emit: 'listenLoop ======================='.
+		self initializeServerSocket.
 	[ 
 	[ 
 	serverSocket isValid ifFalse: [ "will trigger #ifCurtailed: block and destroy socket"
-		self traceCr: 'serverSocket invalid ----------------------------'.
+		StringSignal emit: 'serverSocket invalid ----------------------------'.
 		^ self listenLoop ].
-	"self traceCr:
-		'before serveConnectionsOn ----------------------------'."
 	self serveConnectionsOn: serverSocket ] repeat ] ensure: [ "ensure var tidigare ifCurtailed"
-		self traceCr: 'listenloop ended (ensure:). releaseServerSocket'.
+		StringSignal emit: 'listenloop ended (ensure:). releaseServerSocket'.
 		self releaseServerSocket ].
-	self traceCr: 'After serveConnectionsOn ----------------------------'
+StringSignal emit:'After serveConnectionsOn ----------------------------'
 ]
 
 { #category : #private }
@@ -302,14 +298,10 @@ DcNet >> printOn: stream [
 	stream nextPutAll: (self isRunning
 			 ifTrue: [ 'running' ]
 			 ifFalse: [ 'stopped' ]).
-	 port ifNotNil: [ :p | 
+	port ifNotNil: [ :p | 
 		stream
 			space;
 			print: p ].
-	"self bindingAddress ifNotNil: [ :bindingAddress | 
-		stream
-			space; 
-			print: bindingAddress ]."
 	stream nextPut: $)
 ]
 
@@ -319,11 +311,11 @@ DcNet >> releaseServerSocket [
 	"Release our server socket"
 
 	| address |
-	self traceCr: 'Release our server socket'.
+	StringSignal emit: 'Release our server socket'.
 	serverSocket ifNil: [ ^ self ].
 	address := [ serverSocket address ]
 		           on: Error
-		           do: [ nil ]. 
+		           do: [ nil ].
 	port := [ serverSocket port ]
 		        on: Error
 		        do: [ nil ].
@@ -336,9 +328,7 @@ DcNet >> releaseServerSocket [
 DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 
 	| pdu |
-	self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name
-		, ' sendAndRecievePDU: >' , aPdu class name.
+	StringSignal emit: ' sendAndRecievePDU: >' , aPdu class name.
 	assoc stream ifNil: [ 
 		assoc stream: (self connectAET: assoc remoteAETitle) ].
 	[ 
@@ -348,36 +338,27 @@ DcNet >> sendAndRecievePDU: aPdu forAssoc: assoc [
 	pdu := DcPDU readFrom: assoc stream.
 	pdu class = DcAssociateAc ifTrue: [ 
 		[ 
-		self traceCr:
-			DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-			, 'sendAndRecievePDU:process started **************'.
+		StringSignal emit:
+			'sendAndRecievePDU:process started **************'.
 		[ assoc stream isConnected ] whileTrue: [ 
-			self traceCr:
-				DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-				, 'sendAndRecievePDU:process stopped **************'.
+			StringSignal emit:
+				'sendAndRecievePDU:process stopped **************'.
 			self executeRequestResponseLoopOn: assoc ] ]
 			forkAt: 32
 			named: 'sendAndRecievePDU' ].
-	self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name
-		, ' sendAndRecievePDU: <' , pdu class name.
+	StringSignal emit: ' sendAndRecievePDU: <' , pdu class name.
 	^ pdu ]
 		on: ConnectionClosed , ConnectionTimedOut
 		do: [ :ex | 
-			Transcript
-				show:
-					DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-					, 'sendAndRecievePDU: Connection error. Closing stream';
-				cr.
+			StringSignal
+				emit: 'sendAndRecievePDU: Connection error. Closing stream'			.
 			assoc stream close ]
 ]
 
 { #category : #'request handling' }
 DcNet >> sendPDU: aPdu forAssoc: assoc [
 
-	self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name
-		, ' sendPDU:', aPdu class name.
+	StringSignal emit: ' sendPDU:' , aPdu class name.
 	assoc stream ifNil: [ 
 		assoc stream: (self connectAET: assoc remoteAETitle) ].
 	ZnBufferedWriteStream
@@ -395,14 +376,9 @@ DcNet >> serveConnectionOn: socket [
 	[ self executeRequestResponseLoopOn: assoc ]
 		on: ConnectionClosed , ConnectionTimedOut
 		do: [ :ex | 
-			Transcript
-				show:
-					DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-					, 'serveConnectionOn: Connection error. Closing stream';
-				cr ] ] ensure: [ 
-		self traceCr:
-			DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-			, 'serveConnectionOn: closing stream'.
+			StringSignal
+				emit: 'serveConnectionOn: Connection error. Closing stream' ] ] ensure: [ 
+		StringSignal emit: 'serveConnectionOn: closing stream'.
 		stream close ]
 ]
 
@@ -415,21 +391,10 @@ DcNet >> serveConnectionsOn: listeningSocket [
 	request/response cycle."
 
 	| socket |
-	"self traceCr: 'serveConnectionsOn: waiting for connection '
-		, DateAndTime current printString."
 	socket := listeningSocket waitForAcceptFor: self acceptWaitTimeout.
-	socket ifNil: [ "self traceCr: 'no accepted connection'." ^ self ].
-	self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, 'serveConnectionsOn: accepted connection'.
-	[ 
-	"self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, 'serveConnectionsOn:process started **************'."
-	self serveConnectionOn: socket.
-	"self traceCr:
-		DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-		, 'serveConnectionsOn:process stopped **************'" ]
+	socket ifNil: [  ^ self ].
+	StringSignal emit: 'serveConnectionsOn: accepted connection'.
+	[ self serveConnectionOn: socket ]
 		forkAt: 32
 		named: 'serveConnectionsOn'.
 	^ self
@@ -476,10 +441,13 @@ DcNet >> socketStreamOn: socket [
 { #category : #public }
 DcNet >> start [
 
-	process := [ self traceCr: 'serverprocess started **************'.[ self listenLoop ] repeat.self traceCr: 'serverprocess stopped **************' ]
+	process := [ 
+	           StringSignal emit: 'serverprocess started **************'.
+	           [ self listenLoop ] repeat.
+	          StringSignal emit: 'serverprocess stopped **************' ]
 		           forkAt: 33
 		           named: self serverProcessName. "highIOPriority"
-	self traceCr: 'serverprocess forked **************'
+	StringSignal emit:'serverprocess forked **************'
 ]
 
 { #category : #public }
@@ -491,7 +459,8 @@ DcNet >> stop [
 
 	self isRunning ifFalse: [ ^ self ].
 	process terminate.
-	process := nil.	self traceCr: 'server stopped **************'
+	process := nil.
+	StringSignal emit: 'server stopped **************'
 ]
 
 { #category : #private }
@@ -499,11 +468,12 @@ DcNet >> writeResponse: response on: stream [
 
 	response
 		ifNil: [ 
-			self traceCr:
-				DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-				, 'Empty response. Not written' ]
+			StringSignal emit: 'Empty response. Not written'
+			"self traceCr:
+				DateAndTime current asStringYMDHMS , ' ' , self class name , ' '				," ]
 		ifNotNil: [ 
 			response writeOn: stream.
-			self traceCr: DateAndTime current asStringYMDHMS , ' ' , self class name , ' '
-				,'Response sent' ]
+			"self traceCr:
+				DateAndTime current asStringYMDHMS , ' ' , self class name , ' '				, "
+			StringSignal emit: 'Response sent' ]
 ]
