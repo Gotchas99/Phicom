@@ -447,7 +447,7 @@ DcNet >> start [
 	           self traceCr: 'serverprocess stopped **************' ]
 		           forkAt: 33
 		           named: self serverProcessName. "highIOPriority"
-	StringSignal emit: 'serverprocess forked **************' 
+	self traceCr: 'serverprocess forked **************'
 ]
 
 { #category : #public }
@@ -460,7 +460,7 @@ DcNet >> stop [
 	self isRunning ifFalse: [ ^ self ].
 	process terminate.
 	process := nil.
-	StringSignal emit: 'server stopped **************'
+	self traceCr: 'server stopped **************'
 ]
 
 { #category : #private }
