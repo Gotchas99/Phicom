@@ -444,10 +444,10 @@ DcNet >> start [
 	process := [ 
 	           self traceCr: 'serverprocess started **************'.
 	           [ self listenLoop ] repeat.
-	            self traceCr: 'serverprocess stopped **************' ]
+	           self traceCr: 'serverprocess stopped **************' ]
 		           forkAt: 33
 		           named: self serverProcessName. "highIOPriority"
-	StringSignal emit: 'serverprocess forked **************'
+	StringSignal emit: 'serverprocess forked **************' 
 ]
 
 { #category : #public }
