@@ -444,12 +444,12 @@ DcNet >> socketStreamOn: socket [
 DcNet >> start [
 
 	process := [ 
-	           self traceCr: 'serverprocess started **************'.
+	                self traceCr:  'serverprocess started **************'.
 	           [ self listenLoop ] repeat.
-	           self traceCr: 'serverprocess stopped **************' ]
+	      StringSignal emit:'serverprocess stopped **************' ]
 		           forkAt: 33
 		           named: self serverProcessName. "highIOPriority"
-	self traceCr: 'serverprocess forked **************'
+	StringSignal emit: 'serverprocess forked **************'
 ]
 
 { #category : #public }
@@ -462,7 +462,7 @@ DcNet >> stop [
 	self isRunning ifFalse: [ ^ self ].
 	process terminate.
 	process := nil.
-	self traceCr: 'server stopped **************'
+StringSignal emit: 'server stopped **************'
 ]
 
 { #category : #private }
