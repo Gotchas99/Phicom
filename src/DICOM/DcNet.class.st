@@ -92,7 +92,7 @@ DcNet class >> shutDown: quitting [
 		, ' -----------------------------------------------------'.
 	(quitting or: [ self alwaysRestart ]) ifTrue: [ "	self allInstances do: [ :srv | srv stop ]"
 		default
-			ifNil: [ self traceCr: 'no default server found.' ]
+			ifNil: [ StringSignal emit: 'no default server found.' ]
 			ifNotNil: [ default stop ] ].
 	self loggingClass stop
 ]
@@ -444,12 +444,12 @@ DcNet >> socketStreamOn: socket [
 DcNet >> start [
 
 	process := [ 
-	                self traceCr:  'serverprocess started **************'.
+	           self traceCr: 'serverprocess started **************'.
 	           [ self listenLoop ] repeat.
-	      StringSignal emit:'serverprocess stopped **************' ]
+	           self traceCr: 'serverprocess stopped **************' ]
 		           forkAt: 33
 		           named: self serverProcessName. "highIOPriority"
-	StringSignal emit: 'serverprocess forked **************'
+	  self traceCr: 'serverprocess forked **************'
 ]
 
 { #category : #public }
@@ -462,7 +462,7 @@ DcNet >> stop [
 	self isRunning ifFalse: [ ^ self ].
 	process terminate.
 	process := nil.
-StringSignal emit: 'server stopped **************'
+	  self traceCr: 'server stopped **************'
 ]
 
 { #category : #private }
