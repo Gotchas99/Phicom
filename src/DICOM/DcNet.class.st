@@ -256,16 +256,18 @@ DcNet >> listenLoop [
 	- if not we just make a recursive call to this method to start over."
 
 	StringSignal emit: 'listenLoop ======================='.
-		self initializeServerSocket.
+	self initializeServerSocket.
 	[ 
 	[ 
 	serverSocket isValid ifFalse: [ "will trigger #ifCurtailed: block and destroy socket"
-		StringSignal emit: 'serverSocket invalid ----------------------------'.
+		self traceCr:
+			'serverSocket invalid ----------------------------'.
 		^ self listenLoop ].
 	self serveConnectionsOn: serverSocket ] repeat ] ensure: [ "ensure var tidigare ifCurtailed"
-		StringSignal emit: 'listenloop ended (ensure:). releaseServerSocket'.
+		self traceCr: 'listenloop ended (ensure:). releaseServerSocket'.
 		self releaseServerSocket ].
-StringSignal emit:'After serveConnectionsOn ----------------------------'
+	StringSignal emit:
+		'After serveConnectionsOn ----------------------------'
 ]
 
 { #category : #private }
