@@ -13,9 +13,9 @@ BaselineOfDicom >> baseline: spec [
 		spec
 			baseline: 'SQLite3'
 			with: [ spec repository: 'github://pharo-rdbms/Pharo-SQLite3/src' ];
-			baseline: 'XMLParser'
+			baseline: 'XMLParser' 
 			with: [ 
 				spec repository: 'github://pharo-contributions/XML-XMLParser/src' ];
 			package: 'DICOM' with: [ spec requires: #( 'XMLParser' ) ].
-			spec group: 'default' with: #( 'DICOM' ) ]
+		spec group: 'default' with: #( 'DICOM' ) ]
 ]

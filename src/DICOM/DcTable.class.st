@@ -387,11 +387,10 @@ DcTable class >> initialize [
 { #category : #'class initialization' }
 DcTable class >> initializeTagTable [
 
-	^ TagTable := self new
-	part10;
+	^ TagTable := self new part3
+		              part10;
 		              part6;
 		              part7
-		              
 ]
 
 { #category : #'class initialization' }
@@ -494,6 +493,26 @@ DcTable >> part10 [
 		       ifFalse: [ XMLDOMParser parseURL: url ].
 	root := doc root.
 	self table_7_1_1: root
+]
+
+{ #category : #initialization }
+DcTable >> part3 [
+
+	| fname root url doc parser |
+	fname := 'C:\Misc\dicomref\part03.xml'.
+	url := 'https://dicom.nema.org/medical/dicom/current/source/docbook/part03/part03.xml'.
+
+	parser := fname asFileReference exists
+		          ifTrue: [ XMLDOMParser on: fname asFileReference ]
+		          ifFalse: [ XMLDOMParser onURL: url ].
+	parser optimizeForLargeDocuments.
+	doc := parser parseDocument.
+	"doc := fname asFileReference exists
+		       ifTrue: [ XMLDOMParser parse: fname asFileReference ]
+		       ifFalse: [ XMLDOMParser parseURL: url ]."
+	root := doc root.
+	self table_C_7_1: root.
+"	self table_8_1: root"
 ]
 
 { #category : #initialization }
@@ -682,6 +701,34 @@ DcTable >> table_A_1: anXmlRoot [
 		line with: hdr61 do: [ :val :h | d at: h put: val ].
 		self removeUnprintablesInKey: 'Keyword' from: d.
 		tblUid at: (d at:#UID) put:(d at:#Keyword) ]
+]
+
+{ #category : #initialization }
+DcTable >> table_C_7_1: anXmlRoot [
+
+	| chapters chapter table thead hdrs tbody items d hdr61 sect |
+	chapters := anXmlRoot nodes elementsAt: 'chapter'.
+	chapter := chapters elementsDetect: [ :ch | 
+		           'chapter_C'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	sect := chapter elementsDetect: [ :ch | 
+		           'sect_C.7'
+		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	table := sect allElementsDetect: [ :tab | 
+		         'table_C.7-1'
+		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+	thead := (table elementsAt: 'thead') first elements first.
+	hdrs := thead elements collect: [ :th | th contentString trim ].
+	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
+	tbody := (table elementsAt: 'tbody') first elements.self halt.
+	items := tbody collect: [ :tr | 
+		         tr elements collect: [ :td | 
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+	items do: [ :line | 
+		d := Dictionary new.
+		line with: hdr61 do: [ :val :h | d at: h put: val ].
+		self removeUnprintablesInKey: 'Keyword' from: d.
+		self saveRow: d ]
 ]
 
 { #category : #initialization }
