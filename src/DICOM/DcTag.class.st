@@ -122,6 +122,11 @@ DcTag >> isKeyword: aKeyword [
 ]
 
 { #category : #testing }
+DcTag >> isPixelData [
+	^bin=2145386512
+]
+
+{ #category : #testing }
 DcTag >> isPrivate [
 
 	| group |
@@ -172,6 +177,7 @@ DcTag >> printOn: aStream [
 
 	aStream << 'Tag'.
 	aStream << self hex
+.	aStream << self keyword .
 	"bin ifNotNil: [ 
 		bytes := (bin asByteArrayOfSize: 4) hex.
 		aStream << $( << (bytes first: 4) << $, << (bytes last: 4) << $) ]"

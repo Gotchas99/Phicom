@@ -507,12 +507,9 @@ DcTable >> part3 [
 		          ifFalse: [ XMLDOMParser onURL: url ].
 	parser optimizeForLargeDocuments.
 	doc := parser parseDocument.
-	"doc := fname asFileReference exists
-		       ifTrue: [ XMLDOMParser parse: fname asFileReference ]
-		       ifFalse: [ XMLDOMParser parseURL: url ]."
 	root := doc root.
-	self table_C_7_1: root.
-"	self table_8_1: root"
+	self table_C_7_1: root
+	"	self table_8_1: root"
 ]
 
 { #category : #initialization }
@@ -712,18 +709,17 @@ DcTable >> table_C_7_1: anXmlRoot [
 		           'chapter_C'
 		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
 	sect := chapter elementsDetect: [ :ch | 
-		           'sect_C.7'
-		           = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
+		        'sect_C.7' = (ch attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
 	table := sect allElementsDetect: [ :tab | 
 		         'table_C.7-1'
 		         = (tab attributeAt: 'xml:id' ifAbsent: [ '***' ]) ].
 	thead := (table elementsAt: 'thead') first elements first.
 	hdrs := thead elements collect: [ :th | th contentString trim ].
 	hdr61 := #( #Tag #Name #Keyword #VR #VM #Comment ).
-	tbody := (table elementsAt: 'tbody') first elements.self halt.
-	items := tbody collect: [ :tr | 
+	tbody := (table elementsAt: 'tbody') first elements.
+		items := tbody collect: [ :tr | 
 		         tr elements collect: [ :td | 
-			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].
+			         td contentString trim select: [ :c | c isOctetCharacter ] ] ].self halt.
 	items do: [ :line | 
 		d := Dictionary new.
 		line with: hdr61 do: [ :val :h | d at: h put: val ].

@@ -14,6 +14,28 @@ Class {
 }
 
 { #category : #accessing }
+DcDirRecord >> allEntities [
+
+	| ents  |
+	ents := OrderedCollection with: self.
+	self lowerEntity ifNotNil: [ :ent | 
+		ent records do: [ :rec | ents addAll: rec allEntities ] ].
+	^ ents
+]
+
+{ #category : #accessing }
+DcDirRecord >> at: aKey [
+
+	^ self at: aKey ifAbsent: [ KeyNotFound signalFor: aKey ]
+]
+
+{ #category : #accessing }
+DcDirRecord >> at: aKey ifAbsent: aZeroArgBlock [
+
+	^ properties detect: [ :el | el keyword = aKey ]ifNone:aZeroArgBlock
+]
+
+{ #category : #accessing }
 DcDirRecord >> file:aDirFile [
 file:=aDirFile 
 ]
@@ -23,10 +45,11 @@ DcDirRecord >> lowerEntity [
 
 	^ lowerEntity ifNil: [ 
 		  file readStreamDo: [ :s | 
-			  lowerEntity := DcDirEntity new file:file;
+			  lowerEntity := DcDirEntity new
+				                 file: file;
 				                 readFrom: s
 				                 atPos: offsetLowerEntity
-				                 explicitVR: explicit ] ]
+				                 explicitVR: explicit ]. lowerEntity  ]
 ]
 
 { #category : #accessing }

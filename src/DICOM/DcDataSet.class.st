@@ -9,6 +9,7 @@ Class {
 	#instVars : [
 		'elements',
 		'explicitVR',
+		'readPixelData',
 		'dict'
 	],
 	#category : #'DICOM-Core'
@@ -80,9 +81,7 @@ explicitVR:=aBoolean
 DcDataSet >> initialize [
 
 	elements := SortedCollection new.
-
-
-	
+	readPixelData:=true
 ]
 
 { #category : #testing }
@@ -95,8 +94,18 @@ DcDataSet >> isSR [
 DcDataSet >> readFrom: aStream [
 
 	| e |
-	elements := SortedCollection  new.
-	[ aStream atEnd ] whileFalse: [ 
-		e := DcElement from: aStream explicitVR: explicitVR.
+	elements := SortedCollection new.
+	e := DcElement new.
+	[ aStream atEnd or: [ e isPixelData ] ] whileFalse: [ 
+		e := DcElement new
+			     explicitVR: explicitVR;
+			     readPixelData: readPixelData;
+			     from: aStream.
+	"	self halt."
 		elements add: e ]
+]
+
+{ #category : #initialization }
+DcDataSet >> readPixelData:aBoolean [
+readPixelData:=aBoolean
 ]

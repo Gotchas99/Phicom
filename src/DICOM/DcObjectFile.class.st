@@ -2,7 +2,8 @@ Class {
 	#name : #DcObjectFile,
 	#superclass : #DcFile,
 	#instVars : [
-		'dataset'
+		'dataset',
+		'readPixelData'
 	],
 	#category : #'DICOM-File'
 }
@@ -17,10 +18,33 @@ self flag:#todo.
 	^ 0
 ]
 
+{ #category : #initialization }
+DcObjectFile >> initialize [
+
+	explicitVR := false.
+	readPixelData := true
+]
+
 { #category : #'instance creation' }
 DcObjectFile >> readFrom: s [
 
-	dataset := DcDataSet readFrom: s explicitVR: meta isExplicitVR
+	dataset := DcDataSet new
+		           explicitVR: meta isExplicitVR;
+		           readPixelData: readPixelData;
+		           readFrom: s.
+
+]
+
+{ #category : #accessing }
+DcObjectFile >> readPixelData: aBoolean [
+
+	readPixelData:= aBoolean 
+]
+
+{ #category : #'instance creation' }
+DcObjectFile >> readWithoutPixelFrom:  s [
+
+	dataset :=( DcDataSet new)  explicitVR: meta isExplicitVR;readWithoutPixelFrom: s
 ]
 
 { #category : #'as yet unclassified' }

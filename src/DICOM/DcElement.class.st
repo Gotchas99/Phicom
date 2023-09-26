@@ -32,7 +32,8 @@ Class {
 		'vr',
 		'explicitVR',
 		'rawValue',
-		'value'
+		'value',
+		'readPixelData'
 	],
 	#classVars : [
 		'RawCodes',
@@ -94,7 +95,8 @@ Unsigned binary integer 32 bits long. Represents an integer n in the range:
 
 { #category : #'instance creation' }
 DcElement class >> from: s explicitVR: aBoolean [
-	^ self new from: s explicitVR: aBoolean
+
+	^ self new explicitVR: aBoolean;from: s 
 ]
 
 { #category : #initialization }
@@ -228,6 +230,14 @@ DcElement >> <= otherElement [
 	^ tag <= otherElement tag
 ]
 
+{ #category : #comparing }
+DcElement >> = anElement [
+
+	anElement class = self class ifFalse: [ ^ false ].
+	tag = anElement tag ifFalse: [ ^ false ].
+	^rawValue = anElement rawValue 
+]
+
 { #category : #converting }
 DcElement >> asDouble [
 
@@ -325,21 +335,30 @@ DcElement >> checkLength [
 { #category : #accessing }
 DcElement >> explicitVR: aBoolean [
 
- explicitVR :=	self isCommandElement
-		ifTrue: [ false ]
-		ifFalse: [  aBoolean ]
+	explicitVR := aBoolean 
+]
+
+{ #category : #'instance creation' }
+DcElement >> from: s [
+	tag := DcTag from: s.
+	self isExplicitVR
+		ifTrue: [ self getVR: s ]
+		ifFalse: [ vr := tag vr ].
+	self getLength: s.
+	self shouldReadData ifTrue:  [ self getValue: s ]
 ]
 
 { #category : #'instance creation' }
 DcElement >> from: s explicitVR: aBoolean [
-
+self deprecated: 'använde from: istället'.
 	tag := DcTag from: s.
+	self halt.
 	self explicitVR: aBoolean.
 	self isExplicitVR
 		ifTrue: [ self getVR: s ]
 		ifFalse: [ vr := tag vr ].
 	self getLength: s.
-	self  isItemDelimiter ifFalse: [ self getValue: s ]
+	self isItemDelimiter ifFalse: [ self getValue: s ]
 ]
 
 { #category : #'instance creation' }
@@ -369,10 +388,11 @@ DcElement >> getValue: s [
 			self vr = 'SQ'
 				ifTrue: [ 
 					items := OrderedCollection new.
-					[ (it := DcSqItem from: s explicitVR: explicitVR) isEmpty ] 
+					[ (it := DcSqItem from: s explicitVR:self  isExplicitVR) isEmpty ] 
 						whileFalse: [ items add: it ].
 					rawValue := items ]
-				ifFalse: [ self error: 'undefined length but NOT SQ ... Not right!' ] ]
+				ifFalse: [ 
+				self error: 'undefined length but NOT SQ ... Not right!' ] ]
 		ifFalse: [ rawValue := s next: length ].
 	value := nil
 ]
@@ -388,9 +408,16 @@ DcElement >> groupLength [
 	^ len
 ]
 
+{ #category : #comparing }
+DcElement >> hash [
+
+	^ tag bin bitXor: rawValue hash
+]
+
 { #category : #initialization }
-DcElement >> initialize [ 
-explicitVR :=false
+DcElement >> initialize [
+
+	explicitVR := false.readPixelData :=true
 ]
 
 { #category : #testing }
@@ -412,16 +439,32 @@ DcElement >> isConceptName [
 
 { #category : #testing }
 DcElement >> isExplicitVR [
-
-	 
-	self tag isItemDelimiter ifTrue:[^false].
-		self tag isSeqDelimiter  ifTrue:[^false].
-^	explicitVR
+self   isCommandElement ifTrue:[^false].
+	self tag isItemDelimiter ifTrue: [ ^ false ].
+	self tag isSeqDelimiter ifTrue: [ ^ false ].
+	^ explicitVR
 ]
 
 { #category : #testing }
 DcElement >> isItemDelimiter [
 ^tag isItemDelimiter
+]
+
+{ #category : #testing }
+DcElement >> isPixelData [
+tag ifNil:[^false].
+	^ tag isPixelData
+]
+
+{ #category : #testing }
+DcElement >> isPrivate [
+
+	^tag isPrivate
+]
+
+{ #category : #testing }
+DcElement >> isSeq [
+^vr='SQ'
 ]
 
 { #category : #testing }
@@ -468,7 +511,7 @@ DcElement >> lengthLength [
 	"different size of length field"
 
 	| size |
-	size := explicitVR
+	size :=self  isExplicitVR
 		        ifTrue: [ 
 			        self isShortVR
 				        ifTrue: [ 2 ]
@@ -505,12 +548,27 @@ DcElement >> rawValue [
 ]
 
 { #category : #accessing }
+DcElement >> readPixelData: aBoolean [
+
+	readPixelData:=aBoolean 
+]
+
+{ #category : #accessing }
 DcElement >> shortVRs [
 
 	
 
 	^ #( #AE , #AS , #AT , #CS , #DA , #DS , #DT , #FL , #FD , #IS , #LO
 	     , #LT , #PN , 3 SH , #SL , #SS , #ST , #TM , #UI , #UL , #US )
+]
+
+{ #category : #testing }
+DcElement >> shouldReadData [
+
+	self isItemDelimiter ifTrue: [ ^ false ].
+	self isPixelData ifTrue: [ 
+			^ readPixelData ].
+	^ true
 ]
 
 { #category : #accessing }
@@ -549,7 +607,7 @@ DcElement >> writeLength: s [
 DcElement >> writeOn: s [
 
 	tag writeOn: s.
-	explicitVR ifTrue: [ self writeVR: s ].
+	self explicitVR ifTrue: [ self writeVR: s ].
 	self writeLength: s.
 	self writeValue: s
 ]
