@@ -10,6 +10,14 @@ Class {
 }
 
 { #category : #accessing }
+DcDirEntity >> entitiesOfType: aTypename [
+
+	| tmp |
+	tmp := records select: [ :r | r type = aTypename ]. 
+	^ tmp
+]
+
+{ #category : #accessing }
 DcDirEntity >> file:aDirFile [
 file:=aDirFile 
 ]
@@ -35,6 +43,15 @@ DcDirEntity >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 			          explicitVR: explicitVR.
 		recordPos := newRec nextRecord.
 		records add: newRec ]
+]
+
+{ #category : #printing }
+DcDirEntity >> recordTypes [
+
+	| types |
+	records isEmpty ifTrue: [ ^ 'EMPTY' ].
+	types := records collect: [ :rec | rec type ].
+^	types asSet sorted 
 ]
 
 { #category : #accessing }

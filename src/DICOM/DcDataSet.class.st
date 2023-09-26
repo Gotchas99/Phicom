@@ -91,6 +91,12 @@ DcDataSet >> isSR [
 ]
 
 { #category : #accessing }
+DcDataSet >> nonEmptyElements [
+
+	^ elements reject: [ :el | el isEmpty ] 
+]
+
+{ #category : #accessing }
 DcDataSet >> readFrom: aStream [
 
 	| e |

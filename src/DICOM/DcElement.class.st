@@ -332,6 +332,22 @@ DcElement >> checkLength [
 	self traceCr: self class name , ' ' , 'checkLength passed'
 ]
 
+{ #category : #printing }
+DcElement >> displayKey [
+
+	self isItemDelimiter ifTrue: [ ^ '(ItemDelimiter)' ].
+	self isSeqDelimiter ifTrue: [ ^ '(SeqDelimiter)' ].
+	^ tag keyword , '(' , self vr , ')' , ': '
+]
+
+{ #category : #printing }
+DcElement >> displayValue [
+
+	^ vr = 'UI'
+		  ifTrue: [ DcTable uidAtCode: self value ]
+		  ifFalse: [ self value printString ]
+]
+
 { #category : #accessing }
 DcElement >> explicitVR: aBoolean [
 
@@ -438,10 +454,18 @@ DcElement >> isConceptName [
 ]
 
 { #category : #testing }
+DcElement >> isEmpty [
+rawValue ifNil:[^true].
+	rawValue size = 0 ifTrue: [ ^ true ].
+	^ false
+]
+
+{ #category : #testing }
 DcElement >> isExplicitVR [
-self   isCommandElement ifTrue:[^false].
-	self tag isItemDelimiter ifTrue: [ ^ false ].
-	self tag isSeqDelimiter ifTrue: [ ^ false ].
+
+	self isCommandElement ifTrue: [ ^ false ].
+	self  isItemDelimiter ifTrue: [ ^ false ].
+	self  isSeqDelimiter ifTrue: [ ^ false ].
 	^ explicitVR
 ]
 
@@ -523,19 +547,8 @@ DcElement >> lengthLength [
 { #category : #printing }
 DcElement >> printOn: aStream [
 
-	"super printOn: aStream."
-
-	self isItemDelimiter ifTrue: [ 
-		aStream << '(ItemDelimiter)'.
-		^ self ].
-	self isSeqDelimiter ifTrue: [ 
-		aStream << '(SeqDelimiter)'.
-		^ self ].
-	aStream <<  tag keyword << '(' << self vr << ')' << ': '.
-	self vr = 'UI'
-		ifTrue: [ aStream << (DcTable uidAtCode: self value) ]
-		ifFalse: [ self value printOn: aStream ].
 	
+	aStream << self displayKey << self displayValue
 ]
 
 { #category : #accessing }

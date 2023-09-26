@@ -42,9 +42,11 @@ DcObjectFile >> readPixelData: aBoolean [
 ]
 
 { #category : #'instance creation' }
-DcObjectFile >> readWithoutPixelFrom:  s [
+DcObjectFile >> readWithoutPixelFrom: s [
 
-	dataset :=( DcDataSet new)  explicitVR: meta isExplicitVR;readWithoutPixelFrom: s
+	dataset := DcDataSet new 
+		           explicitVR: meta isExplicitVR;
+		           readWithoutPixelFrom: s
 ]
 
 { #category : #'as yet unclassified' }

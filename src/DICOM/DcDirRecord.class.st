@@ -36,8 +36,33 @@ DcDirRecord >> at: aKey ifAbsent: aZeroArgBlock [
 ]
 
 { #category : #accessing }
+DcDirRecord >> children [
+^self lowerEntity records
+]
+
+{ #category : #accessing }
+DcDirRecord >> entitiesOfType: aTypename [
+
+	^ self lowerEntity entitiesOfType: aTypename 
+]
+
+{ #category : #accessing }
 DcDirRecord >> file:aDirFile [
 file:=aDirFile 
+]
+
+{ #category : #inspecting }
+DcDirRecord >> inspectionString [
+
+	<inspectorPresentationOrder: -10 title: 'DICOM DirRecord'>
+	^ SpTablePresenter new
+		  addColumn:
+			  ((SpStringTableColumn title: 'Index' evaluated: #displayKey)
+				   width: 200);
+		  addColumn:
+			  (SpStringTableColumn title: 'Field' evaluated: #displayValue);
+		  items: properties;
+		  yourself
 ]
 
 { #category : #accessing }
@@ -58,10 +83,9 @@ DcDirRecord >> nextRecord [ ^offsetNextRecord
 
 { #category : #printing }
 DcDirRecord >> printOn: aStream [
-
 	"super printOn: aStream."
 
-	aStream << 'DR: ' << type
+	aStream << 'DR: ' << type << '/' << self size asString
 ]
 
 { #category : #'instance creation' }
@@ -78,6 +102,12 @@ DcDirRecord >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 	properties := els allButFirst: 4
 ]
 
-{ #category : #printing }
+{ #category : #accessing }
+DcDirRecord >> size [
+
+	^ self lowerEntity records size
+]
+
+{ #category : #accessing }
 DcDirRecord >> type [ ^type
 ]
