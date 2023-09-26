@@ -64,6 +64,12 @@ DcDirRecord >> file:aDirFile [
 file:=aDirFile 
 ]
 
+{ #category : #accessing }
+DcDirRecord >> hasKey: aKey [
+
+	^ properties anySatisfy: [ :el | el keyword = aKey ]
+]
+
 { #category : #inspecting }
 DcDirRecord >> inspectionString [
 
