@@ -84,6 +84,20 @@ DcDataSet >> initialize [
 	readPixelData:=true
 ]
 
+{ #category : #inspecting }
+DcDataSet >> inspectionString [
+
+	<inspectorPresentationOrder: -10 title: 'DICOM DirRecord'>
+	^ SpTablePresenter new
+		  addColumn:
+			  ((SpStringTableColumn title: 'Index' evaluated: #displayKey)
+				   width: 200);
+		  addColumn:
+			  (SpStringTableColumn title: 'Field' evaluated: #displayValue);
+		  items: elements;
+		  yourself
+]
+
 { #category : #testing }
 DcDataSet >> isSR [
 

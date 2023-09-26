@@ -9,6 +9,11 @@ Class {
 }
 
 { #category : #accessing }
+DcDirFile >> path [
+	^ filename
+]
+
+{ #category : #accessing }
 DcDirFile >> path:aPath [
 self filename: aPath , '/DICOMDIR'
 ]

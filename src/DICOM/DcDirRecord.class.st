@@ -8,7 +8,8 @@ Class {
 		'properties',
 		'lowerEntity',
 		'explicit',
-		'offsetNextRecord'
+		'offsetNextRecord',
+		'dataset'
 	],
 	#category : #'DICOM-File'
 }
@@ -38,6 +39,18 @@ DcDirRecord >> at: aKey ifAbsent: aZeroArgBlock [
 { #category : #accessing }
 DcDirRecord >> children [
 ^self lowerEntity records
+]
+
+{ #category : #accessing }
+DcDirRecord >> dataset [
+
+	| f |
+	^ dataset ifNil: [
+		  f := DcObjectFile new
+			                  filename: self refFilename;
+			                  readPixelData: false;
+			                  read.
+		 dataset :=  f dataset ]
 ]
 
 { #category : #accessing }
@@ -100,6 +113,15 @@ DcDirRecord >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 	offsetLowerEntity := els third value.
 	type := els fourth value.
 	properties := els allButFirst: 4
+]
+
+{ #category : #'as yet unclassified' }
+DcDirRecord >> refFilename [
+
+	| base ref |
+	base := file path asPath parent.
+	ref := (self at: 'ReferencedFileID') value.
+	^ base / ref
 ]
 
 { #category : #accessing }
