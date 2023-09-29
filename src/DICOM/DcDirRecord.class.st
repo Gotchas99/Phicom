@@ -121,7 +121,7 @@ DcDirRecord >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 	properties := els allButFirst: 4
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcDirRecord >> refFilename [
 
 	| base ref |
