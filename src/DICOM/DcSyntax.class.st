@@ -73,11 +73,12 @@ self add: #(	'1.2.840.10008.5.1.4.1.2.1.1')
 
 { #category : #'class initialization' }
 DcSyntax class >> initializeTransferSyntaxes [
-
 	"uid, name, explicit_VR(optional, default explicit), endianness(optional, default little endian)"
 
 	self add: #( '1.2.840.10008.1.2' nil false ).
-	self add: #( '1.2.840.10008.1.2.1'  )
+	self add: #( '1.2.840.10008.1.2.1' ).
+	"JPEG Baseline (Process 1): Default Transfer Syntax for Lossy JPEG 8-bit Image Compression"
+	self add: #( '1.2.840.10008.1.2.4.50' 'JPEG Baseline' )
 ]
 
 { #category : #converting }

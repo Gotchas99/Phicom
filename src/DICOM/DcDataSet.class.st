@@ -73,6 +73,20 @@ DcDataSet >> elements [
 ]
 
 { #category : #accessing }
+DcDataSet >> elementsForModule: aModulename [
+
+	| mod tags matches matchElements matchTags |
+	tags := elements collect: [ :m | m keyword ].
+	mod := DcModule module: aModulename.
+	matches := mod matchingTags: tags.
+	matchTags := matches collect: [ :t | t at: #TagHex ].
+	self halt.
+	matchElements := elements select: [ :e |
+		                 matchTags anySatisfy: [ :t | t = e tag bin ] ].
+	^ matchElements
+]
+
+{ #category : #accessing }
 DcDataSet >> explicitVR:aBoolean [
 explicitVR:=aBoolean 
 ]
@@ -98,10 +112,26 @@ DcDataSet >> inspectionString [
 		  yourself
 ]
 
+{ #category : #accessing }
+DcDataSet >> iod [
+
+	^ DcTable uidAtCode: ( self at: 'SOPClassUID')
+]
+
 { #category : #testing }
 DcDataSet >> isSR [
 
 	^ (self asDictionary at: 'Modality') = 'SR' 
+]
+
+{ #category : #accessing }
+DcDataSet >> modules [
+
+	| allMods mods |
+	allMods := DcModule modulesForIOD: self iod.
+	mods := Dictionary new.
+	 allMods do: [ :mod |
+		  mods at: mod name put: (self elementsForModule: mod name) ].^mods
 ]
 
 { #category : #accessing }

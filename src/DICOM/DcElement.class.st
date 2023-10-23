@@ -345,7 +345,10 @@ DcElement >> displayValue [
 
 	^ vr = 'UI'
 		  ifTrue: [ DcTable uidAtCode: self value ]
-		  ifFalse: [ self value printString ]
+		  ifFalse: [
+			  [ self value printString ]
+				  on: Error
+				  do: [ ^ '<unknown>' ] ]
 ]
 
 { #category : #accessing }

@@ -111,6 +111,7 @@ DcDirRecord >> printOn: aStream [
 DcDirRecord >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 
 	| els inUse |
+	self halt.
 	explicit := explicitVR.
 	aStream position: startPos.
 	els := DcSqItem from: aStream explicitVR: explicitVR.
