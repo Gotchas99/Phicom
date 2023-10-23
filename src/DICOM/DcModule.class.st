@@ -145,12 +145,6 @@ DcModule >> name: aString [
 	name := aString
 ]
 
-{ #category : #accessing }
-DcModule >> name^ [
-
-	name
-]
-
 { #category : #printing }
 DcModule >> printOn: aStream [
 
