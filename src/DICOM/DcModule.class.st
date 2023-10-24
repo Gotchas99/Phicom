@@ -28,18 +28,22 @@ DcModule class >> addGeneralStudy [
 	m addTag: '(0020,0010)'.
 	m addTag: '(0008,1030)'.
 	m addTag: '(0008,0050)'.
-	^ m
+		Modules at: m name put: m.
+
 ]
 
 { #category : #'class initialization' }
-DcModule class >> addPatient [
+DcModule class >> addPatientIdentificationModule [
 
 	| m |
-	m := self new name: 'Patient'.
+	m := self new
+		     name: 'PatientIdentificationModule';
+		     descr: 'Patient Identification Module'.
 	m addTag: '(0010,0010)'.
 	m addTag: '(0010,0020)'.
 	m addTag: '(0010,0022)'.
-	^ m
+	Modules at: m name put: m.
+
 ]
 
 { #category : #'class initialization' }
@@ -47,8 +51,8 @@ DcModule class >> initialize [
 
 	<script>
 	Modules := Dictionary new.
-	Modules at: #Patient put: self addPatient.
-	Modules at: #GeneralStudy put: self addGeneralStudy.
+	 self addPatientIdentificationModule.
+	self addGeneralStudy.
 	self initializeIOD
 ]
 
