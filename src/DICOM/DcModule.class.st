@@ -134,12 +134,6 @@ DcModule >> matchingTags: tagList [
 ]
 
 { #category : #accessing }
-DcModule >> name [
-
-	^name
-]
-
-{ #category : #accessing }
 DcModule >> name: aString [
 
 	name := aString
