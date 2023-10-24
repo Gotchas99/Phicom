@@ -92,6 +92,21 @@ DcModule class >> addPatient [
 ]
 
 { #category : #'class initialization' }
+DcModule class >> addVLWholeSlideMicroscopyImage [
+
+	| m tagIds |
+	m := self new
+		     name: 'VLWholeSlideMicroscopyImage';
+		     descr: 'VL Whole Slide Microscopy Image'.
+	tagIds := #( '(0008,0008)' '(0048,0001)' '(0048,0002)' '(0048,0003)' '(0048,0006)' '(0048,0007)'
+	'(0048,0008)' '(0028,0002)' '(0028,0008)' '(0028,0100)' '(0028,0101)' '(0008,002A)' '(0018,9073)' 
+	'(0048,0010)' ).
+	tagIds do: [ :tagId | m addTag: tagId ].
+
+	Modules at: m name put: m
+]
+
+{ #category : #'class initialization' }
 DcModule class >> initialize [
 
 	<script>
@@ -101,6 +116,7 @@ DcModule class >> initialize [
 	self addGeneralImage.
 	self addMultiFrame.
 	self addImagePixel.
+	self addVLWholeSlideMicroscopyImage.
 	self initializeIOD
 ]
 
@@ -116,8 +132,9 @@ DcModule class >> initializeIOD [
 			(self module: #Patient).
 			(self module: #GeneralStudy).
 			(self module: #GeneralImage).
-			(self module: #MultiFrame) .
-			(self module: #ImagePixel)}.
+			(self module: #MultiFrame).
+			(self module: #ImagePixel).
+		(self module: #VLWholeSlideMicroscopyImage) }.
 	self module: #GeneralImage
 ]
 
