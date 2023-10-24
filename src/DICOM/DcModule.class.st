@@ -15,6 +15,28 @@ Class {
 }
 
 { #category : #'class initialization' }
+DcModule class >> addGeneralImage [
+
+	| m |
+	m := self new
+		     name: 'GeneralImage';
+		     descr: 'General Image'.
+	m addTag: '(0020,0013)'.
+	m addTag: '(0020,0020)'.
+	m addTag: '(0008,0023)'.
+
+	m addTag: '(0008,0033)'.
+	m addTag: '(0008,0008)'.
+	m addTag: '(0008,0022)'.
+	m addTag: '(0008,0032)'.
+
+	m addTag: '(0020,1002)'.
+	m addTag: '(0008,0032)'.
+
+	Modules at: m name put: m
+]
+
+{ #category : #'class initialization' }
 DcModule class >> addGeneralStudy [
 
 	| m |
@@ -33,17 +55,40 @@ DcModule class >> addGeneralStudy [
 ]
 
 { #category : #'class initialization' }
-DcModule class >> addPatientIdentificationModule [
+DcModule class >> addImagePixel [
 
 	| m |
 	m := self new
-		     name: 'PatientIdentificationModule';
-		     descr: 'Patient Identification Module'.
+		     name: 'ImagePixel';
+		     descr: 'Image Pixel'.
+	m addMacro:'ImagePixel'.
+	Modules at: m name put: m
+]
+
+{ #category : #'class initialization' }
+DcModule class >> addMultiFrame [
+
+	| m |
+	m := self new
+		     name: 'MultiFrame';
+		     descr: 'Multi Frame'.
+	m addTag: '(0028,0008)'.
+	m addTag: '(0028,0009)'.
+
+	Modules at: m name put: m
+]
+
+{ #category : #'class initialization' }
+DcModule class >> addPatient [
+
+	| m |
+	m := self new
+		     name: 'Patient';
+		     descr: 'Patient'.
 	m addTag: '(0010,0010)'.
 	m addTag: '(0010,0020)'.
 	m addTag: '(0010,0022)'.
-	Modules at: m name put: m.
-
+	Modules at: m name put: m
 ]
 
 { #category : #'class initialization' }
@@ -51,8 +96,11 @@ DcModule class >> initialize [
 
 	<script>
 	Modules := Dictionary new.
-	 self addPatientIdentificationModule.
+	self addPatient.
 	self addGeneralStudy.
+	self addGeneralImage.
+	self addMultiFrame.
+	self addImagePixel.
 	self initializeIOD
 ]
 
@@ -62,10 +110,15 @@ DcModule class >> initializeIOD [
 	IOD := Dictionary new.
 	IOD at: 'CTImageStorage' put: {
 			(self module: #Patient).
-			(self module: #GeneralStudy) }.
-	IOD at:'VLWholeSlideMicroscopyImageStorage' put: {
+			(self module: #GeneralStudy).
+			(self module: #GeneralImage) }.
+	IOD at: 'VLWholeSlideMicroscopyImageStorage' put: {
 			(self module: #Patient).
-			(self module: #GeneralStudy) }.
+			(self module: #GeneralStudy).
+			(self module: #GeneralImage).
+			(self module: #MultiFrame) .
+			(self module: #ImagePixel)}.
+	self module: #GeneralImage
 ]
 
 { #category : #accessing }
@@ -85,13 +138,21 @@ DcModule class >> modulesForIOD: aString [
 ]
 
 { #category : #adding }
+DcModule >> addMacro: aMacroName [
+
+	| tmp  |
+	tmp := DcMacro macro: aMacroName.
+	attrs addAll: tmp tags
+]
+
+{ #category : #adding }
 DcModule >> addTag: tagID [
 
 	| tmp tag |
 	tmp := DcTable tagTable atHex: tagID.
 	tag := DcTag fromString: (tmp at: #Tag).
-	attrs add: tag.
-	"attrs at: (tmp at: #TagHex) put: tmp"
+	attrs add: tag
+
 ]
 
 { #category : #printing }
