@@ -135,7 +135,7 @@ DcModule >> matchingTags: tagList [
 
 { #category : #accessing }
 DcModule >> name: aString [
-
+"setter för name"
 	name := aString
 ]
 
