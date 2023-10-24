@@ -134,9 +134,9 @@ DcModule >> matchingTags: tagList [
 ]
 
 { #category : #accessing }
-DcModule >> name^ [
+DcModule >> name [
 
-	name
+	^name
 ]
 
 { #category : #accessing }
