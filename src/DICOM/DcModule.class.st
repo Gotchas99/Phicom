@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'name',
 		'descr',
+		'group',
 		'attrs'
 	],
 	#classVars : [
@@ -82,9 +83,11 @@ DcModule class >> modulesForIOD: aString [
 { #category : #adding }
 DcModule >> addTag: tagID [
 
-	| tmp |
+	| tmp tag |
 	tmp := DcTable tagTable atHex: tagID.
-	attrs at: (tmp at:#TagHex)put: tmp
+	tag := DcTag fromString: (tmp at: #Tag).
+	attrs add: tag.
+	"attrs at: (tmp at: #TagHex) put: tmp"
 ]
 
 { #category : #printing }
@@ -98,28 +101,21 @@ DcModule >> descr:aString [
 descr:=aString
 ]
 
-{ #category : #'as yet unclassified' }
-DcModule >> elementsIncluded: aList [
+{ #category : #accessing }
+DcModule >> elementsIncluded: anElementList [
 
 	| tmp |
-	tmp := OrderedCollection new.
-	tmp := aList asOrderedCollection
-		       collect: [ :el |
-			       attrs
-				       detect: [ :a | (a at: #Tag) = el tag hex ]
-				       ifFound: [ :a |el ]
-				       ifNone: [ nil ] ]
-		       thenReject: [ :el | el isNil ].
+ 	tmp := anElementList select: [ :el | attrs includes: el tag ].
 	^ tmp
 ]
 
 { #category : #initialization }
 DcModule >> initialize [
 
-	attrs := Dictionary new
+	attrs := Set new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DcModule >> matchingTags: tagList [
 
 	| tmp |

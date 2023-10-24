@@ -76,14 +76,14 @@ DcDataSet >> elements [
 DcDataSet >> elementsForModule: aModulename [
 
 	| mod tags matches matchElements matchTags |
-	tags := elements collect: [ :m | m keyword ].
+	"tags := elements collect: [ :m | m keyword ]."
 	mod := DcModule module: aModulename.
-	matches := mod matchingTags: tags.
-	matchTags := matches collect: [ :t | t at: #TagHex ].
+	matches := mod elementsIncluded: elements.
+	"matchTags := matches collect: [ :t | t at: #TagHex ].
 	self halt.
 	matchElements := elements select: [ :e |
-		                 matchTags anySatisfy: [ :t | t = e tag bin ] ].
-	^ matchElements
+		                 matchTags anySatisfy: [ :t | t = e tag bin ] ]."
+	^ matches
 ]
 
 { #category : #accessing }
@@ -140,18 +140,17 @@ DcDataSet >> nonEmptyElements [
 	^ elements reject: [ :el | el isEmpty ] 
 ]
 
-{ #category : #accessing }
+{ #category : #initialization }
 DcDataSet >> readFrom: aStream [
 
 	| e |
 	elements := SortedCollection new.
 	e := DcElement new.
-	[ aStream atEnd or: [ e isPixelData ] ] whileFalse: [ 
+	[ aStream atEnd or: [ e isPixelData ] ] whileFalse: [
 		e := DcElement new
 			     explicitVR: explicitVR;
 			     readPixelData: readPixelData;
 			     from: aStream.
-	"	self halt."
 		elements add: e ]
 ]
 
