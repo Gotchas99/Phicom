@@ -87,13 +87,14 @@ DcDirRecord >> inspectionString [
 { #category : #accessing }
 DcDirRecord >> lowerEntity [
 
-	^ lowerEntity ifNil: [ 
+	^ lowerEntity ifNil: [
 		  file readStreamDo: [ :s | 
 			  lowerEntity := DcDirEntity new
 				                 file: file;
 				                 readFrom: s
 				                 atPos: offsetLowerEntity
-				                 explicitVR: explicit ]. lowerEntity  ]
+				                 explicitVR: explicit ].
+		  lowerEntity ]
 ]
 
 { #category : #accessing }
@@ -111,7 +112,6 @@ DcDirRecord >> printOn: aStream [
 DcDirRecord >> readFrom: aStream atPos: startPos explicitVR: explicitVR [
 
 	| els inUse |
-	self halt.
 	explicit := explicitVR.
 	aStream position: startPos.
 	els := DcSqItem from: aStream explicitVR: explicitVR.
