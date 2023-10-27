@@ -14,7 +14,7 @@ Class {
 	#category : #'DICOM-Core'
 }
 
-{ #category : #'class initialization' }
+{ #category : #modules }
 DcModule class >> addGeneralImage [
 
 	| m |
@@ -36,7 +36,7 @@ DcModule class >> addGeneralImage [
 	Modules at: m name put: m
 ]
 
-{ #category : #'class initialization' }
+{ #category : #modules }
 DcModule class >> addGeneralStudy [
 
 	| m |
@@ -54,7 +54,7 @@ DcModule class >> addGeneralStudy [
 
 ]
 
-{ #category : #'class initialization' }
+{ #category : #modules }
 DcModule class >> addImagePixel [
 
 	| m |
@@ -65,7 +65,7 @@ DcModule class >> addImagePixel [
 	Modules at: m name put: m
 ]
 
-{ #category : #'class initialization' }
+{ #category : #modules }
 DcModule class >> addMultiFrame [
 
 	| m |
@@ -78,7 +78,30 @@ DcModule class >> addMultiFrame [
 	Modules at: m name put: m
 ]
 
-{ #category : #'class initialization' }
+{ #category : #modules }
+DcModule class >> addMultiFrameFunctionalGroups [
+
+	| m |
+	m := self new
+		     name: 'MultiFrameFunctionalGroups';
+		     descr: 'Multi-frame Functional Groups'.
+	m addTag: '(5200,9229)'.
+	m addTag: '(5200,9230)'.
+
+	m addTag: '(0020,0013)'.
+	m addTag: '(0008,0023)'.
+	m addTag: '(0008,0033)'.
+	m addTag: '(0028,0008)'.
+	m addTag: '(0020,9228)'.
+	m addTag: '(0028,6010)'.
+	m addTag: '(0020,9161)'.
+	m addTag: '(0020,0242)'.
+	m addTag: '(0020,9162)'.
+	m addTag: '(0020,9163)'.
+	Modules at: m name put: m
+]
+
+{ #category : #modules }
 DcModule class >> addPatient [
 
 	| m |
@@ -91,7 +114,7 @@ DcModule class >> addPatient [
 	Modules at: m name put: m
 ]
 
-{ #category : #'class initialization' }
+{ #category : #modules }
 DcModule class >> addVLWholeSlideMicroscopyImage [
 
 	| m tagIds |
@@ -115,6 +138,7 @@ DcModule class >> initialize [
 	self addGeneralStudy.
 	self addGeneralImage.
 	self addMultiFrame.
+	self addMultiFrameFunctionalGroups.
 	self addImagePixel.
 	self addVLWholeSlideMicroscopyImage.
 	self initializeIOD
@@ -132,9 +156,9 @@ DcModule class >> initializeIOD [
 			(self module: #Patient).
 			(self module: #GeneralStudy).
 			(self module: #GeneralImage).
-			(self module: #MultiFrame).
+			(self module: #MultiFrame).	(self module: #MultiFrameFunctionalGroups).
 			(self module: #ImagePixel).
-		(self module: #VLWholeSlideMicroscopyImage) }.
+			(self module: #VLWholeSlideMicroscopyImage) }.
 	self module: #GeneralImage
 ]
 

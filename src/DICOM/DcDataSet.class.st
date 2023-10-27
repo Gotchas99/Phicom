@@ -101,7 +101,7 @@ DcDataSet >> initialize [
 { #category : #inspecting }
 DcDataSet >> inspectionString [
 
-	<inspectorPresentationOrder: -10 title: 'DICOM DirRecord'>
+	<inspectorPresentationOrder: -10 title: 'DICOM Dataset'>
 	^ SpTablePresenter new
 		  addColumn:
 			  ((SpStringTableColumn title: 'Index' evaluated: #displayKey)
@@ -157,4 +157,12 @@ DcDataSet >> readFrom: aStream [
 { #category : #initialization }
 DcDataSet >> readPixelData:aBoolean [
 readPixelData:=aBoolean
+]
+
+{ #category : #accessing }
+DcDataSet >> sequences [
+
+	| els |
+	els:= elements select:[:el|el vr='SQ'].
+	^ els
 ]
