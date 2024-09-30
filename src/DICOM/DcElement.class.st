@@ -170,7 +170,6 @@ DcElement class >> initializeRawValues [
 
 { #category : #initialization }
 DcElement class >> initializeVRvalues [
-
 	"As=Age (string ending with e.g. 'Y')
 	CS=Code String
 	DA=Date
@@ -200,8 +199,8 @@ DcElement class >> initializeVRvalues [
 		at: 'AS' put: #asString;
 		at: 'CS' put: #asString;
 		"needs to be converted to real date
-		"at: 'DA' put: #asString;
-		at: 'DT' put: #asString;
+		"at: 'DA' put: #asDate;
+		at: 'DT' put: #asDateTime ;
 		at: 'DS' put: #asNumber;
 		at: 'FD' put: #asDouble;
 		at: 'FL' put: #asFloat;
@@ -217,7 +216,7 @@ DcElement class >> initializeVRvalues [
 		at: 'SS' put: #asSignedShort;
 		at: 'ST' put: #asString;
 		"needs to be converted to real time
-		"at: 'TM' put: #asString;
+		"at: 'TM' put: #asTime ;
 		at: 'UI' put: #asUID;
 		at: 'UL' put: #asUnsignedLong;
 		at: 'US' put: #asUnsignedShort;
@@ -236,6 +235,18 @@ DcElement >> = anElement [
 	anElement class = self class ifFalse: [ ^ false ].
 	tag = anElement tag ifFalse: [ ^ false ].
 	^rawValue = anElement rawValue 
+]
+
+{ #category : #converting }
+DcElement >> asDate [
+
+	^ rawValue asString trimmed
+]
+
+{ #category : #converting }
+DcElement >> asDateTime [
+
+	^ rawValue asString trimmed
 ]
 
 { #category : #converting }
@@ -288,6 +299,12 @@ DcElement >> asSignedShort [
 
 { #category : #converting }
 DcElement >> asString [
+
+	^ rawValue asString trimmed
+]
+
+{ #category : #converting }
+DcElement >> asTime [
 
 	^ rawValue asString trimmed
 ]
