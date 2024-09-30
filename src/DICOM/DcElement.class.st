@@ -314,9 +314,8 @@ DcElement >> asUnsignedShort [
 
 { #category : #accessing }
 DcElement >> assoc [
-^tag keyword -> self value.
 
-	
+	^ tag keyword -> self value
 ]
 
 { #category : #validating }
@@ -595,8 +594,10 @@ DcElement >> tag [
 { #category : #accessing }
 DcElement >> value [
 
-	^ value ifNil: [ 
-		  value :=self perform: (self class VRcodes at: self vr)  ]
+	value ifNotNil: [ ^ value ].
+	rawValue ifNil: [ ^ nil ].
+	rawValue ifEmpty: [ ^nil ].
+	^ value := self perform: (self class VRcodes at: self vr)
 ]
 
 { #category : #accessing }

@@ -14,7 +14,7 @@ Class {
 }
 
 { #category : #initialization }
-DcPresenterMain class >> defaultSpec [
+DcPresenterMain class >> defaultLayout [
 
 	| topRow srBox |
 	topRow := SpBoxLayout newLeftToRight
@@ -25,8 +25,24 @@ DcPresenterMain class >> defaultSpec [
 		         add: #srFlds expand: true.
 	^ SpBoxLayout newTopToBottom
 		  add: topRow height: 165;
-		  "add: #flds expand: true;"
-		  add: srBox expand: true;
+		  "add: #flds expand: true;"add: srBox expand: true;
+		  yourself
+]
+
+{ #category : #initialization }
+DcPresenterMain class >> defaultSpec [
+
+	| topRow srBox |
+	self deprecated: 'use defaultLayout now'.
+	topRow := SpBoxLayout newLeftToRight
+		          add: #files;
+		          add: #els expand: true.
+	srBox := SpBoxLayout newLeftToRight
+		         add: #srTree expand: true;
+		         add: #srFlds expand: true.
+	^ SpBoxLayout newTopToBottom
+		  add: topRow height: 165;
+		  "add: #flds expand: true;"add: srBox expand: true;
 		  yourself
 ]
 
@@ -34,21 +50,21 @@ DcPresenterMain class >> defaultSpec [
 DcPresenterMain >> connectPresenters [
 
 	| sel fname |
-	files whenSelectionChangedDo: [ :selection | 
-		[ :elem | 
+	files whenSelectionChangedDo: [ :selection |
+		[ :elem |
 		sel := elem first.
 		fname := elem third ] cull: selection selectedItem.
 		currentMedia := DcObjectFile new filename: fname.
+		currentMedia readPixelData:false.
 		ds := currentMedia read dataset.
 		els items: ds elements.
 		ds isSR ifTrue: [ srTree roots: { ds asSR } ] ].
-	els whenSelectionChangedDo: [ :selection | 
+	els whenSelectionChangedDo: [ :selection |
 		[ :elem | elem ifNotNil: [ flds items: elem parse ] ] cull:
 			selection selectedItem ].
-	srTree whenSelectionChangedDo: [ :selection | 
-		[ :elem | 
-		elem ifNotNil: [ 
-			srFlds items: elem values ] ] cull: selection selectedItem ]
+	srTree whenSelectionChangedDo: [ :selection |
+		[ :elem | elem ifNotNil: [ srFlds items: elem values ] ] cull:
+			selection selectedItem ]
 ]
 
 { #category : #initialization }
@@ -112,9 +128,8 @@ DcPresenterMain >> sampleMessages [
 
 	^ #( #( #sample1 'Felix' 'C:\MiscTools\Dicoogle_v3.0.2\storage\FELIX\IM-0001-0075.dcm4763272c-307c-4f43-9fcf-b819bf13eef8.dcm' )
 	     #( #adtA08 'CT image' 'C:\Users\chras8\OneDrive - Västra Götalandsregionen\Stråldosregister\Exempel dicom2\DICOM\00002ECF\AA50A585\AA1A94E5\00000F02\EE5304EE' )
-	     #( #adtA08_2 'RDSR' 'C:\Users\chras8\OneDrive - Västra Götalandsregionen\Stråldosregister\Exempel dicom2\DICOM\00002ECF\AA50A585\AA1A94E5\00000448\FF8829E7' ) )
-
-
+	     #( #adtA08_2 'RDSR' 'C:\Users\chras8\OneDrive - Västra Götalandsregionen\Stråldosregister\Exempel dicom2\DICOM\00002ECF\AA50A585\AA1A94E5\00000448\FF8829E7' )
+	     #( #adtA08_3 'WSI 3DHIS' 'C:\Users\chras8\OneDrive - Västra Götalandsregionen\Dicom\WSI\samples\3DHISTECH-1\000006.dcm' ) )
 ]
 
 { #category : #initialization }

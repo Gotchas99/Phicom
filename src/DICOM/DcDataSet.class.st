@@ -129,7 +129,7 @@ DcDataSet >> modules [
 
 	| allMods mods |
 	allMods := DcModule modulesForIOD: self iod.
-	mods := Dictionary new.
+	mods := OrderPreservingDictionary new.
 	 allMods do: [ :mod |
 		  mods at: mod name put: (self elementsForModule: mod name) ].^mods
 ]

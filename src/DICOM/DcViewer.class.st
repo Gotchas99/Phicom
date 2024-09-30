@@ -20,5 +20,5 @@ DcViewer class >> run [
 { #category : #accessing }
 DcViewer >> start [
 
-	(self new: DcPresenterMain) openWithSpec
+	(self new: DcPresenterMain) open
 ]

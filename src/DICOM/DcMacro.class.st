@@ -76,7 +76,7 @@ DcMacro >> name: aString [
 name:=aString 
 ]
 
-{ #category : #adding }
+{ #category : #accessing }
 DcMacro >> tags [
 
 ^tags

@@ -156,7 +156,8 @@ DcModule class >> initializeIOD [
 			(self module: #Patient).
 			(self module: #GeneralStudy).
 			(self module: #GeneralImage).
-			(self module: #MultiFrame).	(self module: #MultiFrameFunctionalGroups).
+			(self module: #MultiFrame).
+			(self module: #MultiFrameFunctionalGroups).
 			(self module: #ImagePixel).
 			(self module: #VLWholeSlideMicroscopyImage) }.
 	self module: #GeneralImage
