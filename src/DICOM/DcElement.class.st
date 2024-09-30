@@ -240,7 +240,7 @@ DcElement >> = anElement [
 { #category : #converting }
 DcElement >> asDate [
 
-	^ rawValue asString trimmed
+	^ Date readFrom: rawValue asString pattern: 'yyyymmdd'.
 ]
 
 { #category : #converting }
